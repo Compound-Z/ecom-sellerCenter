@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginBottom="8dp"
+    android:id="@+id/layout"
+    android:background="@drawable/rounded_bg"
+    android:layout_height="wrap_content">
+    <RadioButton
+        android:id="@+id/radioButton"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:checked="true">
+
+    </RadioButton>
+
+    <ImageView
+        android:id="@+id/ivGHN"
+        android:layout_width="55dp"
+        android:layout_height="35dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ghn"
+        app:layout_constraintStart_toEndOf="@id/radioButton"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivGHN"
+        app:layout_constraintStart_toEndOf="@id/ivGHN"
+        app:layout_constraintTop_toTopOf="@+id/ivGHN"
+        tools:text="Đường bộ">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvServiceShippingFeeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvServiceShippingFee"
+        app:layout_constraintTop_toTopOf="@+id/tvName"
+        android:text="Service fee: ">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvServiceShippingFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvServiceShippingFeeLabel"
+        tools:text="56.000đ"></TextView>
+
+    <TextView
+        android:textSize="12sp"
+        android:id="@+id/tvInsuranceShippingFeeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/tvServiceShippingFeeLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvServiceShippingFeeLabel"
+        android:text="Insurance fee: ">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvInsuranceShippingFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvServiceShippingFee"
+        app:layout_constraintStart_toEndOf="@id/tvInsuranceShippingFeeLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvServiceShippingFeeLabel"
+        tools:text="6.000đ"></TextView>
+
+    <TextView
+        android:id="@+id/tvTotalShippingFeeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/ivGHN"
+        app:layout_constraintTop_toBottomOf="@+id/ivGHN"
+        tools:text="Total fee: ">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvTotalShippingFee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/green_500"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTotalShippingFeeLabel"
+        app:layout_constraintStart_toEndOf="@+id/tvTotalShippingFeeLabel"
+        app:layout_constraintTop_toTopOf="@+id/tvTotalShippingFeeLabel"
+        tools:text="63.000đ"></TextView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

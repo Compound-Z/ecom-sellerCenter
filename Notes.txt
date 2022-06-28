@@ -1,0 +1,5 @@
+* Feature: getAllProducts in HomeViewModel: the sample app pulls the data from local storage first to display,
+ then update it using another call to remote repository.
+* It doesn't have exception handler
+* Performance: skip frames
+* Flow: re-getProducts when click back button - need to recreate to debug.

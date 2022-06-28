@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SignupFragment">
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.auth.login.LoginFragment"
+        android:label="@string/login_fragment_label"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_login_to_signup"
+            app:destination="@id/SignupFragment"
+            app:popUpTo="@id/SignupFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_login_to_forgot_password"
+            app:destination="@id/ForgetPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SignupFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.auth.signup.SignupFragment"
+        android:label="@string/signup_fragment_label"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signup_to_login"
+            app:destination="@id/LoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ForgetPasswordFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.auth.forgot_password.ForgotPasswordFragment"
+        android:label="@string/forgot_password_fragment_label"
+        tools:layout="@layout/fragment_forgot_password">
+        <action
+            android:id="@+id/action_forgot_password_to_login"
+            app:destination="@id/LoginFragment"
+            app:popUpTo="@id/ForgetPasswordFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+</navigation>

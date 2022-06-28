@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shipping_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="false"
+    android:focusable="true"
+    app:cardElevation="0dp"
+    app:strokeColor="#CCCCCC"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvShippingProviderLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Shipping provider:" />
+        <ImageView
+            android:id="@+id/ivGHN"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ghn"
+            app:layout_constraintBottom_toBottomOf="@+id/tvShippingProviderLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvShippingProviderLabel">
+
+        </ImageView>
+        <TextView
+            android:id="@+id/ship_date_value_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/black"
+            android:padding="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvShippingProviderLabel"
+            app:layout_constraintEnd_toStartOf="@id/ivGHN"
+            app:layout_constraintTop_toTopOf="@+id/tvShippingProviderLabel"
+            tools:text="Giaohangnhanh" />
+
+        <TextView
+            android:id="@+id/ship_add_label_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/shipping_address_label_string"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvShippingProviderLabel" />
+
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/ship_add_label_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/ship_add_label_tv"
+            app:layout_constraintTop_toTopOf="@+id/ship_add_label_tv"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="12, Dream street, Hollywood, LA, California, USA" />
+
+        <ImageView
+            android:id="@+id/card_dotted_divider"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/price_card_divider_desc"
+            android:layerType="software"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvAddress"
+            app:srcCompat="@drawable/dotted_line_drawable" />
+        <TextView
+            android:id="@+id/tvReceiverLLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Receiver"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_dotted_divider" />
+
+        <TextView
+            android:id="@+id/tvReceiver"
+            android:layout_width="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/tvReceiverLLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tvReceiverLLabel"
+            app:layout_constraintTop_toTopOf="@+id/tvReceiverLLabel"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Christopher Franklin" />
+        <TextView
+            android:id="@+id/tvPhoneNumberLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Phone number"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvReceiverLLabel" />
+
+        <TextView
+            android:id="@+id/tvPhoneNumber"
+            android:layout_width="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/tvPhoneNumberLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tvPhoneNumberLabel"
+            app:layout_constraintTop_toTopOf="@+id/tvPhoneNumberLabel"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="+84336130008" />
+
+        <!--        <TextView-->
+<!--            android:id="@+id/ship_curr_status_label_tv"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="@string/ship_curr_status_label_text"-->
+<!--            android:textAppearance="@style/TextAppearance.MyTheme.Body1"-->
+<!--            android:textColor="@color/dark_gray"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/card_dotted_divider" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/ship_curr_status_value_tv"-->
+<!--            android:layout_width="160dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textAlignment="textEnd"-->
+<!--            android:textAppearance="@style/TextAppearance.MyTheme.Body1"-->
+<!--            android:textColor="@color/blue_accent_300"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/ship_curr_status_label_tv"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/ship_curr_status_label_tv"-->
+<!--            tools:text="DELIVERED ON January 01, 2023" />-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

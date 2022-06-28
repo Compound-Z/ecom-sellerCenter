@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/address_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardElevation="0dp"
+    app:strokeColor="#CCCCCC"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/tvNoAddress"
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="No address added!\nClick to add an address"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/blue_accent_300"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55" />
+
+        <ImageView
+            android:id="@+id/ivLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/add_img_item_desc"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_filled_location_on_24" />
+
+        <TextView
+            android:id="@+id/tvNameAndPhoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body2"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btGoToAddress"
+            app:layout_constraintStart_toEndOf="@+id/ivLocation"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text=" Hoàxxxxxxxxxng sd  s s sdsadadasas da a sadd asd asd ad ấ ad ấ dád" />
+
+
+        <ImageButton
+            android:id="@+id/btGoToAddress"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="false"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/pro_details_delete_btn_desc"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_navigate_next_24"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:id="@+id/tvDetailedAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginVertical="8dp"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body2"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/ivLocation"
+            app:layout_constraintTop_toBottomOf="@+id/tvNameAndPhoneNumber"
+            app:layout_constraintEnd_toStartOf="@id/btGoToAddress"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="dsa da ad asd ad asad a á đá á ds s dsd ada asd asd asd á sa" />
+
+        <LinearLayout
+            android:id="@+id/cart_product_quantity_buttons_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/layout_background_rounded_corners"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/tvDetailedAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@id/tvDetailedAddress"
+            app:layout_constraintTop_toTopOf="@+id/tvDetailedAddress"
+            app:layout_constraintVertical_bias="1.0">
+            
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
