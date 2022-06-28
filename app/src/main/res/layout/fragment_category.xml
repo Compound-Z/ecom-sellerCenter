@@ -9,7 +9,7 @@
     tools:context=".ui.category.CategoryFragment">
     <include
         android:id="@+id/category_top_app_bar"
-        layout="@layout/layout_no_icon_app_bar"
+        layout="@layout/layout_list_products_in_category_top_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
@@ -62,7 +62,7 @@
                 android:clipToPadding="false"
                 android:padding="8dp"
                 app:flow_horizontalAlign="center"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:spanCount="3"

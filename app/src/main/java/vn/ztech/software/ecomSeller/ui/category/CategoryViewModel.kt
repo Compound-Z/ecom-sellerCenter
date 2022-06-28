@@ -23,7 +23,8 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     val currentSelectedCategory = MutableLiveData<Category>()
     private var _allCategories = MutableLiveData<List<Category>>()
     val allCategories: LiveData<List<Category>> get() = _allCategories
-
+    val originalCategories = MutableLiveData<List<Category>>()
+    val isSearchCategoriesResultEmpty = MutableLiveData<Boolean>()
     val products = MutableLiveData<List<Product>>()
 
     private val _storeDataStatus = MutableLiveData<StoreDataStatus>()
@@ -42,6 +43,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
                         _allCategories.value = it.data?: emptyList()
+                        originalCategories.value = it.data?: emptyList()
                         Log.d(TAG, "LOADED")
                     }
                     is LoadState.Error -> {
@@ -95,6 +97,17 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
             }
         }
     }
+    fun searchCategoriesLocal(searchWords: String){
+        val filteredCategories = originalCategories.value?.filter { category ->
+            category.name.contains(searchWords, ignoreCase = true)
+        }
+        if (filteredCategories.isNullOrEmpty()){
+            isSearchCategoriesResultEmpty.value = true
+        }else{
+            _allCategories.value = filteredCategories
+            isSearchCategoriesResultEmpty.value = false
+        }
+    }
     fun searchProductsInCategory(searchWordsProduct: String){
         Log.d("searchProductsInCategory", searchWordsProduct + currentSelectedCategory.value?.name?:"")
         viewModelScope.launch {
@@ -119,5 +132,6 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     }
     fun clearErrors() {
         error.value = null
+        isSearchCategoriesResultEmpty.value = null
     }
 }

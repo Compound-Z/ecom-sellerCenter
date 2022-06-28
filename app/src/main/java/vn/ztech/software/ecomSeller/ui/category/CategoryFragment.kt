@@ -1,13 +1,15 @@
 package vn.ztech.software.ecomSeller.ui.category
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.View
-import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentCategoryBinding
 import vn.ztech.software.ecomSeller.model.Category
@@ -24,30 +26,15 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getCategories()
+        if(viewModel.originalCategories.value.isNullOrEmpty()) {
+            viewModel.getCategories()
+        }
     }
     override fun setUpViews() {
         super.setUpViews()
         if (context != null) {
             setUpCategoryAdapter(viewModel.allCategories.value)
             binding.categoriesRecyclerView.apply {
-                val gridLayoutManager = GridLayoutManager(context, 3)
-                val proCount = listCategoriesAdapter.data.count { it is Category }
-                val adCount = listCategoriesAdapter.data.size - proCount
-                val totalCount = proCount + (adCount * 3)
-                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (listCategoriesAdapter.getItemViewType(position)) {
-                            2 -> 2 //ad
-                            else -> {
-
-                                // product, full for last item
-                                if (position + 1 == listCategoriesAdapter.data.size && totalCount % 2 == 1) 2 else 1
-                            }
-                        }
-                    }
-                }
-                layoutManager = gridLayoutManager
                 adapter = listCategoriesAdapter
                 val itemDecoration = ItemDecorationRecyclerViewPadding()
                 if (itemDecorationCount == 0) {
@@ -73,6 +60,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
     @SuppressLint("NotifyDataSetChanged")
     override fun observeView() {
         super.observeView()
+        setTopAppBar()
         viewModel.storeDataStatus.observe(viewLifecycleOwner) { status ->
             if(status == StoreDataStatus.LOADING) {
                 binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
@@ -85,7 +73,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             }
         }
         viewModel.allCategories.observe(viewLifecycleOwner) { listCategories->
-            if (listCategories.isNotEmpty()) {
+            if (!listCategories.isNullOrEmpty()) {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
                 binding.categoriesRecyclerView.visibility = View.VISIBLE
@@ -93,8 +81,17 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                     listCategoriesAdapter.data = listCategories
                     notifyDataSetChanged()
                 }
+            }else{
+
             }
-            binding.categoryTopAppBar.topAppBar.title = "${listCategories.size} categories"
+        }
+        viewModel.isSearchCategoriesResultEmpty.observe(viewLifecycleOwner){
+                it?.let {
+                    if (it)
+                        Toast.makeText(requireContext(), "No category found", Toast.LENGTH_LONG)
+                        .apply { setGravity(Gravity.CENTER, 0, 0) }
+                        .show()
+                }
         }
         viewModel.error.observe(viewLifecycleOwner){
             it ?: return@observe
@@ -102,19 +99,45 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
         }
     }
 
+    private fun setTopAppBar() {
+        binding.categoryTopAppBar.homeSearchEditText.onFocusChangeListener = focusChangeListener
+        binding.categoryTopAppBar.homeSearchEditText.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                textView.clearFocus()
+                val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(textView.windowToken, 0)
+                performSearch(textView.text.toString())
+                true
+            } else {
+                false
+            }
+        }
+        binding.categoryTopAppBar.searchOutlinedTextLayout.setEndIconOnClickListener {
+            Log.d("SEARCH", "setEndIconOnClickListener")
+            it.clearFocus()
+            binding.categoryTopAppBar.homeSearchEditText.setText("")
+            val inputManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(it.windowToken, 0)
+//			viewModel.filterProducts("All")
+        }
+    }
+
     private fun performSearch(searchWords: String) {
-        viewModel.searchProducts(searchWords)
+        viewModel.searchCategoriesLocal(searchWords)
     }
     
 
     private fun setUpCategoryAdapter(categoriesList: List<Category>?) {
         listCategoriesAdapter = ListCategoriesAdapter(categoriesList ?: emptyList(), requireContext())
         listCategoriesAdapter.onClickListener =  object : ListCategoriesAdapter.OnClickListener {
-            override fun onClick(categoryData: Category) {
-                findNavController().navigate(
-                    R.id.action_category_2_list_products,
-                    bundleOf("category" to categoryData)
-                )
+
+            override fun onClickEdit(categoryData: Category) {
+                Toast.makeText(requireContext(), "Edit", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onClickDelete(categoryData: Category) {
+                Toast.makeText(requireContext(), "Delete", Toast.LENGTH_LONG).show()
             }
         }
     }

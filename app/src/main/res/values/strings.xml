@@ -86,6 +86,7 @@
     <string name="home_app_bar_filter_label">Filter</string>
     <string name="search_hint">Search Product…</string>
     <string name="search_placeholder_text">Search Product</string>
+    <string name="search_category_placeholder_text">Search Category</string>
     <string name="add_product_insert_error">Error Saving Product!</string>
     <string name="app_icon_img_desc">App Icon</string>
     <string name="pro_details_add_to_cart_btn_text">Add To Cart</string>
@@ -99,6 +100,7 @@
     <string name="cart_fragment_label">Your Cart</string>
     <string name="next_btn_text">Next</string>
     <string name="edit_btn_text">Edit</string>
+    <string name="delete_btn_text">Delete</string>
     <string name="ship_to_title">Ship To</string>
     <string name="add_menu_item_title">Add</string>
     <string name="add_address_btn_text">Add Address</string>
