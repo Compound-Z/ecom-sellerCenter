@@ -3,6 +3,7 @@
     package="vn.ztech.software.ecomSeller">
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:name="vn.ztech.software.ecomSeller.App"
         android:allowBackup="true"

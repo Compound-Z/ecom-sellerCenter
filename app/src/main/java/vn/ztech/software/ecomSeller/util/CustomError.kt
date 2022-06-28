@@ -10,10 +10,10 @@ import java.io.Serializable
 
 open class CustomError( val e: Throwable = Throwable(), open var customMessage: String = "System error! Please try again later!"): IOException(), Serializable{
     init {
-        Log.d("CustomError", e.message.toString())
+        Log.d("CustomError",customMessage)
     }
     fun showErrorDialog(context: Context, listener: DialogInterface.OnClickListener? = null): AlertDialog {
-        Log.d("showErrorDialog", e.message.toString())
+        Log.d("showErrorDialog", customMessage)
         return AlertDialog.Builder(context)
             .setTitle(R.string.error_dialog_tittle)
             .setMessage(customMessage)

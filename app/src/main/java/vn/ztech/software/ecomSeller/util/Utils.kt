@@ -1,9 +1,16 @@
 package vn.ztech.software.ecomSeller.util
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
+
+
 const val MOB_ERROR_TEXT = "Enter valid mobile number!"
 const val PASSWORD_ERROR_TEXT = "Please enter a stronger password: minimum eight characters, at least one uppercase letter, one lowercase letter and one number!"
 const val RETYPE_PASSWORD_ERROR_TEXT = "Retype password must be identical!"
@@ -88,6 +95,33 @@ internal fun getOfferPercentage(costPrice: Double, sellingPrice: Double): Int {
 internal fun getAddressId(userId: String): String {
 	val uniqueId = UUID.randomUUID().toString()
 	return "$userId-$uniqueId"
+}
+
+internal fun getFullPath(context: Context, uri: Uri): String{
+	var filePath = ""
+	val wholeID = DocumentsContract.getDocumentId(uri)
+
+	// Split at colon, use second item in the array
+	val id = wholeID.split(":").toTypedArray()[1]
+
+	val column = arrayOf(MediaStore.Images.Media.DATA)
+
+
+	// where id is equal to
+	val sel = MediaStore.Images.Media._ID + "=?"
+
+	val cursor: Cursor? = context.contentResolver.query(
+		MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+		column, sel, arrayOf(id), null
+	)
+
+	val columnIndex: Int = cursor?.getColumnIndex(column[0])?:0
+
+	if (cursor?.moveToFirst() == true) {
+		filePath = cursor.getString(columnIndex)
+	}
+	cursor?.close()
+	return filePath
 }
 
 

@@ -23,6 +23,9 @@ fun errorMessage(
         is SocketTimeoutException -> {
             e.customMessage = "Timeout! Please try again later!"
         }
+        is CustomError->{
+            e.customMessage = e.e.customMessage
+        }
     }
     return e
 

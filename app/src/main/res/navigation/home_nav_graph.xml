@@ -23,15 +23,24 @@
         android:name="vn.ztech.software.ecomSeller.ui.category.CategoryFragment"
         android:label="fragment_category"
         tools:layout="@layout/fragment_category">
-        <!--        <action-->
-        <!--            android:id="@+id/action_goto_addProduct"-->
-        <!--            app:destination="@id/addEditProductFragment" />-->
+        <action
+            android:id="@+id/action_categoryFragment_to_addEditCategoryFragment"
+            app:destination="@id/addEditCategoryFragment" />
         <action
             android:id="@+id/action_category_2_list_products"
             app:destination="@id/listProductsInCategoryFragment" />
         <action
             android:id="@+id/action_category_home"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditCategoryFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.category.AddEditCategoryFragment"
+        android:label="fragment_add_edit_category"
+        tools:layout="@layout/fragment_add_edit_category">
+        <action
+            android:id="@+id/action_addEditCategoryFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/listProductsInCategoryFragment"

@@ -25,6 +25,7 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
         private val categoryImage = binding.categoryImageView
         private val btEdit = binding.btEdit
         private val btDelete = binding.btDelete
+        private val tvNumberOfProduct = binding.tvNumberOfProduct
 
         fun bind(categoryData: Category) {
             btEdit.setOnClickListener {
@@ -34,7 +35,7 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
                 onClickListener.onClickDelete(categoryData)
             }
             categoryName.text = categoryData.name
-
+            tvNumberOfProduct.text = "${categoryData.numberOfProduct} products"
             if (categoryData.imageUrl.isNotEmpty()) {
                 val imgUrl = categoryData.imageUrl.toUri().buildUpon().scheme("https").build()
                 Glide.with(context)

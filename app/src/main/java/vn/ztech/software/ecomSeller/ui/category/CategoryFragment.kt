@@ -9,7 +9,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentCategoryBinding
 import vn.ztech.software.ecomSeller.model.Category
@@ -42,18 +44,15 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                 }
             }
         }
-        //feature: this will be add when the app supports seller.
-//        if (!viewModel.isUserASeller) {
-//            binding.homeFabAddProduct.visibility = View.GONE
-//        }
-//        binding.homeFabAddProduct.setOnClickListener {
-//            showDialogWithItems(ProductCategories, 0, false)
-//        }
         binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
         binding.loaderLayout.circularLoader.showAnimationBehavior
 
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.getCategories()
+        }
+
+        binding.btAddEditCategory.setOnClickListener {
+            findNavController().navigate(R.id.action_categoryFragment_to_addEditCategoryFragment)
         }
     }
 //
@@ -81,8 +80,6 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                     listCategoriesAdapter.data = listCategories
                     notifyDataSetChanged()
                 }
-            }else{
-
             }
         }
         viewModel.isSearchCategoriesResultEmpty.observe(viewLifecycleOwner){
