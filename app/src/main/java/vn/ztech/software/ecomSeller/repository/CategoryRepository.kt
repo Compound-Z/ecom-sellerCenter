@@ -9,6 +9,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import vn.ztech.software.ecomSeller.api.ICategoryApi
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -20,6 +21,8 @@ interface ICategoryRepository {
     suspend fun search(searchWords: String, searchWordsProduct: String): List<Product>
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createCategory(createCategoryRequest: CreateCategoryRequest): Category
+    suspend fun deleteCategory(categoryId: String): BasicResponse
+
 }
 
 class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryRepository{
@@ -44,6 +47,10 @@ class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryReposi
 
     override suspend fun createCategory(createCategoryRequest: CreateCategoryRequest): Category {
         return CategoryApi.createCategory(createCategoryRequest)
+    }
+
+    override suspend fun deleteCategory(categoryId: String): BasicResponse {
+        return CategoryApi.deleteCategory(categoryId)
     }
 
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -18,6 +19,8 @@ interface IListCategoriesUseCase{
     suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<List<Product>>
     fun uploadImage(file: File): Flow<UploadImageResponse>
     fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category>
+    fun deleteCategory(categoryId: String): Flow<BasicResponse>
+
 }
 
 class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository): IListCategoriesUseCase{
@@ -45,5 +48,9 @@ class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository)
         val category = categoryRepository.createCategory(createCategoryRequest)
         category.name = category.name.removeUnderline()
         emit(category)
+    }
+
+    override fun deleteCategory(categoryId: String): Flow<BasicResponse> =flow{
+        emit(categoryRepository.deleteCategory(categoryId))
     }
 }

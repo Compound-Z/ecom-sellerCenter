@@ -40,6 +40,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
 
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdCategory = MutableLiveData<Category>()
+    val deleteCategoryStatus = MutableLiveData<Boolean>()
 
     val error = MutableLiveData<CustomError>()
     val errorUI = MutableLiveData<AddCategoryViewErrors>()
@@ -147,6 +148,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
         uploadedImage.value = null
         createdCategory.value = null
         errorUI.value = null
+        deleteCategoryStatus.value = null
     }
     fun uploadImage(file: File){
         Log.d("file", file.toString())
@@ -171,8 +173,8 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
         }
     }
 
-    fun checkInputData(text: String, text1: String, imgList: MutableList<Uri>) {
-        if (text.isBlank() || text1.isBlank() || imgList.isEmpty() || imgList[0].toString().isBlank()) {
+    fun checkInputData(text: String, imgList: MutableList<Uri>) {
+        if (text.isBlank() || imgList.isEmpty() || imgList[0].toString().isBlank()) {
             errorUI.value = AddCategoryViewErrors.EMPTY
         }else{
             var duplicatedName = false
@@ -203,6 +205,28 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     }
                     is LoadState.Error -> {
                         _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
+    fun deleteCategory(categoryId: String) {
+        viewModelScope.launch {
+            listCategoriesUseCase.deleteCategory(categoryId).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        deleteCategoryStatus.value = true
+                        Log.d(TAG, "LOADED")
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        deleteCategoryStatus.value = false
                         error.value = errorMessage(it.e)
                         Log.d(TAG +" ERROR:", it.e.message.toString())
                     }

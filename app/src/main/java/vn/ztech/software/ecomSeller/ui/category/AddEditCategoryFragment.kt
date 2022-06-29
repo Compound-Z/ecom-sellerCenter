@@ -59,7 +59,7 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
         if (viewModel.currentSelectedCategory.value==null) {
             binding.addProAppBar.topAppBar.title =
-                "Add Category - ${viewModel.currentSelectedCategory.value?.name}"
+                "Add new category"
         }else{
             binding.addProAppBar.topAppBar.title =
                 "Edit Category - ${viewModel.currentSelectedCategory.value?.name}"
@@ -81,7 +81,6 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
         binding.addProErrorTextView.visibility = View.GONE
         binding.etCategoryName.onFocusChangeListener = focusChangeListener
-        binding.etNumOfProInCate.onFocusChangeListener = focusChangeListener
 
         binding.addProBtn.setOnClickListener {
             onAddProduct()
@@ -109,13 +108,13 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
         viewModel.uploadedImage.observe(viewLifecycleOwner){
             it?.let {
                 createNewCategory(
-                    binding.etCategoryName.text.toString(), binding.etNumOfProInCate.text.toString(), it.url
+                    binding.etCategoryName.text.toString(), it.url
                 )
             }
         }
         viewModel.createdCategory.observe(viewLifecycleOwner){
             it?.let {
-                Toast.makeText(requireContext(), "Created new category ${it.name}", Toast.LENGTH_LONG)
+                Toast.makeText(requireContext(), "Create category ${it.name} successfully", Toast.LENGTH_LONG)
                     .apply {
                         setGravity(Gravity.CENTER, 0, 0)
                     }
@@ -137,15 +136,14 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
         }
     }
 
-    private fun createNewCategory(etCategoryName: String, etNumOfProInCate: String, url: String) {
-        viewModel.createCategory(CreateCategoryRequest(name = etCategoryName, numberOfProduct = etNumOfProInCate.toInt(), imageUrl = url))
+    private fun createNewCategory(etCategoryName: String, url: String) {
+        viewModel.createCategory(CreateCategoryRequest(name = etCategoryName, imageUrl = url))
     }
 
     private fun onAddProduct() {
         /**for now placing it here, to to other part later*/
         viewModel.checkInputData(
             binding.etCategoryName.text.toString(),
-            binding.etNumOfProInCate.text.toString(),
             imgList
         )
     }
@@ -299,6 +297,7 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
     override fun onStop() {
         super.onStop()
+        binding.etCategoryName.onFocusChangeListener = null
         viewModel.clearErrors()
     }
 }

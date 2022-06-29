@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
@@ -66,7 +67,6 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             if(status == StoreDataStatus.LOADING) {
                 binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
                 binding.loaderLayout.circularLoader.showAnimationBehavior
-                binding.categoriesRecyclerView.visibility = View.GONE
             }else{
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
@@ -92,6 +92,13 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                         .show()
                 }
         }
+        viewModel.deleteCategoryStatus.observe(viewLifecycleOwner){
+            it?.let {
+                /**if delete successfully, reload list categories*/
+                if (it) viewModel.getCategories()
+                viewModel.deleteCategoryStatus.value = null
+            }
+        }
         viewModel.error.observe(viewLifecycleOwner){
             it ?: return@observe
             handleError(it)
@@ -99,9 +106,8 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
     }
 
     private fun setTopAppBar() {
-        val inputManager =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow( activity?.currentFocus?.windowToken, 0)
+        val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
         binding.categoryTopAppBar.homeSearchEditText.onFocusChangeListener = focusChangeListener
         binding.categoryTopAppBar.homeSearchEditText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -140,8 +146,23 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             }
 
             override fun onClickDelete(categoryData: Category) {
-                Toast.makeText(requireContext(), "Delete", Toast.LENGTH_LONG).show()
+                showDeleteDialog(categoryData._id)
             }
+        }
+    }
+    private fun showDeleteDialog(categoryId: String) {
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle(getString(R.string.delete_dialog_title_text))
+                .setMessage(getString(R.string.delete_category_message_text))
+                .setNeutralButton(getString(R.string.pro_cat_dialog_cancel_btn)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(getString(R.string.delete_dialog_delete_btn_text)) { dialog, _ ->
+                    viewModel.deleteCategory(categoryId)
+                    dialog.cancel()
+                }
+                .show()
         }
     }
     override fun onStop() {

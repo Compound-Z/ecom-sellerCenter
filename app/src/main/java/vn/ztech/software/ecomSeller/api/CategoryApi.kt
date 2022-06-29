@@ -5,6 +5,7 @@ import okhttp3.MultipartBody
 import retrofit2.http.*
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -26,5 +27,8 @@ interface ICategoryApi{
 
     @POST("/api/v1/categories")
     suspend fun createCategory(@Body createCategoryRequest: CreateCategoryRequest): Category
+
+    @DELETE("/api/v1/categories/{categoryId}")
+    suspend fun deleteCategory(@Path("categoryId")categoryId: String): BasicResponse
 
 }
