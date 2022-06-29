@@ -127,7 +127,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
                         findNavController().navigate(
                             R.id.action_cartFragment_to_productDetailsFragment,
-                            bundleOf("product" to Product(_id = product.productId,product.name,"",true, product.price, "", "", 0, product.weight, 0 , 0),
+                            bundleOf("product" to Product(_id = product.productId,product.name,"",true, product.price, "", "", 0, product.weight, 0 , 0,0),
                             "ADD_TO_CART_BUTTON_ENABLED" to false)
                         )
             }

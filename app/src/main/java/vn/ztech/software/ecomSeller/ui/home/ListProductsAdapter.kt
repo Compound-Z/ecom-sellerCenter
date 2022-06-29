@@ -22,31 +22,25 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 	var data = proList
 
 	lateinit var onClickListener: OnClickListener
-	lateinit var bindImageButtons: BindImageButtons
 //	private val sessionManager = ShoppingAppSessionManager(context)
 
 	inner class ItemViewHolder(binding: ItemProductListBinding) :
 		RecyclerView.ViewHolder(binding.root) {
-		private val proName = binding.productNameTv
-		private val proPrice = binding.productPriceTv
+		private val proName = binding.tvProductName
+		private val proPrice = binding.tvProductPrice
 		private val productCard = binding.productCard
 		private val productImage = binding.productImageView
-		private val proDeleteButton = binding.productDeleteButton
-		private val proEditBtn = binding.productEditButton
-		private val proMrp = binding.productActualPriceTv
-		private val proOffer = binding.productOfferValueTv
-		private val proRatingBar = binding.productRatingBar
-		private val proLikeButton = binding.productLikeCheckbox
-		private val proCartButton = binding.productAddToCartButton
+		private val proEditBtn = binding.btEdit
+		private val tvStockNumber = binding.tvStockNumber
+		private val tvSoldNumber = binding.tvSoldNumber
+		private val btAdvancedActions = binding.btAdvancedActions
+//		private val proRatingBar = binding.productRatingBar
 
 		fun bind(productData: Product) {
-			productCard.setOnClickListener {
-				onClickListener.onClick(productData)
-			}
 			proName.text = productData.name
 			proPrice.text =
 				context.getString(R.string.pro_details_price_value, productData.price.toString())
-			proRatingBar.rating = productData.averageRating.toFloat()
+//			proRatingBar.rating = productData.averageRating.toFloat()
 
 			if (productData.imageUrl.isNotEmpty()) {
 				val imgUrl = productData.imageUrl.toUri().buildUpon().scheme("https").build()
@@ -57,29 +51,18 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 
 				productImage.clipToOutline = true
 			}
+			tvStockNumber.text = productData.stockNumber.toString()
+			tvSoldNumber.text = productData.saleNumber.toString()
 
-//feature: this should be uncommented when the app supports seller
-//			if (sessionManager.isUserSeller()) {
-//				proLikeButton.visibility = View.GONE
-//				proCartButton.visibility = View.GONE
-//				proEditBtn.setOnClickListener {
-//					onClickListener.onEditClick(productData.productId)
-//				}
-//
-//				proDeleteButton.setOnClickListener {
-//					onClickListener.onDeleteClick(productData)
-//				}
-//			} else {
-				proEditBtn.visibility = View.GONE
-				proDeleteButton.visibility = View.GONE
-				bindImageButtons.setCartButton(productData._id, proCartButton)
-				proLikeButton.setOnCheckedChangeListener { _, _ ->
+			proEditBtn.visibility = View.VISIBLE
+			proEditBtn.setOnClickListener {
+				onClickListener.onEditClick(productData)
+			}
 
+			btAdvancedActions.setOnClickListener {
+				onClickListener.onClickAdvancedActionsButton(it, productData)
+			}
 
-				}
-				proCartButton.setOnClickListener {
-					onClickListener.onAddToCartClick(productData)
-				}
 //			}
 		}
 	}
@@ -129,15 +112,8 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 		}
 	}
 
-	interface BindImageButtons {
-		fun setCartButton(productId: String, imgView: ImageView)
-	}
-
 	interface OnClickListener {
-		fun onClick(productData: Product)
-		fun onDeleteClick(productData: Product)
-		fun onEditClick(productId: String) {}
-		fun onLikeClick(productId: String) {}
-		fun onAddToCartClick(productData: Product) {}
+		fun onClickAdvancedActionsButton(view: View, productData: Product)
+		fun onEditClick(productData: Product)
 	}
 }

@@ -200,41 +200,19 @@ open class ListProductsInCategoryFragment : Fragment() {
     private fun setUpProductAdapter(productsList: List<Product>?) {
         listProductsAdapter = ListProductsAdapter(productsList ?: emptyList(), requireContext())
         listProductsAdapter.onClickListener =  object : ListProductsAdapter.OnClickListener {
-            override fun onClick(productData: Product) {
-                findNavController().navigate(
-                    R.id.action_list_pro_in_cart_2_pro_details,
-                    bundleOf("product" to productData, "ADD_TO_CART_BUTTON_ENABLED" to true)
-                )
+
+            override fun onClickAdvancedActionsButton(view: View, productData: Product) {
+                TODO("Not yet implemented")
             }
 
-            override fun onDeleteClick(productData: Product) {
-//                Log.d(TAG, "onDeleteProduct: initiated for ${productData.productId}")
-//                showDeleteDialog(productData.name, productData.productId)
-            }
+//            override fun onDeleteClick(productData: Product) {
+////                Log.d(TAG, "onDeleteProduct: initiated for ${productData.productId}")
+////                showDeleteDialog(productData.name, productData.productId)
+//            }
 
-            override fun onEditClick(productId: String) {
+            override fun onEditClick(productData: Product) {
 //                Log.d(TAG, "onEditProduct: initiated for $productId")
 //                navigateToAddEditProductFragment(isEdit = true, productId = productId)
-            }
-
-            override fun onLikeClick(productId: String) {
-//                Log.d(TAG, "onToggleLike: initiated for $productId")
-//                viewModel.toggleLikeByProductId(productId)
-            }
-
-            override fun onAddToCartClick(productData: Product) {
-//                Log.d(TAG, "onToggleCartAddition: initiated")
-//                viewModel.toggleProductInCart(productData)
-            }
-        }
-        listProductsAdapter.bindImageButtons = object : ListProductsAdapter.BindImageButtons {
-
-            override fun setCartButton(productId: String, imgView: ImageView) {
-//                if (viewModel.isProductInCart(productId)) {
-//                    imgView.setImageResource(R.drawable.ic_remove_shopping_cart_24)
-//                } else {
-//                    imgView.setImageResource(R.drawable.ic_add_shopping_cart_24)
-//                }
             }
 
         }

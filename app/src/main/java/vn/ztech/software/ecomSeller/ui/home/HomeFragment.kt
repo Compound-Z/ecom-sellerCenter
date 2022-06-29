@@ -5,17 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentHomeBinding
@@ -35,7 +35,7 @@ private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: HomeViewModel by sharedViewModel()
     private lateinit var listProductsAdapter: ListProductsAdapter
     protected val focusChangeListener = MyOnFocusChangeListener()
 
@@ -62,37 +62,11 @@ class HomeFragment : Fragment() {
         setHomeTopAppBar()
         if (context != null) {
             setUpProductAdapter(viewModel.allProducts.value)
-            binding.productsRecyclerView.apply {
-                val gridLayoutManager = GridLayoutManager(context, 2)
-                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (listProductsAdapter.getItemViewType(position)) {
-                            2 -> 2 //ad
-                            else -> {
-                                val proCount = listProductsAdapter.data.count { it is Product }
-                                val adCount = listProductsAdapter.data.size - proCount
-                                val totalCount = proCount + (adCount * 2)
-                                // product, full for last item
-                                if (position + 1 == listProductsAdapter.data.size && totalCount % 2 == 1) 2 else 1
-                            }
-                        }
-                    }
-                }
-                layoutManager = gridLayoutManager
-                adapter = listProductsAdapter
-                val itemDecoration = ItemDecorationRecyclerViewPadding()
-                if (itemDecorationCount == 0) {
-                    addItemDecoration(itemDecoration)
-                }
-            }
+            binding.productsRecyclerView.adapter = listProductsAdapter
         }
-        //feature: this will be add when the app supports seller.
-//        if (!viewModel.isUserASeller) {
-//            binding.homeFabAddProduct.visibility = View.GONE
-//        }
-//        binding.homeFabAddProduct.setOnClickListener {
-//            showDialogWithItems(ProductCategories, 0, false)
-//        }
+        binding.homeFabAddProduct.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addEditProductFragment)
+        }
         binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
         binding.loaderLayout.circularLoader.showAnimationBehavior
     }
@@ -187,9 +161,6 @@ class HomeFragment : Fragment() {
             inputManager.hideSoftInputFromWindow(it.windowToken, 0)
 //			viewModel.filterProducts("All")
         }
-//        binding.homeTopAppBar.topAppBar.setOnMenuItemClickListener { menuItem ->
-//            setAppBarItemClicks(menuItem)
-//        }
     }
 
     private fun performSearch(searchWords: String) {
@@ -199,45 +170,51 @@ class HomeFragment : Fragment() {
     private fun setUpProductAdapter(productsList: List<Product>?) {
         listProductsAdapter = ListProductsAdapter(productsList ?: emptyList(), requireContext())
         listProductsAdapter.onClickListener =  object : OnClickListener {
-            override fun onClick(productData: Product) {
-                Log.d("XXXX", productData.toString())
-                findNavController().navigate(
-                    R.id.action_seeProduct,
-                    bundleOf("product" to productData, "ADD_TO_CART_BUTTON_ENABLED" to true)
-                )
-            }
 
-            override fun onDeleteClick(productData: Product) {
-//                Log.d(TAG, "onDeleteProduct: initiated for ${productData.productId}")
-//                showDeleteDialog(productData.name, productData.productId)
+            override fun onClickAdvancedActionsButton(view: View, productData: Product) {
+                showPopup(view, productData)
             }
+//
+//            override fun onDeleteClick(productData: Product) {
+//                Toast.makeText(requireContext(), "Delete", Toast.LENGTH_LONG).show()
+////                Log.d(TAG, "onDeleteProduct: initiated for ${productData.productId}")
+////                showDeleteDialog(productData.name, productData.productId)
+//            }
 
-            override fun onEditClick(productId: String) {
+            override fun onEditClick(productData: Product) {
+                Toast.makeText(requireContext(), "Edit", Toast.LENGTH_LONG).show()
 //                Log.d(TAG, "onEditProduct: initiated for $productId")
 //                navigateToAddEditProductFragment(isEdit = true, productId = productId)
             }
-
-            override fun onLikeClick(productId: String) {
-//                Log.d(TAG, "onToggleLike: initiated for $productId")
-//                viewModel.toggleLikeByProductId(productId)
-            }
-
-            override fun onAddToCartClick(productData: Product) {
-                Log.d(TAG, "onToggleCartAddition: initiated")
-//                viewModel.toggleProductInCart(productData)
-            }
         }
-        listProductsAdapter.bindImageButtons = object : ListProductsAdapter.BindImageButtons {
+    }
 
-            override fun setCartButton(productId: String, imgView: ImageView) {
-//                if (viewModel.isProductInCart(productId)) {
-//                    imgView.setImageResource(R.drawable.ic_remove_shopping_cart_24)
-//                } else {
-//                    imgView.setImageResource(R.drawable.ic_add_shopping_cart_24)
-//                }
+    private fun showPopup(view: View, productData: Product) {
+        val popup = PopupMenu(requireContext(), view).apply {
+            setOnMenuItemClickListener {
+                when(it.itemId){
+                    R.id.actionFullEdit -> {
+                        editProduct(productData)
+                        true
+                    }
+                    R.id.actionDelete -> {
+                        deleteProduct(productData)
+                        true
+                    }
+                    else -> {false}
+                }
             }
-
+            inflate(R.menu.advanced_action_product_menu)
+            show()
         }
+    }
+
+    private fun editProduct(productData: Product) {
+        Toast.makeText(requireContext(), "Edit ${productData.name}", Toast.LENGTH_LONG).show()
+    }
+
+    private fun deleteProduct(productData: Product) {
+        Toast.makeText(requireContext(), "Delete ${productData.name}", Toast.LENGTH_LONG).show()
     }
 
     private fun getMixedDataList(data: List<Product>, adsList: List<Int>): List<Any> {
