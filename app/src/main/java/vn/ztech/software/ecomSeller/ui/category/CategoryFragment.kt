@@ -9,7 +9,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -23,7 +25,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
         return FragmentCategoryBinding.inflate(layoutInflater)
     }
     
-    private val viewModel: CategoryViewModel by viewModel()
+    private val viewModel: CategoryViewModel by sharedViewModel()
     private lateinit var listCategoriesAdapter: ListCategoriesAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,6 +99,9 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
     }
 
     private fun setTopAppBar() {
+        val inputManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow( activity?.currentFocus?.windowToken, 0)
         binding.categoryTopAppBar.homeSearchEditText.onFocusChangeListener = focusChangeListener
         binding.categoryTopAppBar.homeSearchEditText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -118,6 +123,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             inputManager.hideSoftInputFromWindow(it.windowToken, 0)
 //			viewModel.filterProducts("All")
         }
+
     }
 
     private fun performSearch(searchWords: String) {

@@ -1,6 +1,7 @@
 package vn.ztech.software.ecomSeller.ui.category
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -13,13 +14,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import kotlin.properties.Delegates
@@ -37,7 +41,7 @@ private const val TAG = "AddProductFragment"
 
 class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() {
         // arguments
-    private val viewModel: CategoryViewModel by viewModel()
+    private val viewModel: CategoryViewModel by sharedViewModel()
     private var imgList = mutableListOf<Uri>()
     private lateinit var adapter: AddCategoryImagesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -193,6 +197,10 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
                         binding.addProErrorTextView.visibility = View.VISIBLE
                         binding.addProErrorTextView.text = getString(R.string.add_category_error_string)
                     }
+                    AddCategoryViewErrors.DUPLICATED_NAME->{
+                        binding.addProErrorTextView.visibility = View.VISIBLE
+                        binding.addProErrorTextView.text = getString(R.string.add_category_error_duplicated_name_string)
+                    }
                 }
     }
 //
@@ -287,5 +295,10 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 //    }
     override fun setViewBinding(): FragmentAddEditCategoryBinding {
         return FragmentAddEditCategoryBinding.inflate(layoutInflater)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.clearErrors()
     }
 }

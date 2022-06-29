@@ -9,9 +9,6 @@ import java.io.IOException
 import java.io.Serializable
 
 open class CustomError( val e: Throwable = Throwable(), open var customMessage: String = "System error! Please try again later!"): IOException(), Serializable{
-    init {
-        Log.d("CustomError",customMessage)
-    }
     fun showErrorDialog(context: Context, listener: DialogInterface.OnClickListener? = null): AlertDialog {
         Log.d("showErrorDialog", customMessage)
         return AlertDialog.Builder(context)

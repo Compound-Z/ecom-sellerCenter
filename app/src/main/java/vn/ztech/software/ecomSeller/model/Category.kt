@@ -9,7 +9,8 @@ data class Category(
     val _id: String,
     val createdAt: String,
     val imageUrl: String,
-    val name: String,
+    var name: String,
     val numberOfProduct: Int,
     val updatedAt: String
 ): Parcelable
+

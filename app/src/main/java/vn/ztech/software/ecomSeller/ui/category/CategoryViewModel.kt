@@ -26,18 +26,24 @@ import java.io.File
 class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
     val TAG = "CategoryViewModel"
     val currentSelectedCategory = MutableLiveData<Category>()
+
     private var _allCategories = MutableLiveData<MutableList<Category>>()
     val allCategories: LiveData<MutableList<Category>> get() = _allCategories
     val originalCategories = MutableLiveData<MutableList<Category>>()
+
     val isSearchCategoriesResultEmpty = MutableLiveData<Boolean>()
     val products = MutableLiveData<List<Product>>()
 
     private val _storeDataStatus = MutableLiveData<StoreDataStatus>()
     val storeDataStatus: LiveData<StoreDataStatus> get() = _storeDataStatus
-    val error = MutableLiveData<CustomError>()
-    val errorUI = MutableLiveData<AddCategoryViewErrors>()
+
+
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdCategory = MutableLiveData<Category>()
+
+    val error = MutableLiveData<CustomError>()
+    val errorUI = MutableLiveData<AddCategoryViewErrors>()
+
     fun getCategories(){
         viewModelScope.launch {
             listCategoriesUseCase.getListCategories().flowOn(Dispatchers.IO).toLoadState().collect {
@@ -138,6 +144,9 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     fun clearErrors() {
         error.value = null
         isSearchCategoriesResultEmpty.value = null
+        uploadedImage.value = null
+        createdCategory.value = null
+        errorUI.value = null
     }
     fun uploadImage(file: File){
         Log.d("file", file.toString())
@@ -166,7 +175,15 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
         if (text.isBlank() || text1.isBlank() || imgList.isEmpty() || imgList[0].toString().isBlank()) {
             errorUI.value = AddCategoryViewErrors.EMPTY
         }else{
-            errorUI.value = AddCategoryViewErrors.NONE
+            var duplicatedName = false
+            originalCategories.value?.forEach {
+                if(it.name.lowercase() == text.trim().lowercase()) duplicatedName = true
+            }
+            if(duplicatedName){
+                errorUI.value = AddCategoryViewErrors.DUPLICATED_NAME
+            }else{
+                errorUI.value = AddCategoryViewErrors.NONE
+            }
         }
     }
 

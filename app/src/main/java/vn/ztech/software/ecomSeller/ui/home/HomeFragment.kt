@@ -196,20 +196,6 @@ class HomeFragment : Fragment() {
         viewModel.search(searchWords)
     }
 
-    private fun setAppBarItemClicks(menuItem: MenuItem): Boolean {
-        return true //this line should be deleted when the codes below is uncommented
-//        return when (menuItem.itemId) {
-//            R.id.home_filter -> {
-//                val extraFilters = arrayOf("All", "None")
-//                val categoryList = ProductCategories.plus(extraFilters)
-//                val checkedItem = categoryList.indexOf(viewModel.filterCategory.value)
-//                showDialogWithItems(categoryList, checkedItem, true)
-//                true
-//            }
-//            else -> false
-//        }
-    }
-
     private fun setUpProductAdapter(productsList: List<Product>?) {
         listProductsAdapter = ListProductsAdapter(productsList ?: emptyList(), requireContext())
         listProductsAdapter.onClickListener =  object : OnClickListener {

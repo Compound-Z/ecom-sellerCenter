@@ -9,6 +9,7 @@ import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.repository.ICategoryRepository
 import vn.ztech.software.ecomSeller.util.CustomError
+import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 import java.io.File
 
 interface IListCategoriesUseCase{
@@ -22,6 +23,9 @@ interface IListCategoriesUseCase{
 class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository): IListCategoriesUseCase{
     override suspend fun getListCategories(): Flow<List<Category>> = flow{
         val listCategories = categoryRepository.getListCategories()
+        listCategories.forEach() {
+            it.name = it.name.removeUnderline()
+        }
         emit(listCategories)
     }
     override suspend fun getListProductsInCategory(category: String): Flow<List<Product>> = flow {
@@ -38,6 +42,8 @@ class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository)
     }
 
     override fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category> = flow {
-        emit(categoryRepository.createCategory(createCategoryRequest))
+        val category = categoryRepository.createCategory(createCategoryRequest)
+        category.name = category.name.removeUnderline()
+        emit(category)
     }
 }
