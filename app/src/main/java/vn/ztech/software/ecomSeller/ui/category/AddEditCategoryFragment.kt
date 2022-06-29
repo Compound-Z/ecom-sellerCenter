@@ -23,12 +23,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.currentCoroutineContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import kotlin.properties.Delegates
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
+import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentAddEditCategoryBinding
 import vn.ztech.software.ecomSeller.model.Category
@@ -49,8 +51,10 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
         arguments?.takeIf { it.containsKey("category") }?.let {
             viewModel.currentSelectedCategory.value = it.getParcelable<Category>("category")
-            imgList.add(viewModel.currentSelectedCategory.value?.imageUrl?.toUri()!!)
+            return
         }
+        //else
+        viewModel.currentSelectedCategory.value = null
     }
 
     override fun setUpViews() {
@@ -63,6 +67,9 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
         }else{
             binding.addProAppBar.topAppBar.title =
                 "Edit Category - ${viewModel.currentSelectedCategory.value?.name}"
+            binding.etCategoryName.setText(viewModel.currentSelectedCategory.value?.name.toString())
+            imgList.add(viewModel.currentSelectedCategory.value?.imageUrl?.toUri()!!)
+            binding.addProBtn.text = "Edit category"
         }
 
         adapter = AddCategoryImagesAdapter(requireContext(), imgList)
@@ -84,13 +91,6 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
         binding.addProBtn.setOnClickListener {
             onAddProduct()
-//            if (viewModel.errorStatus.value == AddCategoryViewErrors.NONE) {
-//                viewModel.addProductErrors.observe(viewLifecycleOwner) { err ->
-//                    if (err == AddProductErrors.NONE) {
-//                        findNavController().navigate(R.id.action_addProductFragment_to_homeFragment)
-//                    }
-//                }
-//            }
         }
     }
 
@@ -107,9 +107,18 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
         }
         viewModel.uploadedImage.observe(viewLifecycleOwner){
             it?.let {
-                createNewCategory(
-                    binding.etCategoryName.text.toString(), it.url
-                )
+                /**if this is an add action*/
+                if(viewModel.currentSelectedCategory.value == null){
+                    createNewCategory(
+                        binding.etCategoryName.text.toString(), it.url
+                    )
+                }else{
+                    updateCategory(
+                        viewModel.currentSelectedCategory.value?._id,
+                        binding.etCategoryName.text.toString(),
+                        it.url
+                    )
+                }
             }
         }
         viewModel.createdCategory.observe(viewLifecycleOwner){
@@ -121,10 +130,24 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
                     .show()
             }
         }
+        viewModel.updatedCategory.observe(viewLifecycleOwner){
+            it?.let {
+                Toast.makeText(requireContext(), "Updated category successfully, ${it.modifiedCount} products have been modified!", Toast.LENGTH_LONG)
+                    .apply {
+                        setGravity(Gravity.CENTER, 0, 0)
+                    }
+                    .show()
+            }
+        }
         viewModel.errorUI.observe(viewLifecycleOwner){
             it?.let {
                 if(it == AddCategoryViewErrors.NONE){
-                    uploadImage()
+                    /**only upload if it is a new image user picked from local device*/
+                    if(  !  imgList[0].toString().startsWith("http")) {
+                        uploadImage()
+                    }else {
+                        viewModel.uploadedImage.value = UploadImageResponse(imgList[0].toString())
+                    }
                 }else{
                     modifyErrors(it)
                 }
@@ -134,6 +157,10 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
             it ?: return@observe
             handleError(it)
         }
+    }
+
+    private fun updateCategory(id: String?, name: String, url: String) {
+        viewModel.updateCategory(id, CreateCategoryRequest(name = name, imageUrl = url))
     }
 
     private fun createNewCategory(etCategoryName: String, url: String) {
@@ -180,15 +207,16 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
 
     private val getImages =
         registerForActivityResult(ActivityResultContracts.GetContent()) { result ->
-            imgList.clear()
-            imgList.add(result)
-            adapter.data = imgList
-            binding.recyclerViewAddImage.adapter?.notifyDataSetChanged()
+            result?.let {
+                imgList.clear()
+                imgList.add(result)
+                adapter.data = imgList
+                binding.recyclerViewAddImage.adapter?.notifyDataSetChanged()
+            }
         }
-    private fun makeToast(text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
-    }
+
     private fun modifyErrors(err: AddCategoryViewErrors) {
+                binding.etCategoryName.error = null
                 when (err) {
                     AddCategoryViewErrors.NONE -> binding.addProErrorTextView.visibility = View.GONE
                     AddCategoryViewErrors.EMPTY -> {
@@ -198,6 +226,9 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
                     AddCategoryViewErrors.DUPLICATED_NAME->{
                         binding.addProErrorTextView.visibility = View.VISIBLE
                         binding.addProErrorTextView.text = getString(R.string.add_category_error_duplicated_name_string)
+                    }
+                    AddCategoryViewErrors.NAME_LENGTH->{
+                        binding.etCategoryName.error = "Name must be longer than 5 and shorter than 40 characters"
                     }
                 }
     }

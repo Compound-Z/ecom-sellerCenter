@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
+import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -17,9 +18,10 @@ interface IListCategoriesUseCase{
     suspend fun getListCategories(): Flow<List<Category>>
     suspend fun getListProductsInCategory(category: String): Flow<List<Product>>
     suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<List<Product>>
-    fun uploadImage(file: File): Flow<UploadImageResponse>
-    fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category>
-    fun deleteCategory(categoryId: String): Flow<BasicResponse>
+    suspend fun uploadImage(file: File): Flow<UploadImageResponse>
+    suspend fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category>
+    suspend fun deleteCategory(categoryId: String): Flow<BasicResponse>
+    suspend fun updateCategory(categoryId: String, createCategoryRequest: CreateCategoryRequest): Flow<UpdateCategoryResponse>
 
 }
 
@@ -37,20 +39,23 @@ class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository)
     override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<List<Product>> = flow{
         emit(categoryRepository.search(searchWordsCategory, searchWordsProduct))
     }
-
-    override fun uploadImage(file: File): Flow<UploadImageResponse> = flow{
+    override suspend fun uploadImage(file: File): Flow<UploadImageResponse> = flow{
         if(!"jpg|png|jpeg".contains(file.extension)) throw CustomError(customMessage = "Wrong file type, please submit image")
         if (file.length()/1024>2048) throw CustomError(customMessage = "File is too large, please submit file smaller than 2M")
         else emit(categoryRepository.uploadImage(file))
     }
 
-    override fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category> = flow {
+    override suspend fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category> = flow {
         val category = categoryRepository.createCategory(createCategoryRequest)
         category.name = category.name.removeUnderline()
         emit(category)
     }
 
-    override fun deleteCategory(categoryId: String): Flow<BasicResponse> =flow{
+    override suspend fun deleteCategory(categoryId: String): Flow<BasicResponse> =flow{
         emit(categoryRepository.deleteCategory(categoryId))
+    }
+    override suspend fun updateCategory(categoryId: String, createCategoryRequest: CreateCategoryRequest): Flow<UpdateCategoryResponse> = flow {
+        emit(categoryRepository.updateCategory(categoryId, createCategoryRequest))
+
     }
 }

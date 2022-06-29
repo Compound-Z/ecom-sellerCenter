@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
+import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -41,6 +43,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdCategory = MutableLiveData<Category>()
     val deleteCategoryStatus = MutableLiveData<Boolean>()
+    val updatedCategory = MutableLiveData<UpdateCategoryResponse>()
 
     val error = MutableLiveData<CustomError>()
     val errorUI = MutableLiveData<AddCategoryViewErrors>()
@@ -145,10 +148,9 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     fun clearErrors() {
         error.value = null
         isSearchCategoriesResultEmpty.value = null
-        uploadedImage.value = null
-        createdCategory.value = null
         errorUI.value = null
         deleteCategoryStatus.value = null
+        uploadedImage.value = null
     }
     fun uploadImage(file: File){
         Log.d("file", file.toString())
@@ -174,17 +176,22 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     }
 
     fun checkInputData(text: String, imgList: MutableList<Uri>) {
-        if (text.isBlank() || imgList.isEmpty() || imgList[0].toString().isBlank()) {
+        val name = text.trim()
+        if (name.isBlank() || imgList.isEmpty() || imgList[0].toString().isBlank()) {
             errorUI.value = AddCategoryViewErrors.EMPTY
         }else{
-            var duplicatedName = false
-            originalCategories.value?.forEach {
-                if(it.name.lowercase() == text.trim().lowercase()) duplicatedName = true
-            }
-            if(duplicatedName){
-                errorUI.value = AddCategoryViewErrors.DUPLICATED_NAME
+            if (name.length<5 || name.length>40){
+                errorUI.value = AddCategoryViewErrors.NAME_LENGTH
             }else{
-                errorUI.value = AddCategoryViewErrors.NONE
+                var duplicatedName = false
+                originalCategories.value?.forEach {
+                    if(it.name.lowercase() == text.trim().lowercase()) duplicatedName = true
+                }
+                if(duplicatedName){
+                    errorUI.value = AddCategoryViewErrors.DUPLICATED_NAME
+                }else{
+                    errorUI.value = AddCategoryViewErrors.NONE
+                }
             }
         }
     }
@@ -227,6 +234,32 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     is LoadState.Error -> {
                         _storeDataStatus.value = StoreDataStatus.ERROR
                         deleteCategoryStatus.value = false
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateCategory(categoryId: String?, createCategoryRequest: CreateCategoryRequest) {
+        if(categoryId==null) {
+            errorMessage(CustomError(customMessage = "System error, category is empty! Try again later!"))
+            return
+        }
+        viewModelScope.launch {
+            listCategoriesUseCase.updateCategory(categoryId, createCategoryRequest).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        updatedCategory.value = it.data
+                        Log.d(TAG, "LOADED")
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
                         error.value = errorMessage(it.e)
                         Log.d(TAG +" ERROR:", it.e.message.toString())
                     }

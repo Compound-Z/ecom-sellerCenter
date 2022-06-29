@@ -6,6 +6,7 @@ import retrofit2.http.*
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
+import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -30,5 +31,7 @@ interface ICategoryApi{
 
     @DELETE("/api/v1/categories/{categoryId}")
     suspend fun deleteCategory(@Path("categoryId")categoryId: String): BasicResponse
+    @PATCH("/api/v1/categories/{categoryId}")
+    suspend fun updateCategory(@Path("categoryId") categoryId: String, @Body createCategoryRequest: CreateCategoryRequest): UpdateCategoryResponse
 
 }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -99,6 +100,12 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                 viewModel.deleteCategoryStatus.value = null
             }
         }
+        viewModel.updatedCategory.observe(viewLifecycleOwner){
+            it?.let {
+                viewModel.getCategories()
+                viewModel.updatedCategory.value = null
+            }
+        }
         viewModel.error.observe(viewLifecycleOwner){
             it ?: return@observe
             handleError(it)
@@ -142,7 +149,10 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
         listCategoriesAdapter.onClickListener =  object : ListCategoriesAdapter.OnClickListener {
 
             override fun onClickEdit(categoryData: Category) {
-                Toast.makeText(requireContext(), "Edit", Toast.LENGTH_LONG).show()
+                findNavController().navigate(
+                    R.id.action_categoryFragment_to_addEditCategoryFragment,
+                    bundleOf("category" to categoryData)
+                )
             }
 
             override fun onClickDelete(categoryData: Category) {

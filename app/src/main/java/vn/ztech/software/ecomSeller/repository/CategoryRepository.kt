@@ -10,6 +10,7 @@ import vn.ztech.software.ecomSeller.api.ICategoryApi
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
+import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -22,7 +23,7 @@ interface ICategoryRepository {
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createCategory(createCategoryRequest: CreateCategoryRequest): Category
     suspend fun deleteCategory(categoryId: String): BasicResponse
-
+    suspend fun updateCategory(categoryId: String, createCategoryRequest: CreateCategoryRequest): UpdateCategoryResponse
 }
 
 class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryRepository{
@@ -51,6 +52,11 @@ class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryReposi
 
     override suspend fun deleteCategory(categoryId: String): BasicResponse {
         return CategoryApi.deleteCategory(categoryId)
+    }
+
+    override suspend fun updateCategory(categoryId: String, createCategoryRequest: CreateCategoryRequest): UpdateCategoryResponse {
+        return CategoryApi.updateCategory(categoryId, createCategoryRequest)
+
     }
 
 }

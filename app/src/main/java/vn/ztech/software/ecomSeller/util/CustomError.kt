@@ -17,6 +17,4 @@ open class CustomError( val e: Throwable = Throwable(), open var customMessage: 
             .setPositiveButton(R.string.ok, listener)
             .show()
     }
-
-
 }
