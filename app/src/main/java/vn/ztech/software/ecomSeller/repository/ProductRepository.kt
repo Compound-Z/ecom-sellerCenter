@@ -19,6 +19,7 @@ interface IProductRepository {
     suspend fun getOrigins(): List<Country>
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Product
+    suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product
 
 }
 
@@ -47,5 +48,7 @@ class ProductRepository(private val productApi: IProductApi): IProductRepository
     override suspend fun createProduct(createProductRequest: CreateProductRequest?): Product {
         return productApi.createProduct(createProductRequest)
     }
-
+    override suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product {
+        return productApi.updateProduct(productId, createProductRequest)
+    }
 }

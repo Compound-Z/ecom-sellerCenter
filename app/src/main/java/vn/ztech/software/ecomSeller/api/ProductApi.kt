@@ -28,6 +28,9 @@ interface IProductApi{
 
     @POST("/api/v1/products")
     suspend fun createProduct(@Body createProductRequest: CreateProductRequest?): Product
+
+    @PATCH("/api/v1/products/{productId}")
+    suspend fun updateProduct(@Path("productId") productId: String, @Body createProductRequest: CreateProductRequest?): Product
 }
 
 

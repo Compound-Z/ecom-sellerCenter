@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.util.extension
 import vn.ztech.software.ecomSeller.api.request.CartItem
 import vn.ztech.software.ecomSeller.api.response.CartProductResponse
 import vn.ztech.software.ecomSeller.model.OrderItem
+import vn.ztech.software.ecomSeller.model.Product
 
 fun MutableList<CartProductResponse>.toCartItems(): List<CartItem>{
     val cartItems = this.map {

@@ -42,7 +42,7 @@ class HomeViewModel(
     val currentSelectedOrigin = MutableLiveData<Country>()
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdProduct = MutableLiveData<Product>()
-
+    val updatedProduct = MutableLiveData<Product>()
     val errorUI = MutableLiveData<AddProductViewErrors>()
     val error = MutableLiveData<CustomError>()
 
@@ -117,6 +117,7 @@ class HomeViewModel(
         error.value = null
         errorUI.value = null
         createdProduct.value = null
+        updatedProduct.value = null
         uploadedImage.value = null
     }
 
@@ -162,7 +163,6 @@ class HomeViewModel(
             errorUI.value = AddProductViewErrors.DES
             return
         }
-        errorUI.value = AddProductViewErrors.NONE
 
         //create new product request instance
         currentProductInput.value = CreateProductRequest(
@@ -183,6 +183,7 @@ class HomeViewModel(
                 unit = unit
             )
         )
+        errorUI.value = AddProductViewErrors.NONE
     }
 
     fun uploadImage(file: File){
@@ -231,4 +232,29 @@ class HomeViewModel(
         }
     }
 
+    fun updateProduct(productId: String?, createProductRequest: CreateProductRequest?) {
+        if (productId==null) {
+            error.value = errorMessage(CustomError(customMessage = "System error, product is empty!"))
+            return
+        }
+        viewModelScope.launch {
+            listProductsUseCase.updateProduct(productId, createProductRequest).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        updatedProduct.value = it.data
+                        Log.d(TAG, "LOADED"+ it.data.toString())
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
 }

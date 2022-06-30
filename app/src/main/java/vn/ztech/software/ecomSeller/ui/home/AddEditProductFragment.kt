@@ -15,28 +15,35 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
+import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentAddEditAddressBinding
 import vn.ztech.software.ecomSeller.databinding.FragmentAddEditProductBinding
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
+import vn.ztech.software.ecomSeller.model.ProductDetails
 import vn.ztech.software.ecomSeller.ui.AddCategoryViewErrors
 import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.ui.category.AddCategoryImagesAdapter
 import vn.ztech.software.ecomSeller.ui.category.CategoryViewModel
+import vn.ztech.software.ecomSeller.ui.product_details.ProductDetailsViewModel
+import vn.ztech.software.ecomSeller.util.extension.findIndexOf
+import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 import vn.ztech.software.ecomSeller.util.getFullPath
 import java.io.File
 
 
 class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
     private val viewModel: HomeViewModel by sharedViewModel()
+    private val productDetailViewModel: ProductDetailsViewModel by sharedViewModel()
     //todo: Bug_Risk: shared viewModel here may contains bugs for features in future, give this a check if any weird bug shows up
     private val categoryViewModel: CategoryViewModel by sharedViewModel()
     private lateinit var spinnerCategoryAdapter: ArrayAdapter<String>
@@ -48,9 +55,9 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("product") }?.let {
             viewModel.currentSelectedProduct.value = arguments?.getParcelable<Product>("product")
-            /**do some initial setup here*/
-
-            return
+            viewModel.currentSelectedProduct.value?.let {
+                imgList.add(it.imageUrl.toUri())
+            }
         }
         /**if product argument does not exist*/
         if (categoryViewModel.originalCategories.value == null){
@@ -74,8 +81,10 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         binding.etStockNumber.onFocusChangeListener = focusChangeListener
         binding.etDescription.onFocusChangeListener = focusChangeListener
         binding.etBrand.onFocusChangeListener = focusChangeListener
+
         adapter = AddCategoryImagesAdapter(requireContext(), imgList)
         binding.recyclerViewAddedImage.adapter = adapter
+
         binding.btAddProductImg.setOnClickListener {
             getImages.launch("image/*")
         }
@@ -94,7 +103,6 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
             binding.btAddEditProduct.text = "Update product"
         }
     }
-
 
     override fun observeView() {
         super.observeView()
@@ -117,22 +125,39 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         }
         viewModel.origins.observe(viewLifecycleOwner){
             it?.let {
-                populateOriginsToSpinner(binding.spinnerOrigin, it, object : AdapterView.OnItemSelectedListener{
-                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        if(binding.spinnerOrigin.getItemAtPosition(p2).toString().isNotEmpty()){
-                            viewModel.currentSelectedOrigin.value = viewModel.origins.value?.get(p2-1) /**p2-1 because the category list is added one empty item at it's head*/
-                        }else{
-                            viewModel.currentSelectedOrigin.value = null
+                if (viewModel.currentSelectedProduct.value == null){
+                    /**if is adding new product*/
+                    populateOriginsToSpinner(binding.spinnerOrigin, it, object : AdapterView.OnItemSelectedListener{
+                        override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                            if(binding.spinnerOrigin.getItemAtPosition(p2).toString().isNotEmpty()){
+                                viewModel.currentSelectedOrigin.value = viewModel.origins.value?.get(p2-1) /**p2-1 because the category list is added one empty item at it's head*/
+                            }else{
+                                viewModel.currentSelectedOrigin.value = null
+                            }
                         }
-                    }
-                    override fun onNothingSelected(p0: AdapterView<*>?) {
-                    }
+                        override fun onNothingSelected(p0: AdapterView<*>?) {
+                        }
 
-                })
+                    })
+                }else{
+                    /**if is editing product*/
+                    if(checkPopulateConditions()){   /**if both origins and productDetails data is fetch successfully, populate origins to spinner*/
+                        populateOriginsToSpinner(binding.spinnerOrigin, it, object : AdapterView.OnItemSelectedListener{
+                            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                                if(binding.spinnerOrigin.getItemAtPosition(p2).toString().isNotEmpty()){
+                                    viewModel.currentSelectedOrigin.value = viewModel.origins.value?.get(p2-1) /**p2-1 because the category list is added one empty item at it's head*/
+                                }else{
+                                    viewModel.currentSelectedOrigin.value = null
+                                }
+                            }
+                            override fun onNothingSelected(p0: AdapterView<*>?) {
+                            }
+                        })
+                    }
+                }
+
             }
         }
-
-
         viewModel.storeDataStatus.observe(viewLifecycleOwner) { status ->
             if(status == StoreDataStatus.LOADING) {
                 binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
@@ -154,22 +179,57 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         viewModel.uploadedImage.observe(viewLifecycleOwner){
             it?.let {
                 /**if this is an add action*/
+                viewModel.currentProductInput.value?.product?.imageUrl = it.url
+                viewModel.currentProductInput.value?.productDetail?.imageUrls = listOf(it.url)
                 if(viewModel.currentSelectedProduct.value == null){
-                    viewModel.currentProductInput.value?.product?.imageUrl = it.url
-                    viewModel.currentProductInput.value?.productDetail?.imageUrls = listOf(it.url)
                     createNewProduct(viewModel.currentProductInput.value)
                 }else{
-//                    updateCategory(
-//                        viewModel.currentSelectedCategory.value?._id,
-//                        binding.etCategoryName.text.toString(),
-//                        it.url
-//                    )
+                    updateCategory(
+                        viewModel.currentSelectedProduct.value?._id,
+                       viewModel.currentProductInput.value
+                    )
                 }
             }
         }
         viewModel.createdProduct.observe(viewLifecycleOwner){
             it?.let {
                toastCenter("Created product ${it.name} successfully!")
+            }
+        }
+        viewModel.updatedProduct.observe(viewLifecycleOwner){
+            it?.let {
+                viewModel.getProducts()
+                toastCenter("Updated product ${it.name} successfully!")
+            }
+        }
+        viewModel.currentSelectedProduct.observe(viewLifecycleOwner){
+            it?.let {
+                productDetailViewModel.getProductDetails(viewModel.currentSelectedProduct.value?._id?:"")
+            }
+        }
+        productDetailViewModel.productDetails.observe(viewLifecycleOwner){
+            it?.let {
+                if (viewModel.currentSelectedProduct.value != null) {
+                    /**if is editing product*/
+                    if(checkPopulateConditions()){   /**if both origins and productDetails data is fetch successfully, populate origins to spinner*/
+                        populateOriginsToSpinner(binding.spinnerOrigin, viewModel.origins.value?: emptyList(), object : AdapterView.OnItemSelectedListener{
+                            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                                if(binding.spinnerOrigin.getItemAtPosition(p2).toString().isNotEmpty()){
+                                    viewModel.currentSelectedOrigin.value = viewModel.origins.value?.get(p2-1) /**p2-1 because the category list is added one empty item at it's head*/
+                                }else{
+                                    viewModel.currentSelectedOrigin.value = null
+                                }
+                            }
+                            override fun onNothingSelected(p0: AdapterView<*>?) {
+                            }
+                        })
+                    }
+                    fillDataOnUI(
+                        viewModel.currentSelectedProduct.value,
+                        it
+                    )
+                }
+
             }
         }
         viewModel.error.observe(viewLifecycleOwner){
@@ -181,7 +241,11 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
             if(it == AddProductViewErrors.NONE){
                 //call api add product
                 binding.tvError.visibility = View.GONE
-                uploadImage()
+                if(  !  imgList[0].toString().startsWith("http")) {
+                    uploadImage()
+                }else {
+                    viewModel.uploadedImage.value = UploadImageResponse(imgList[0].toString())
+                }
             }else{
                 modifyErrors(it)
             }
@@ -192,8 +256,32 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         }
     }
 
+
+
+    private fun checkPopulateConditions(): Boolean {
+        return (viewModel.origins.value != null) && (productDetailViewModel.productDetails.value != null)
+    }
+
+    private fun fillDataOnUI(product: Product?, productDetails: ProductDetails) {
+        if (product == null) return
+
+        binding.etProductName.setText(product.name)
+        binding.etSKU.setText(product.sku)
+        binding.etPrice.setText(product.price.toString())
+        binding.etWeight.setText(product.weight.toString())
+        binding.etStockNumber.setText(product.stockNumber.toString())
+        binding.etDescription.setText(productDetails.description)
+        binding.etBrand.setText(productDetails.brandName)
+        binding.etUnit.setText(productDetails.unit)
+        // cate, origin
+    }
+
+
     private fun createNewProduct(createProductRequest: CreateProductRequest?) {
         viewModel.createNewProduct(createProductRequest)
+    }
+    private fun updateCategory(productId: String?, createProductRequest: CreateProductRequest?) {
+        viewModel.updateProduct(productId, createProductRequest)
     }
 
     private fun onAddEditProduct() {
@@ -249,21 +337,42 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
     }
     private fun populateCategoriesToSpinner(spinnerCategory: Spinner, categories: MutableList<Category>, onItemSelectedListener: AdapterView.OnItemSelectedListener) {
         val listCategoryName = categories.map { it.name }.toMutableList()
+        /**find index of selected item*/
+        var selectedIndex = -1
+        viewModel.currentSelectedProduct.value?.let {
+            selectedIndex = listCategoryName.findIndexOf(it.category.removeUnderline())
+        }
+        if (selectedIndex>0){
+            categoryViewModel.currentSelectedCategory.value = categoryViewModel.originalCategories.value?.get(selectedIndex)
+        }
         listCategoryName.add(0,"") /**add an empty item at the head of spinner so that it appear empty when the spinner is created instead of the first item*/
         spinnerCategoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listCategoryName)
-        setupAdapterForSpinner(spinnerCategory, spinnerCategoryAdapter, onItemSelectedListener)
+        setupAdapterForSpinner(spinnerCategory, spinnerCategoryAdapter, onItemSelectedListener, selectedIndex+1)
     }
     private fun populateOriginsToSpinner(spinnerOrigin: Spinner, origins: List<Country>, onItemSelectedListener: AdapterView.OnItemSelectedListener) {
         val listOrigins = origins.map { it.name }.toMutableList()
+        /**find index of selected item*/
+        var selectedIndex = -1
+        viewModel.currentSelectedProduct.value?.let {
+            selectedIndex = listOrigins.findIndexOf(productDetailViewModel.productDetails.value?.origin?:"")
+        }
+        if (selectedIndex>0){
+            viewModel.currentSelectedOrigin.value = viewModel.origins.value?.get(selectedIndex)
+        }
+
         listOrigins.add(0,"")
         spinnerOriginAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listOrigins)
-        setupAdapterForSpinner(spinnerOrigin, spinnerOriginAdapter, onItemSelectedListener)
+        setupAdapterForSpinner(spinnerOrigin, spinnerOriginAdapter, onItemSelectedListener, selectedIndex+1)
     }
-    private fun setupAdapterForSpinner(spinner: Spinner, spinnerAdapter: ArrayAdapter<String>, onItemSelectedListener: AdapterView.OnItemSelectedListener) {
+    private fun setupAdapterForSpinner(spinner: Spinner, spinnerAdapter: ArrayAdapter<String>, onItemSelectedListener: AdapterView.OnItemSelectedListener, selectedIndex: Int = -1) {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         spinner.adapter = spinnerAdapter
         spinner.onItemSelectedListener = onItemSelectedListener
-        spinner.setSelection(0)
+        if (selectedIndex>0){
+            spinner.setSelection(selectedIndex)
+        }else{
+            spinner.setSelection(0)
+        }
     }
     private fun uploadImage() {
         when {

@@ -185,8 +185,11 @@ class HomeFragment : Fragment() {
 
             override fun onEditClick(productData: Product) {
                 Toast.makeText(requireContext(), "Edit", Toast.LENGTH_LONG).show()
-//                Log.d(TAG, "onEditProduct: initiated for $productId")
-//                navigateToAddEditProductFragment(isEdit = true, productId = productId)
+                findNavController().navigate(
+                    R.id.action_homeFragment_to_addEditProductFragment,
+                    bundleOf(
+                        "product" to productData
+                    ))
             }
         }
     }
