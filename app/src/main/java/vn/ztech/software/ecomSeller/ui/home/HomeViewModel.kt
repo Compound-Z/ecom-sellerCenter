@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.request.ProductDetail
+import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -39,6 +40,8 @@ class HomeViewModel(
     /**add product*/
     val currentSelectedProduct = MutableLiveData<Product>()
     val currentProductInput = MutableLiveData<CreateProductRequest>()
+    val currentQuickProductInput = MutableLiveData<QuickUpdateProductRequest>()
+
     val currentSelectedOrigin = MutableLiveData<Country>()
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdProduct = MutableLiveData<Product>()
@@ -256,5 +259,57 @@ class HomeViewModel(
                 }
             }
         }
+    }
+
+    fun quickUpdate(productId: String?, request: QuickUpdateProductRequest?) {
+        if (productId == null || request == null){
+            error.value = errorMessage(CustomError(customMessage = "System error: product is empty"))
+            return
+        }
+        viewModelScope.launch {
+            listProductsUseCase.quickUpdateProduct(productId, request).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        updatedProduct.value = it.data
+                        Log.d(TAG, "LOADED"+ it.data.toString())
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
+
+    fun checkQuickUpdateInputData(price: String, stock: String) {
+        if (price.trim().isEmpty() || stock.trim().isEmpty()){
+            errorUI.value = AddProductViewErrors.EMPTY
+            return
+        }
+        val priceInt = price.toIntOrNull()
+        if (priceInt == null || priceInt < 0){
+            errorUI.value = AddProductViewErrors.PRICE
+            return
+        }
+        val stockInt = stock.toIntOrNull()
+        if (stockInt == null || stockInt < 0){
+            errorUI.value = AddProductViewErrors.STOCK
+            return
+        }
+
+        //create new product request instance
+        currentQuickProductInput.value = QuickUpdateProductRequest(
+            product = vn.ztech.software.ecomSeller.api.request.QuickProduct(
+                price = priceInt,
+                stockNumber = stockInt,
+            )
+        )
+        errorUI.value = AddProductViewErrors.NONE
     }
 }

@@ -184,12 +184,13 @@ class HomeFragment : Fragment() {
 //            }
 
             override fun onEditClick(productData: Product) {
-                Toast.makeText(requireContext(), "Edit", Toast.LENGTH_LONG).show()
                 findNavController().navigate(
-                    R.id.action_homeFragment_to_addEditProductFragment,
+                    R.id.action_homeFragment_to_quickEditProductFragment,
                     bundleOf(
                         "product" to productData
-                    ))
+                    )
+                )
+
             }
         }
     }
@@ -215,7 +216,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun editProduct(productData: Product) {
-        Toast.makeText(requireContext(), "Edit ${productData.name}", Toast.LENGTH_LONG).show()
+        findNavController().navigate(
+            R.id.action_homeFragment_to_addEditProductFragment,
+            bundleOf(
+                "product" to productData
+            ))
     }
 
     private fun deleteProduct(productData: Product) {

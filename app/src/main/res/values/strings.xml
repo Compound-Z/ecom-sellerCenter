@@ -51,6 +51,7 @@
     <string name="add_pro_desc_label_text">Description</string>
     <string name="add_pro_sizes_label_text">Sizes Available</string>
     <string name="app_pro_btn_text">Add Product</string>
+    <string name="app_pro_btn_save_text">Save Product</string>
     <string name="add_cate_btn_text">Add Category</string>
     <string name="pro_cat_dialog_title">Select Product Category</string>
     <string name="pro_cat_dialog_cancel_btn">Cancel</string>

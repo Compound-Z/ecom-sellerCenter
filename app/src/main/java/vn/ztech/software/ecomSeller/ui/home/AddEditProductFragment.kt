@@ -256,8 +256,6 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         }
     }
 
-
-
     private fun checkPopulateConditions(): Boolean {
         return (viewModel.origins.value != null) && (productDetailViewModel.productDetails.value != null)
     }

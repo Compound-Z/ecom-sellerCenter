@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.ui.home
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
+import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.repository.IProductRepository
@@ -17,6 +18,7 @@ interface IListProductUseCase{
     suspend fun uploadImage(file: File): Flow<UploadImageResponse>
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Flow<Product>
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Flow<Product>
+    suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Flow<Product>
 
 }
 
@@ -45,6 +47,14 @@ class ListProductsUseCase(private val productRepository: IProductRepository): IL
     }
     override suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Flow<Product> = flow {
         val product = productRepository.updateProduct(productId, createProductRequest)
+        emit(product)
+    }
+
+    override suspend fun quickUpdateProduct(
+        productId: String,
+        request: QuickUpdateProductRequest
+    ): Flow<Product> = flow{
+        val product = productRepository.quickUpdateProduct(productId, request)
         emit(product)
     }
 

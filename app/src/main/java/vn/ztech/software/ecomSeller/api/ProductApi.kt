@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import okhttp3.MultipartBody
 import retrofit2.http.*
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
+import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
@@ -31,6 +32,9 @@ interface IProductApi{
 
     @PATCH("/api/v1/products/{productId}")
     suspend fun updateProduct(@Path("productId") productId: String, @Body createProductRequest: CreateProductRequest?): Product
+
+    @PATCH("/api/v1/products/{productId}")
+    suspend fun quickUpdateProduct(@Path("productId")productId: String, @Body request: QuickUpdateProductRequest): Product
 }
 
 

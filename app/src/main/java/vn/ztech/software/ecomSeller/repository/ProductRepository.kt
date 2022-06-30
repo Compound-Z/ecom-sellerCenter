@@ -6,6 +6,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import vn.ztech.software.ecomSeller.api.IProductApi
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
+import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
@@ -20,6 +21,7 @@ interface IProductRepository {
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Product
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product
+    suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Product
 
 }
 
@@ -50,5 +52,12 @@ class ProductRepository(private val productApi: IProductApi): IProductRepository
     }
     override suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product {
         return productApi.updateProduct(productId, createProductRequest)
+    }
+
+    override suspend fun quickUpdateProduct(
+        productId: String,
+        request: QuickUpdateProductRequest
+    ): Product {
+        return productApi.quickUpdateProduct(productId, request)
     }
 }
