@@ -120,6 +120,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setHomeTopAppBar() {
+        val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
         var lastInput = ""
 //        val debounceJob: Job? = null
 //        val uiScope = CoroutineScope(Dispatchers.Main + SupervisorJob())

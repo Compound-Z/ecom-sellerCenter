@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -54,7 +55,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvProductNameLabel">
-
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etProductName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/gray"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -306,16 +315,17 @@
                     android:id="@+id/etDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="textMultiLine"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
+                    android:minLines="2"
                     android:textColor="@color/gray"
                     android:textStyle="bold" />
 
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
                 android:id="@+id/tvUnitLabel"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
@@ -325,43 +335,33 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/descriptionOutlinedTextField" />
-            <TextView
-                android:id="@+id/tvUnitError"
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/unitOutlinedTextField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:text="* Error: Unit is missing"
-                android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
-                android:textColor="@color/red_600"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:visibility="invisible"
-                tools:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@id/tvUnitLabel"
-                app:layout_constraintStart_toEndOf="@id/tvUnitLabel"
-                app:layout_constraintTop_toTopOf="@id/tvUnitLabel" />
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardUnit"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="16dp"
+                app:boxStrokeColor="@color/blue_accent_300"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvUnitLabel"
-                android:backgroundTint="#D9EEF3"
-                android:layout_marginTop="8dp"
-                android:layout_height="50dp">
-                <Spinner
-                    android:id="@+id/spinnerUnit"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:backgroundTint="@color/black">
+                app:layout_constraintTop_toBottomOf="@id/tvUnitLabel">
 
-                </Spinner>
-            </androidx.cardview.widget.CardView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUnit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textAutoComplete"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/gray"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
             <TextView
                 android:id="@+id/tvBrandLabel"
                 android:layout_width="0dp"
@@ -376,7 +376,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardUnit" />
+                app:layout_constraintTop_toBottomOf="@id/unitOutlinedTextField" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/brandOutlinedTextField"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -394,7 +394,7 @@
                     android:id="@+id/etBrand"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
+                    android:inputType="textAutoComplete"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:textColor="@color/gray"
@@ -440,6 +440,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvOriginLabel"
                 android:backgroundTint="#D9EEF3"
+                android:layout_marginBottom="45dp"
                 android:layout_marginTop="8dp"
                 android:layout_height="50dp">
                 <Spinner
@@ -458,7 +459,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Add image"
+                android:text="Add 1 image"
                 android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -485,6 +486,7 @@
                 android:id="@+id/recyclerViewAddedImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -493,6 +495,23 @@
                 app:layout_constraintTop_toBottomOf="@id/addProductImgLabel"
                 tools:itemCount="5"
                 tools:listitem="@layout/add_images_item" />
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical"
+                android:text="@string/add_pro_error_empty"
+                android:textAppearance="@style/TextAppearance.MyTheme.Subtitle2"
+                android:textColor="?attr/colorError"
+                app:drawableStartCompat="@android:drawable/stat_notify_error"
+                app:drawableTint="?attr/colorError"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardOrigin" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

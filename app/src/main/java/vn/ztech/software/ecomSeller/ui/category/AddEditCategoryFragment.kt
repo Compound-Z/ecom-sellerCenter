@@ -184,7 +184,8 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
                 viewModel.uploadImage(File(getFullPath(requireContext(), imgList[0])))
             }
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                Toast.makeText(requireContext(), "Please grant permission to upload image", Toast.LENGTH_LONG).show()
+                requestPermissionLauncher.launch(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
             }
             else -> {
                 // You can directly ask for the permission.

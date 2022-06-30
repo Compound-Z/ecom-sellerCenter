@@ -151,6 +151,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
         errorUI.value = null
         deleteCategoryStatus.value = null
         uploadedImage.value = null
+        createdCategory.value = null
     }
     fun uploadImage(file: File){
         Log.d("file", file.toString())
