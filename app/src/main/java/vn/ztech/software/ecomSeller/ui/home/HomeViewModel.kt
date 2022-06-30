@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.request.ProductDetail
 import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -46,6 +47,7 @@ class HomeViewModel(
     val uploadedImage = MutableLiveData<UploadImageResponse>()
     val createdProduct = MutableLiveData<Product>()
     val updatedProduct = MutableLiveData<Product>()
+    val deletedProductStatus = MutableLiveData<BasicResponse>()
     val errorUI = MutableLiveData<AddProductViewErrors>()
     val error = MutableLiveData<CustomError>()
 
@@ -311,5 +313,27 @@ class HomeViewModel(
             )
         )
         errorUI.value = AddProductViewErrors.NONE
+    }
+
+    fun deleteProduct(productId: String) {
+        viewModelScope.launch {
+            listProductsUseCase.deleteProduct(productId).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        deletedProductStatus.value = it.data
+                        Log.d(TAG, "LOADED"+ it.data.toString())
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
     }
 }

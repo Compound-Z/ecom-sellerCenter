@@ -15,6 +15,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -77,7 +78,6 @@ class HomeFragment : Fragment() {
             if(status == StoreDataStatus.LOADING) {
                 binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
                 binding.loaderLayout.circularLoader.showAnimationBehavior
-                binding.productsRecyclerView.visibility = View.GONE
             }else{
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
@@ -97,6 +97,15 @@ class HomeFragment : Fragment() {
                 }
             }else{
                 binding.tvNoProductFound.visibility = View.VISIBLE
+            }
+        }
+        viewModel.deletedProductStatus.observe(viewLifecycleOwner){
+            it?.let {
+                Toast.makeText(requireContext(), "Delete product successfully!", Toast.LENGTH_LONG).apply {
+                    setGravity(Gravity.CENTER, 0, 0)
+                }.show()
+                viewModel.deletedProductStatus.value = null
+                viewModel.getProducts()
             }
         }
         viewModel.error.observe(viewLifecycleOwner){
@@ -224,7 +233,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun deleteProduct(productData: Product) {
-        Toast.makeText(requireContext(), "Delete ${productData.name}", Toast.LENGTH_LONG).show()
+        showDeleteDialog(productData._id)
+    }
+
+    private fun showDeleteDialog(productId: String) {
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle(getString(R.string.delete_dialog_title_text))
+                .setMessage(getString(R.string.delete_product_message_text))
+                .setNeutralButton(getString(R.string.pro_cat_dialog_cancel_btn)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(getString(R.string.delete_dialog_delete_btn_text)) { dialog, _ ->
+                    viewModel.deleteProduct(productId)
+                    dialog.cancel()
+                }
+                .show()
+        }
     }
 
     private fun getMixedDataList(data: List<Product>, adsList: List<Int>): List<Any> {

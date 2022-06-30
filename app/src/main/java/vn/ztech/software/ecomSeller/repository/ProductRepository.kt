@@ -7,6 +7,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import vn.ztech.software.ecomSeller.api.IProductApi
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
@@ -22,6 +23,7 @@ interface IProductRepository {
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Product
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product
     suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Product
+    suspend fun deleteProduct(productId: String): BasicResponse
 
 }
 
@@ -59,5 +61,9 @@ class ProductRepository(private val productApi: IProductApi): IProductRepository
         request: QuickUpdateProductRequest
     ): Product {
         return productApi.quickUpdateProduct(productId, request)
+    }
+
+    override suspend fun deleteProduct(productId: String): BasicResponse {
+        return productApi.deleteProduct(productId)
     }
 }

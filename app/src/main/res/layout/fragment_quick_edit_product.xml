@@ -159,7 +159,7 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/blue_accent_300"
         android:padding="16dp"
-        android:text="@string/app_pro_btn_text"
+        android:text="@string/app_pro_btn_save_text"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:textStyle="bold" />

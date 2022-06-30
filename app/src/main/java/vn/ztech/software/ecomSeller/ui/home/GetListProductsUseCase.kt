@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
+import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.repository.IProductRepository
@@ -19,6 +20,7 @@ interface IListProductUseCase{
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Flow<Product>
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Flow<Product>
     suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Flow<Product>
+    suspend fun deleteProduct(productId: String): Flow<BasicResponse>
 
 }
 
@@ -55,6 +57,11 @@ class ListProductsUseCase(private val productRepository: IProductRepository): IL
         request: QuickUpdateProductRequest
     ): Flow<Product> = flow{
         val product = productRepository.quickUpdateProduct(productId, request)
+        emit(product)
+    }
+
+    override suspend fun deleteProduct(productId: String): Flow<BasicResponse> = flow {
+        val product = productRepository.deleteProduct(productId)
         emit(product)
     }
 

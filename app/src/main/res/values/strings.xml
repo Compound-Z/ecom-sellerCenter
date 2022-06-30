@@ -132,6 +132,7 @@
     <string name="ship_to_error_empty">Please select an address!</string>
     <string name="delete_address_message_text">On clicking Delete, Address will be deleted premanently!</string>
     <string name="delete_category_message_text">By clicking Delete, Category will be deleted permanently!</string>
+    <string name="delete_product_message_text">By clicking Delete, Product will be deleted permanently!</string>
     <string name="canceled_order_message_text">You want to cancel this order? :(</string>
     <string name="plus_btn_desc">Increase Button</string>
     <string name="minus_btn_desc">Decrease Button</string>
