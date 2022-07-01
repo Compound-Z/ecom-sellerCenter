@@ -32,7 +32,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
         </TextView>
-
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body2"
+            app:layout_constraintStart_toEndOf="@id/tvOrderStatus"
+            app:layout_constraintTop_toTopOf="@id/tvOrderStatus"
+            app:layout_constraintBottom_toBottomOf="@id/tvOrderStatus"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textAlignment="textEnd"
+            tools:text="Hoang Phung" />
         <ImageView
             android:id="@+id/product_image_view"
             android:layout_width="60dp"
@@ -84,15 +96,34 @@
             app:layout_constraintStart_toStartOf="@id/tvSubTotalAndShipping"
             app:layout_constraintTop_toBottomOf="@+id/tvSubTotalAndShipping"
             tools:text="$1234.56" />
-
+        <TextView
+            android:id="@+id/tvOrderId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginEnd="15dp"
+            android:maxLines="2"
+            android:layout_marginTop="5dp"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body2"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/product_image_view"
+            app:layout_constraintTop_toTopOf="@id/btViewDetails"
+            app:layout_constraintEnd_toStartOf="@id/btViewDetails"
+            app:layout_constraintBottom_toBottomOf="@id/btViewDetails"
+            tools:text="OrderId: 220701abcde"
+            android:drawableEnd="@drawable/ic_baseline_content_copy_24"
+            />
         <Button
             android:id="@+id/btViewDetails"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTotal"
             android:backgroundTint="@color/blue_accent_300"
             android:text="View details"
+            android:textSize="12sp"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="15dp"
+            android:textAllCaps="false"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">

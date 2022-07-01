@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import vn.ztech.software.ecomSeller.R
+import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.ItemOrderHistoryBinding
 import vn.ztech.software.ecomSeller.model.Order
 
@@ -20,10 +21,11 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
     inner class ViewHolder(private val binding: ItemOrderHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
-
+            binding.tvUserName.text = order.user.name
             binding.cartProductTitleTv.text = "${order.orderItems[0].name}..."
             binding.tvSubTotalAndShipping.text = "Subtotal: ${order.billing.subTotal} + ${order.billing.shippingFee}(ship)"
             binding.tvTotal.text = (order.billing.subTotal + order.billing.shippingFee).toString()
+            binding.tvOrderId.text = order.orderId
             if (order.orderItems[0].imageUrl.isNotEmpty()) {
                 val imgUrl = order.orderItems[0].imageUrl.toUri().buildUpon().scheme("https").build()
                 Glide.with(context)
@@ -33,6 +35,13 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
                 binding.productImageView.clipToOutline = true
             }
             setUIBaseOnOrderStatus(binding.tvOrderStatus, order.status)
+            binding.btViewDetails.text = getAppropriateActionLabel(order.status)
+            binding.productCard.setOnClickListener {
+                onClickListener.onClick(order)
+            }
+            binding.tvOrderId.setOnClickListener {
+                onClickListener.onCopyClipBoardClicked(order.orderId)
+            }
             binding.btViewDetails.setOnClickListener {
                 onClickListener.onClickButtonViewDetail(order)
             }
@@ -77,7 +86,13 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
             }
         }
     }
+    private fun getAppropriateActionLabel(statusFilter: String): String{
+        return Constants.StatusFilterToAction[statusFilter]?:"View Details"
+    }
     interface OnClickListener{
+        fun onClick(order: Order)
         fun onClickButtonViewDetail(order: Order)
+        fun onCopyClipBoardClicked(orderId: String) {
+        }
     }
 }

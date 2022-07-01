@@ -11,9 +11,10 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.FragmentOrderHistoryBinding
 import vn.ztech.software.ecomSeller.ui.BaseFragment
+import vn.ztech.software.ecomSeller.ui.BaseFragment2
 
 
-class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(), ListOrdersFragment.OnClickListener {
+class OrderHistoryFragment : BaseFragment2<FragmentOrderHistoryBinding>(), ListOrdersFragment.OnClickListener {
     private lateinit var listOrdersFragmentAdapter: ListOrdersFragmentAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +55,7 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(), ListOr
         }
     }
 
-    override fun onClickButtonViewDetails(orderId: String) {
+    override fun onClickViewDetails(orderId: String) {
         findNavController().navigate(
             R.id.action_orderHistoryFragment_to_orderDetailsFragment,
             bundleOf(

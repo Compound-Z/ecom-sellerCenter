@@ -4,27 +4,32 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import kotlinx.android.synthetic.main.item_order_history.*
 import vn.ztech.software.ecomSeller.databinding.FragmentListOrderBinding
 import vn.ztech.software.ecomSeller.ui.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.model.Order
+import vn.ztech.software.ecomSeller.ui.BaseFragment2
 
 const val TAG = "ListOrdersFragment"
-class ListOrdersFragment() : BaseFragment<FragmentListOrderBinding>() {
+class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
     private val viewModel: ListOrdersViewModel by viewModel()
     lateinit var statusFilter: String
     lateinit var adapter: ListOrderAdapter
     interface OnClickListener{
-        fun onClickButtonViewDetails(orderId: String)
+        fun onClickViewDetails(orderId: String)
     }
     private lateinit var callBack: OnClickListener
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("statusFilter") }?.apply {
             Log.d(TAG, getString("statusFilter").toString())
             viewModel.getOrders(getString("statusFilter"))
             statusFilter = getString("statusFilter").toString()
+            viewModel.statusFilter.value = statusFilter
         }
     }
 
@@ -35,16 +40,30 @@ class ListOrdersFragment() : BaseFragment<FragmentListOrderBinding>() {
     override fun setUpViews() {
         super.setUpViews()
         setupAdapter(viewModel.orders.value)
-
     }
     private fun setupAdapter(_orders: List<Order>?){
         val orders = _orders?: emptyList()
         adapter = ListOrderAdapter(requireContext(), orders, object : ListOrderAdapter.OnClickListener{
+            override fun onClick(order: Order) {
+                callBack.onClickViewDetails(order._id)
+            }
+
+            override fun onCopyClipBoardClicked(orderId: String) {
+                toastCenter("Copied: ${orderId}")
+            }
             override fun onClickButtonViewDetail(order: Order) {
-                callBack.onClickButtonViewDetails(order._id)
+                handleAction(order)
             }
         })
         binding.listOrders.adapter = adapter
+    }
+
+    private fun handleAction(order: Order) {
+        viewModel.currentSelectedOrder.value = order
+        when(order.status){
+            "PENDING" -> viewModel.startProcessing(order)
+            "PROCESSING" -> viewModel.confirm(order)
+        }
     }
 
 
@@ -82,4 +101,5 @@ class ListOrdersFragment() : BaseFragment<FragmentListOrderBinding>() {
 
         callBack = parentFragment as OnClickListener
     }
+
 }

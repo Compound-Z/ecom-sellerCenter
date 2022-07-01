@@ -22,4 +22,12 @@ object Constants {
         "CANCELED",
         "RECEIVED",
     )
+    val StatusFilterToAction = mapOf<String, String>(
+        "" to "View Details",
+        "PENDING" to "Start Processing",
+        "PROCESSING" to "Confirm",
+        "CONFIRMED" to "View Details",
+        "CANCELED" to "View Details",
+        "RECEIVED" to "View Details"
+    )
 }

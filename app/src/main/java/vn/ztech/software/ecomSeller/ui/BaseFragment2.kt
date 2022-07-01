@@ -1,8 +1,11 @@
 package vn.ztech.software.ecomSeller.ui
 
+import android.R.attr
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import vn.ztech.software.ecomSeller.R
@@ -19,6 +23,7 @@ import vn.ztech.software.ecomSeller.ui.auth.otp.OtpActivity
 import vn.ztech.software.ecomSeller.ui.splash.ISplashUseCase
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
+
 
 abstract class BaseFragment2<VBinding : ViewBinding>: Fragment() {
 
@@ -77,7 +82,7 @@ abstract class BaseFragment2<VBinding : ViewBinding>: Fragment() {
     }
 
     fun handleError(error: CustomError){
-        if(error is RefreshTokenExpiredException){
+        if(error.e is RefreshTokenExpiredException){
             openLogInSignUpActivity(ISplashUseCase.PAGE.LOGIN)
         }else{
             showErrorDialog(error)
@@ -87,5 +92,10 @@ abstract class BaseFragment2<VBinding : ViewBinding>: Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).apply {
             setGravity(Gravity.CENTER, 0, 0)
         }.show()
+    }
+    fun setClipBoard(context: Context, label: String, text: String){
+        val clipboard: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+        val clip = ClipData.newPlainText(label, text)
+        clipboard?.setPrimaryClip(clip)
     }
 }

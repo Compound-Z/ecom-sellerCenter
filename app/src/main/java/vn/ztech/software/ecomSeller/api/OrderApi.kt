@@ -13,7 +13,7 @@ interface IOrderApi{
     suspend fun createOrder(@Body request: CreateOrderRequest): OrderDetails
     @DELETE("/api/v1/orders/{orderId}")
     suspend fun cancelOrder(@Path("orderId") orderId: String): OrderDetails
-    @POST("/api/v1/orders/my-orders")
+    @POST("/api/v1/orders")
     suspend fun getOrders(@Body request: GetOrdersRequest): List<Order>
     @GET("/api/v1/orders/{orderId}")
     suspend fun getOrderDetails(@Path("orderId") orderId: String): OrderDetails

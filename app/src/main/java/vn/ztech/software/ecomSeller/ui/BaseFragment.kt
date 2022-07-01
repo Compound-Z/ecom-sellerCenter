@@ -77,7 +77,7 @@ abstract class BaseFragment<VBinding : ViewBinding>: Fragment() {
     }
 
     fun handleError(error: CustomError){
-        if(error is RefreshTokenExpiredException){
+        if(error.e is RefreshTokenExpiredException){
             openLogInSignUpActivity(ISplashUseCase.PAGE.LOGIN)
         }else{
             showErrorDialog(error)

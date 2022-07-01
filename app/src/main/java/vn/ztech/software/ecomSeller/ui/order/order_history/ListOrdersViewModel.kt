@@ -15,10 +15,11 @@ import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 
 class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
+    val currentSelectedOrder = MutableLiveData<Order>()
+    val statusFilter = MutableLiveData<String>()
     val loading = MutableLiveData<Boolean>()
     val orders = MutableLiveData<List<Order>>()
     val error = MutableLiveData<CustomError>()
-
 
     fun getOrders(statusFilter: String?, isLoadingEnabled: Boolean = true) {
         statusFilter ?: throw CustomError(customMessage = "System error")
@@ -39,5 +40,13 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                 }
             }
         }
+    }
+
+    fun startProcessing(order: Order) {
+    //todo: implement this
+    }
+
+    fun confirm(order: Order) {
+
     }
 }

@@ -13,6 +13,7 @@ import vn.ztech.software.ecomSeller.databinding.FragmentOrderBinding
 import vn.ztech.software.ecomSeller.model.Address
 import vn.ztech.software.ecomSeller.model.AddressItem
 import vn.ztech.software.ecomSeller.ui.BaseFragment
+import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.ui.address.AddressViewModel
 import vn.ztech.software.ecomSeller.ui.cart.CartViewModel
 import vn.ztech.software.ecomSeller.ui.order.OrderProductsAdapter
