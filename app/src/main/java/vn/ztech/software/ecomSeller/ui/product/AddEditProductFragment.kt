@@ -1,14 +1,11 @@
-package vn.ztech.software.ecomSeller.ui.home
+package vn.ztech.software.ecomSeller.ui.product
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -16,24 +13,22 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
-import vn.ztech.software.ecomSeller.databinding.FragmentAddEditAddressBinding
 import vn.ztech.software.ecomSeller.databinding.FragmentAddEditProductBinding
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.model.ProductDetails
-import vn.ztech.software.ecomSeller.ui.AddCategoryViewErrors
 import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.ui.category.AddCategoryImagesAdapter
 import vn.ztech.software.ecomSeller.ui.category.CategoryViewModel
+import vn.ztech.software.ecomSeller.ui.product.ProductViewModel
 import vn.ztech.software.ecomSeller.ui.product_details.ProductDetailsViewModel
 import vn.ztech.software.ecomSeller.util.extension.findIndexOf
 import vn.ztech.software.ecomSeller.util.extension.removeUnderline
@@ -42,7 +37,7 @@ import java.io.File
 
 
 class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
-    private val viewModel: HomeViewModel by sharedViewModel()
+    private val viewModel: ProductViewModel by sharedViewModel()
     private val productDetailViewModel: ProductDetailsViewModel by sharedViewModel()
     //todo: Bug_Risk: shared viewModel here may contains bugs for features in future, give this a check if any weird bug shows up
     private val categoryViewModel: CategoryViewModel by sharedViewModel()
@@ -194,6 +189,8 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         viewModel.createdProduct.observe(viewLifecycleOwner){
             it?.let {
                toastCenter("Created product ${it.name} successfully!")
+                /**update category when a new product is created successfully*/
+                categoryViewModel.getCategories()
             }
         }
         viewModel.updatedProduct.observe(viewLifecycleOwner){

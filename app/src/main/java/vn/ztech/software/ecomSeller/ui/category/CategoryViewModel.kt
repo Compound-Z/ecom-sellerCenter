@@ -20,7 +20,7 @@ import vn.ztech.software.ecomSeller.common.extension.toLoadState
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.AddCategoryViewErrors
-import vn.ztech.software.ecomSeller.ui.home.IListProductUseCase
+import vn.ztech.software.ecomSeller.ui.product.IListProductUseCase
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import java.io.File

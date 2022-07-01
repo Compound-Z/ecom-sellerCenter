@@ -1,4 +1,4 @@
-package vn.ztech.software.ecomSeller.ui.home
+package vn.ztech.software.ecomSeller.ui.product
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -33,10 +33,10 @@ class MainActivity : AppCompatActivity() {
             Log.d("MENU:QUEUE", navHostFragment.navController.backQueue.toString())
             when (destination.id) {
                 R.id.homeFragment -> setBottomNavVisibility(View.VISIBLE)
-                R.id.cartFragment -> setBottomNavVisibility(View.VISIBLE)
                 R.id.accountFragment -> setBottomNavVisibility(View.VISIBLE)
                 R.id.orderHistoryFragment -> setBottomNavVisibility(View.VISIBLE)
                 R.id.categoryFragment -> setBottomNavVisibility(View.VISIBLE)
+                R.id.productFragment -> setBottomNavVisibility(View.VISIBLE)
                 //feature: enable later
 //                R.id.orderSuccessFragment -> setBottomNavVisibility(View.VISIBLE)
                 else -> setBottomNavVisibility(View.GONE)

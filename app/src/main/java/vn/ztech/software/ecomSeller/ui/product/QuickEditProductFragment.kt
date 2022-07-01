@@ -1,11 +1,8 @@
-package vn.ztech.software.ecomSeller.ui.home
+package vn.ztech.software.ecomSeller.ui.product
 
 import android.os.Bundle
 import android.view.Gravity
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -14,10 +11,11 @@ import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentQuickEditProductBinding
 import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import vn.ztech.software.ecomSeller.ui.product.ProductViewModel
 
 
 class QuickEditProductFragment : BaseFragment2<FragmentQuickEditProductBinding>() {
-    private val viewModel: HomeViewModel by sharedViewModel()
+    private val viewModel: ProductViewModel by sharedViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("product") }?.let {

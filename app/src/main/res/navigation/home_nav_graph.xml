@@ -4,24 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_nav_graph"
     app:startDestination="@id/homeFragment">
-
     <fragment
         android:id="@+id/homeFragment"
         android:name="vn.ztech.software.ecomSeller.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
+    </fragment>
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.product.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product">
         <action
-            android:id="@+id/action_homeFragment_to_addEditProductFragment"
+            android:id="@+id/action_productFragment_to_addEditProductFragment"
             app:destination="@id/addEditProductFragment"
             />
         <action
-            android:id="@+id/action_homeFragment_to_quickEditProductFragment"
+            android:id="@+id/action_productFragment_to_quickEditProductFragment"
             app:destination="@id/quickEditProductFragment"
             />
     </fragment>
+
     <fragment
         android:id="@+id/addEditProductFragment"
-        android:name="vn.ztech.software.ecomSeller.ui.home.AddEditProductFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.product.AddEditProductFragment"
         android:label="fragment_add_edit_product"
         tools:layout="@layout/fragment_add_edit_product">
         <action
@@ -30,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/quickEditProductFragment"
-        android:name="vn.ztech.software.ecomSeller.ui.home.QuickEditProductFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.product.QuickEditProductFragment"
         android:label="fragment_quick_edit_product"
         tools:layout="@layout/fragment_quick_edit_product">
     </fragment>

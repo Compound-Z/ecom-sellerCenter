@@ -1,4 +1,4 @@
-package vn.ztech.software.ecomSeller.ui.home
+package vn.ztech.software.ecomSeller.ui.product
 
 import android.content.Context
 import android.view.LayoutInflater

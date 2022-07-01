@@ -14,6 +14,7 @@ import vn.ztech.software.ecomSeller.ui.home.HomeViewModel
 import vn.ztech.software.ecomSeller.ui.order.order.OrderViewModel
 import vn.ztech.software.ecomSeller.ui.order.order_details.OrderDetailsViewModel
 import vn.ztech.software.ecomSeller.ui.order.order_history.ListOrdersViewModel
+import vn.ztech.software.ecomSeller.ui.product.ProductViewModel
 import vn.ztech.software.ecomSeller.ui.product_details.ProductDetailsViewModel
 import vn.ztech.software.ecomSeller.ui.splash.SplashViewModel
 
@@ -21,7 +22,7 @@ fun viewModelModule() = module {
     viewModel { SplashViewModel(get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { LogInViewModel(get()) }
-    viewModel { HomeViewModel(get())}
+    viewModel { HomeViewModel()}
     viewModel { ProductDetailsViewModel(get()) }
     viewModel { OtpViewModel(get()) }
     viewModel { ForgotPasswordViewModel(get()) }
@@ -32,5 +33,5 @@ fun viewModelModule() = module {
     viewModel { OrderViewModel(get(), get()) }
     viewModel { OrderDetailsViewModel(get())}
     viewModel { ListOrdersViewModel(get()) }
-
+    viewModel { ProductViewModel(get()) }
 }
