@@ -189,8 +189,9 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         viewModel.createdProduct.observe(viewLifecycleOwner){
             it?.let {
                toastCenter("Created product ${it.name} successfully!")
-                /**update category when a new product is created successfully*/
-                categoryViewModel.getCategories()
+                /**reloading categories make the category spinner becomes blank, will fix this later by: chagen condition in populateSpinner function*/
+//                /**update category when a new product is created successfully*/
+//                categoryViewModel.getCategories()
             }
         }
         viewModel.updatedProduct.observe(viewLifecycleOwner){

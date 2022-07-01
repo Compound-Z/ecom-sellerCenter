@@ -81,17 +81,26 @@ class ProductFragment : Fragment() {
             }
         }
         viewModel.allProducts.observe(viewLifecycleOwner) { listProducts->
-            if (listProducts.isNotEmpty()) {
-                binding.tvNoProductFound.visibility = View.GONE
+            listProducts?.let{
+                if (listProducts.isEmpty()) {
+                    binding.tvNoProductFound.visibility = View.VISIBLE
+                    binding.productsRecyclerView.visibility = View.GONE
+                }else {
+                    binding.tvNoProductFound.visibility = View.GONE
+                    binding.loaderLayout.circularLoader.hideAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+                    binding.productsRecyclerView.visibility = View.VISIBLE
+                    binding.productsRecyclerView.adapter?.apply {
+                        listProductsAdapter.data =
+                            getMixedDataList(listProducts, getAdsList())
+                        notifyDataSetChanged()
+                    }
+                }
+            }
+            if (listProducts==null){
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                binding.productsRecyclerView.visibility = View.VISIBLE
-                binding.productsRecyclerView.adapter?.apply {
-                    listProductsAdapter.data =
-                        getMixedDataList(listProducts, getAdsList())
-                    notifyDataSetChanged()
-                }
-            }else{
+                binding.productsRecyclerView.visibility = View.GONE
                 binding.tvNoProductFound.visibility = View.VISIBLE
             }
         }
