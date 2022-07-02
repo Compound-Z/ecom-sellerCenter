@@ -76,7 +76,7 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
                     background = resources.getDrawable(R.drawable.rounded_bg_red)
                 }
                 "PROCESSING"->{
-                    setTextColor(Color.YELLOW)
+                    setTextColor(resources.getColor(R.color.dark_yellow))
                     background = resources.getDrawable(R.drawable.rounded_bg_yellow)
                 }
                 "CONFIRMED"->{

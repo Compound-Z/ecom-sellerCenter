@@ -158,15 +158,15 @@
                 app:layout_constraintTop_toBottomOf="@id/order_details_payment_label_tv" />
 
             <Button
-                android:id="@+id/btCancelOrder"
+                android:id="@+id/btProcess"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="18dp"
-                android:backgroundTint="#E82D20"
+                android:backgroundTint="@color/blue_accent_300"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="14dp"
-                android:text="Cancel order"
+                android:text="Process Order"
                 android:textAllCaps="false"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -176,15 +176,15 @@
                 app:layout_constraintTop_toBottomOf="@id/layoutBilling" />
 
             <Button
-                android:id="@+id/btRebuyOrder"
+                android:id="@+id/btConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="18dp"
-                android:backgroundTint="#5E7688"
+                android:backgroundTint="#4CAF50"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="14dp"
-                android:text="Re-buy this order"
+                android:text="Confirm Order"
                 android:textAllCaps="false"
                 android:textSize="14sp"
                 android:textStyle="bold"

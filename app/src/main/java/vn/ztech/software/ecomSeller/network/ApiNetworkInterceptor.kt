@@ -53,6 +53,9 @@ class ApiNetworkInterceptor(private val gson: Gson, private val userManager: Use
                     throw ResourceException(responseObj?.message?:"Not found")
                 }
                 HttpURLConnection.HTTP_INTERNAL_ERROR -> {
+                    if (responseObj?.message?.startsWith("Giaohangnhanh") == true){
+                        throw ResourceException(responseObj.message.toString())
+                    }
                     throw ResourceException("System error")
                 }
                 HttpURLConnection.HTTP_UNAUTHORIZED -> {

@@ -1,5 +1,6 @@
 package vn.ztech.software.ecomSeller.ui.order.order_details
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -9,10 +10,12 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import vn.ztech.software.ecomSeller.R
+import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.FragmentOrderDetailsBinding
 import vn.ztech.software.ecomSeller.model.*
 import vn.ztech.software.ecomSeller.ui.BaseFragment
 import vn.ztech.software.ecomSeller.ui.order.OrderProductsAdapter
+import vn.ztech.software.ecomSeller.ui.order.order_history.ListOrdersViewModel
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import vn.ztech.software.ecomSeller.util.extension.getFullAddress
@@ -22,6 +25,7 @@ const val TAG = "OrderDetailsFragment"
 class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
 
     private val viewModel: OrderDetailsViewModel by viewModel()
+    private val listOrdersViewModel: ListOrdersViewModel by viewModel()
 	private lateinit var productsAdapter: OrderProductsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +66,21 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
         binding.tvOrderStatus.text = viewModel.orderDetails.value?.status?:"unknown"
         setUpShippingViews(viewModel.orderDetails.value?.user, viewModel.orderDetails.value?.address)
         setUpBillingViews(viewModel.orderDetails.value?.billing, viewModel.orderDetails.value?.orderItems)
-        binding.btCancelOrder.setOnClickListener {
-            showCancelDialog(viewModel.orderDetails.value?._id)
+        binding.btProcess.setOnClickListener {
+            Constants.StatusFilterToAction[viewModel.orderDetails.value?.status]?.let{
+                showDialog(it) { p0, _ ->
+                    p0.dismiss()
+                    listOrdersViewModel.startProcessing(viewModel.orderDetails.value?._id)
+                }
+            }
         }
-        binding.btRebuyOrder.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_orderDetailsFragment_to_orderFragment,
-                bundleOf("products" to viewModel.orderDetails.value?.orderItems?.toCartProductResponses(),
-                "ADDRESS_ITEM" to viewModel.orderDetails.value?.address)
-            )
+        binding.btConfirm.setOnClickListener {
+            Constants.StatusFilterToAction[viewModel.orderDetails.value?.status]?.let{
+                showDialog(it) { p0, _ ->
+                    p0.dismiss()
+                    listOrdersViewModel.confirm(viewModel.orderDetails.value?._id)
+                }
+            }
         }
     }
 
@@ -115,12 +125,26 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                 }
             }
         }
+        listOrdersViewModel.loading.observe(viewLifecycleOwner){
+            when (it) {
+                true -> {
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                    binding.loaderLayout.circularLoader.showAnimationBehavior
+                }
+                false -> {
+                    binding.loaderLayout.circularLoader.hideAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+                }
+            }
+        }
+
         viewModel.orderDetails.observe(viewLifecycleOwner){
             it?.let {
                   updateOrderStatusUI(it.status)
                   setUpViews()
             }
         }
+
         viewModel.cancelOrderStatus.observe(viewLifecycleOwner){
             it?.let {
                 if (it){
@@ -130,7 +154,19 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                 }
             }
         }
+
+        listOrdersViewModel.order.observe(viewLifecycleOwner){
+            it?.let {
+                viewModel.getOrderDetails(it._id)
+            }
+        }
+
         viewModel.error.observe(viewLifecycleOwner){
+            it?.let {
+                handleError(it)
+            }
+        }
+        listOrdersViewModel.error.observe(viewLifecycleOwner){
             it?.let {
                 handleError(it)
             }
@@ -144,26 +180,26 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                 "PENDING"->{
                     tvOrderStatus.setTextColor(Color.BLUE)
                     tvOrderStatus.background = resources.getDrawable(R.drawable.rounded_bg_blue)
-                    btCancelOrder.visibility = View.VISIBLE
-                    btRebuyOrder.visibility = View.GONE
+                    btProcess.visibility = View.VISIBLE
+                    btConfirm.visibility = View.GONE
                 }
                 "CANCELED"->{
                     tvOrderStatus.setTextColor(Color.RED)
                     tvOrderStatus.background = resources.getDrawable(R.drawable.rounded_bg_red)
-                    btCancelOrder.visibility = View.GONE
-                    btRebuyOrder.visibility = View.VISIBLE
+                    btProcess.visibility = View.GONE
+                    btConfirm.visibility = View.GONE
                 }
                 "PROCESSING"->{
-                    tvOrderStatus.setTextColor(Color.YELLOW)
+                    tvOrderStatus.setTextColor(resources.getColor(R.color.dark_yellow))
                     tvOrderStatus.background = resources.getDrawable(R.drawable.rounded_bg_yellow)
-                    btCancelOrder.visibility = View.VISIBLE
-                    btRebuyOrder.visibility = View.GONE
+                    btProcess.visibility = View.GONE
+                    btConfirm.visibility = View.VISIBLE
                 }
                 "CONFIRMED"->{
                     tvOrderStatus.setTextColor(Color.GREEN)
                     tvOrderStatus.background = resources.getDrawable(R.drawable.rounded_bg_green)
-                    btCancelOrder.visibility = View.GONE
-                    btRebuyOrder.visibility = View.VISIBLE
+                    btProcess.visibility = View.GONE
+                    btConfirm.visibility = View.GONE
                 }
             }
         }
@@ -189,7 +225,18 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                 .show()
         }
     }
-
+    private fun showDialog(action: String, onClick: DialogInterface.OnClickListener) {
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setTitle("$action action")
+                .setMessage("Do you want to $action this order?")
+                .setNeutralButton(getString(R.string.no)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(getString(R.string.yes), onClick)
+                .show()
+        }
+    }
     override fun onStop() {
         super.onStop()
         viewModel.clearErrors()
