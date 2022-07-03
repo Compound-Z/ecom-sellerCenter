@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.ui.order
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateOrderRequest
+import vn.ztech.software.ecomSeller.api.request.GetOrderBaseOnTimeRequest
 import vn.ztech.software.ecomSeller.api.request.UpdateOrderStatusBody
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.model.OrderDetails
@@ -14,6 +15,9 @@ interface IOrderUserCase{
     suspend fun getOrders(statusFilter: String): Flow<List<Order>>
     suspend fun getOrderDetails(orderId: String): Flow<OrderDetails>
     suspend fun updateOrderStatus(orderId: String, updateOrderStatusBody: UpdateOrderStatusBody): Flow<Order>
+    suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<List<Order>>
+    suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<List<Order>>
+    suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<List<Order>>
 
 }
 
@@ -31,7 +35,8 @@ class OrderUseCase(private val orderRepository: IOrderRepository): IOrderUserCas
 
     override suspend fun getOrders(statusFilter: String): Flow<List<Order>> = flow {
         val orders = orderRepository.getOrders(statusFilter)
-        emit(orders)
+        val orders2 = orders.sortedByDescending{ it.updatedAt }
+        emit(orders2)
     }
 
     override suspend fun getOrderDetails(orderId: String): Flow<OrderDetails> = flow {
@@ -42,5 +47,22 @@ class OrderUseCase(private val orderRepository: IOrderRepository): IOrderUserCas
     override suspend fun updateOrderStatus(_id: String, updateOrderStatusBody: UpdateOrderStatusBody): Flow<Order> =flow {
         val order = orderRepository.updateOrderStatus(_id, updateOrderStatusBody)
         emit(order)
+    }
+
+    override suspend fun searchByOrderId(searchWords: String, statusFilter: String, ): Flow<List<Order>> = flow {
+        val orders = orderRepository.searchByOrderId(searchWords, statusFilter)
+        val orders2 = orders.sortedByDescending{ it.updatedAt }
+        emit(orders2)
+    }
+    override suspend fun searchByUserName(searchWords: String, statusFilter: String, ): Flow<List<Order>> = flow {
+        val orders = orderRepository.searchByUserName(searchWords, statusFilter)
+        val orders2 = orders.sortedByDescending{ it.updatedAt }
+        emit(orders2)
+    }
+
+    override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<List<Order>> = flow {
+        val orders = orderRepository.getOrdersBaseOnTime(getOrderBaseOnTimeRequest)
+        val orders2 = orders.sortedByDescending{ it.updatedAt }
+        emit(orders2)
     }
 }

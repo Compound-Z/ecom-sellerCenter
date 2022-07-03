@@ -1,11 +1,19 @@
 package vn.ztech.software.ecomSeller.ui.order.order_history
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.item_order_history.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -22,6 +30,7 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
     private val viewModel: ListOrdersViewModel by viewModel()
     lateinit var statusFilter: String
     lateinit var adapter: ListOrderAdapter
+    lateinit var spinnerAdapter: ArrayAdapter<String>
     interface OnClickListener{
         fun onClickViewDetails(orderId: String)
     }
@@ -48,7 +57,65 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
     override fun setUpViews() {
         super.setUpViews()
         setupAdapter(viewModel.orders.value)
+        setupSpinner()
+        setUpSearchView()
     }
+
+    private fun setUpSearchView() {
+        val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
+
+        binding.topAppBar.homeSearchEditText.onFocusChangeListener = focusChangeListener
+        binding.topAppBar.homeSearchEditText.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                textView.clearFocus()
+                val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputManager.hideSoftInputFromWindow(textView.windowToken, 0)
+
+                performSearch(textView.text.toString())
+                true
+            } else {
+                false
+            }
+        }
+        binding.topAppBar.searchOutlinedTextLayout.setEndIconOnClickListener {
+            Log.d("SEARCH", "setEndIconOnClickListener")
+            it.clearFocus()
+            binding.topAppBar.homeSearchEditText.setText("")
+            val inputManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+        binding.topAppBar.searchOutlinedTextLayout.setStartIconOnClickListener {
+            Log.d("SEARCH", "setEndIconOnClickListener")
+            it.clearFocus()
+            val inputManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(it.windowToken, 0)
+            performSearch(binding.topAppBar.homeSearchEditText.text.toString())
+        }
+    }
+
+    private fun performSearch(searchWords: String) {
+        viewModel.search(searchWords)
+    }
+
+    private fun setupSpinner() {
+        val searchCriteria = resources.getStringArray(R.array.search_criteria)
+        viewModel.currentSelectedSearchCriteria.value = searchCriteria[0]
+        viewModel.listSearchCriteria.value = searchCriteria.toList()
+
+        spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, searchCriteria)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+
+        binding.topAppBar.spinnerSearchCriteria.adapter = spinnerAdapter
+        binding.topAppBar.spinnerSearchCriteria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                viewModel.currentSelectedSearchCriteria.value = viewModel.listSearchCriteria.value?.get(p2)
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+    }
+
     private fun setupAdapter(_orders: List<Order>?){
         val orders = _orders?: emptyList()
         adapter = ListOrderAdapter(requireContext(), orders, object : ListOrderAdapter.OnClickListener{
@@ -57,13 +124,20 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             }
 
             override fun onCopyClipBoardClicked(orderId: String) {
-                toastCenter("Copied: ${orderId}")
+                copyToClipBoard(orderId)
             }
             override fun onClickButtonViewDetail(order: Order) {
                 handleAction(order)
             }
         })
         binding.listOrders.adapter = adapter
+    }
+
+    private fun copyToClipBoard(orderId: String) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip: ClipData = ClipData.newPlainText("orderId", orderId)
+        clipboard.setPrimaryClip(clip)
+        toastCenter("Copied $orderId")
     }
 
     private fun handleAction(order: Order) {
@@ -90,7 +164,6 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             }
         }
     }
-
 
     override fun observeView() {
         super.observeView()

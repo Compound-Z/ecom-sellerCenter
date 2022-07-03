@@ -23,6 +23,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.currentCoroutineContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
@@ -184,8 +185,18 @@ class AddEditCategoryFragment : BaseFragment2<FragmentAddEditCategoryBinding>() 
                 viewModel.uploadImage(File(getFullPath(requireContext(), imgList[0])))
             }
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                requestPermissionLauncher.launch(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Permission request")
+                    .setMessage("You need to grant permission to upload image")
+                    .setNegativeButton(getString(R.string.pro_cat_dialog_cancel_btn)) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    .setPositiveButton("OK") { dialog, _ ->
+                        requestPermissionLauncher.launch(
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                        dialog.cancel()
+                    }
+                    .show()
             }
             else -> {
                 // You can directly ask for the permission.

@@ -16,6 +16,8 @@ import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 
 class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
+    val listSearchCriteria = MutableLiveData<List<String>>()
+    val currentSelectedSearchCriteria = MutableLiveData<String>()
     val currentSelectedOrder = MutableLiveData<Order>()
     val statusFilter = MutableLiveData<String>()
     val loading = MutableLiveData<Boolean>()
@@ -82,5 +84,57 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
 
     fun clearErrors() {
         error.value = null
+    }
+
+    fun search(searchWords: String, isLoadingEnabled: Boolean = true) {
+        if (statusFilter.value == null || currentSelectedSearchCriteria.value == null){
+            error.value = errorMessage(CustomError(customMessage = "System error"))
+            return
+        }
+        if (currentSelectedSearchCriteria.value == listSearchCriteria.value?.get(0)){
+            searchByOrderId(searchWords, statusFilter, isLoadingEnabled)
+        }else{
+            searchByUserName(searchWords, statusFilter, isLoadingEnabled)
+        }
+    }
+
+    private fun searchByUserName(searchWords: String, statusFilter: MutableLiveData<String>, isLoadingEnabled: Boolean = true) {
+        viewModelScope.launch {
+            orderUseCase.searchByUserName(searchWords, statusFilter.value?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+                when (it) {
+                    LoadState.Loading -> {
+                        if (isLoadingEnabled) loading.value = true
+                    }
+                    is LoadState.Loaded -> {
+                        loading.value = false
+                        orders.value = it.data
+                    }
+                    is LoadState.Error -> {
+                        loading.value = false
+                        error.value = errorMessage(it.e)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun searchByOrderId(searchWords: String, statusFilter: MutableLiveData<String>, isLoadingEnabled: Boolean = true) {
+        viewModelScope.launch {
+            orderUseCase.searchByOrderId(searchWords, statusFilter.value?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+                when (it) {
+                    LoadState.Loading -> {
+                        if (isLoadingEnabled) loading.value = true
+                    }
+                    is LoadState.Loaded -> {
+                        loading.value = false
+                        orders.value = it.data
+                    }
+                    is LoadState.Error -> {
+                        loading.value = false
+                        error.value = errorMessage(it.e)
+                    }
+                }
+            }
+        }
     }
 }

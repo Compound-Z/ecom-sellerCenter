@@ -22,7 +22,6 @@ fun viewModelModule() = module {
     viewModel { SplashViewModel(get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { LogInViewModel(get()) }
-    viewModel { HomeViewModel()}
     viewModel { ProductDetailsViewModel(get()) }
     viewModel { OtpViewModel(get()) }
     viewModel { ForgotPasswordViewModel(get()) }

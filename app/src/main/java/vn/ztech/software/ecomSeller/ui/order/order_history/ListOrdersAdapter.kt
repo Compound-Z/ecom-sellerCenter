@@ -83,6 +83,10 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
                     setTextColor(Color.GREEN)
                     background = resources.getDrawable(R.drawable.rounded_bg_green)
                 }
+                "RECEIVED"->{
+                    setTextColor(Color.GREEN)
+                    background = resources.getDrawable(R.drawable.rounded_bg_green)
+                }
             }
         }
     }

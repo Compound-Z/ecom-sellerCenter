@@ -22,6 +22,12 @@ object Constants {
         "CANCELED",
         "RECEIVED",
     )
+
+    val SaleReportTimeOptions = arrayOf(
+        Pair("1 day", 1),
+        Pair("7 days", 7),
+        Pair("30 days", 30)
+    )
     val StatusFilterToAction = mapOf<String, String>(
         "" to "View Details",
         "PENDING" to "Start Processing",
@@ -29,5 +35,10 @@ object Constants {
         "CONFIRMED" to "View Details",
         "CANCELED" to "View Details",
         "RECEIVED" to "View Details"
+    )
+    val SaleReportIndicator = listOf<String>(
+        "Order number",
+        "Sales",
+        "Average sales",
     )
 }

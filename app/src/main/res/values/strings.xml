@@ -93,6 +93,7 @@
     <string name="home_app_bar_filter_label">Filter</string>
     <string name="search_hint">Search Product…</string>
     <string name="search_placeholder_text">Search Product</string>
+    <string name="search_order_placeholder_text">Search Orders</string>
     <string name="search_category_placeholder_text">Search Category</string>
     <string name="add_product_insert_error">Error Saving Product!</string>
     <string name="app_icon_img_desc">App Icon</string>
@@ -217,5 +218,4 @@
     <string name="reset_password_successfully">Reset password Successfully!</string>
     <string name="signup_successfully">Sign Up Successfully!</string>
     <string name="logging_out">Logging out...</string>
-
 </resources>

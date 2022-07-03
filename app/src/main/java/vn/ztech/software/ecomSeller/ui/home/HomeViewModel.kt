@@ -1,8 +1,5 @@
 package vn.ztech.software.ecomSeller.ui.home
 
-import android.net.Uri
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,26 +7,40 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
-import vn.ztech.software.ecomSeller.api.request.ProductDetail
-import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
-import vn.ztech.software.ecomSeller.api.response.BasicResponse
-import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
+import vn.ztech.software.ecomSeller.api.request.GetOrderBaseOnTimeRequest
 import vn.ztech.software.ecomSeller.common.LoadState
-import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.common.extension.toLoadState
-import vn.ztech.software.ecomSeller.model.Category
-import vn.ztech.software.ecomSeller.model.Country
-import vn.ztech.software.ecomSeller.model.Product
-import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
+import vn.ztech.software.ecomSeller.model.Order
+import vn.ztech.software.ecomSeller.ui.order.IOrderUserCase
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
-import java.io.File
 
 private const val TAG = "HomeViewModel"
 
-class HomeViewModel(
-): ViewModel() {
-
-
+class HomeViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
+    val loading = MutableLiveData<Boolean>()
+    val orders = MutableLiveData<List<Order>>()
+    val error = MutableLiveData<CustomError>()
+    fun getOrdersBaseOnTime(numberOfDays: Int, isLoadingEnabled: Boolean = true) {
+        viewModelScope.launch {
+            orderUseCase.getOrdersBaseOnTime(GetOrderBaseOnTimeRequest(numberOfDays)).flowOn(Dispatchers.IO).toLoadState().collect {
+                when (it) {
+                    LoadState.Loading -> {
+                        if (isLoadingEnabled) loading.value = true
+                    }
+                    is LoadState.Loaded -> {
+                        loading.value = false
+                        orders.value = it.data
+                    }
+                    is LoadState.Error -> {
+                        loading.value = false
+                        error.value = errorMessage(it.e)
+                    }
+                }
+            }
+        }
+    }
+    fun clearErrors() {
+        error.value = null
+    }
 }

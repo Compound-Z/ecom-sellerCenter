@@ -378,10 +378,10 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 viewModel.uploadImage(File(getFullPath(requireContext(), imgList[0])))
             }
-            shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                requestPermissionLauncher.launch(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+//            shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+//                requestPermissionLauncher.launch(
+//                    Manifest.permission.READ_EXTERNAL_STORAGE)
+//            }
             else -> {
                 // You can directly ask for the permission.
                 // The registered ActivityResultCallback gets the result of this request.

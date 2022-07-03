@@ -1,8 +1,7 @@
 package vn.ztech.software.ecomSeller.repository
 
 import vn.ztech.software.ecomSeller.api.IOrderApi
-import vn.ztech.software.ecomSeller.api.request.CreateOrderRequest
-import vn.ztech.software.ecomSeller.api.request.UpdateOrderStatusBody
+import vn.ztech.software.ecomSeller.api.request.*
 import vn.ztech.software.ecomSeller.api.response.GetOrdersRequest
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.model.OrderDetails
@@ -13,7 +12,9 @@ interface IOrderRepository{
     suspend fun getOrders(statusFilter: String): List<Order>
     suspend fun getOrderDetails(orderId: String): OrderDetails
     suspend fun updateOrderStatus(orderId: String, updateOrderStatusBody: UpdateOrderStatusBody): Order
-
+    suspend fun searchByOrderId(searchWords: String, statusFilter: String): List<Order>
+    suspend fun searchByUserName(searchWords: String, statusFilter: String): List<Order>
+    suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): List<Order>
 }
 
 class OrderRepository(private val orderApi: IOrderApi): IOrderRepository{
@@ -34,5 +35,15 @@ class OrderRepository(private val orderApi: IOrderApi): IOrderRepository{
 
     override suspend fun updateOrderStatus(_id: String, updateOrderStatusBody: UpdateOrderStatusBody): Order {
         return orderApi.updateOrderStatus(_id, updateOrderStatusBody)
+    }
+
+    override suspend fun searchByOrderId(searchWords: String, statusFilter: String): List<Order> {
+        return orderApi.searchByOrderId(SearchOrderByIdRequest(searchWords, statusFilter))
+    }
+    override suspend fun searchByUserName(searchWords: String, statusFilter: String): List<Order> {
+        return orderApi.searchByUserName(SearchOrderByNameRequest(searchWords, statusFilter))
+    }
+    override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): List<Order> {
+        return orderApi.getOrdersBaseOnTime(getOrderBaseOnTimeRequest)
     }
 }
