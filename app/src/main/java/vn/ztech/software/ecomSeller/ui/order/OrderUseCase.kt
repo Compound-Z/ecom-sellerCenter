@@ -7,7 +7,10 @@ import vn.ztech.software.ecomSeller.api.request.GetOrderBaseOnTimeRequest
 import vn.ztech.software.ecomSeller.api.request.UpdateOrderStatusBody
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.model.OrderDetails
+import vn.ztech.software.ecomSeller.model.OrderWithTime
 import vn.ztech.software.ecomSeller.repository.IOrderRepository
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface IOrderUserCase{
     suspend fun createOrder(createOrderRequest: CreateOrderRequest): Flow<OrderDetails>
@@ -17,7 +20,7 @@ interface IOrderUserCase{
     suspend fun updateOrderStatus(orderId: String, updateOrderStatusBody: UpdateOrderStatusBody): Flow<Order>
     suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<List<Order>>
     suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<List<Order>>
-    suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<List<Order>>
+    suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<Map<LocalDate, List<OrderWithTime>>>
 
 }
 
@@ -60,9 +63,15 @@ class OrderUseCase(private val orderRepository: IOrderRepository): IOrderUserCas
         emit(orders2)
     }
 
-    override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<List<Order>> = flow {
+    override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<Map<LocalDate, List<OrderWithTime>>> = flow {
         val orders = orderRepository.getOrdersBaseOnTime(getOrderBaseOnTimeRequest)
         val orders2 = orders.sortedByDescending{ it.updatedAt }
-        emit(orders2)
+        val orders3 = orders2.map {
+            OrderWithTime(it,
+            LocalDate.parse(it.createdAt.split("T").get(0)))
+        }.groupBy {
+            it.dateTime
+        }
+        emit(orders3)
     }
 }

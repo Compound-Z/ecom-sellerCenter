@@ -18,29 +18,29 @@ import vn.ztech.software.ecomSeller.util.errorMessage
 private const val TAG = "HomeViewModel"
 
 class HomeViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
-    val loading = MutableLiveData<Boolean>()
-    val orders = MutableLiveData<List<Order>>()
-    val error = MutableLiveData<CustomError>()
-    fun getOrdersBaseOnTime(numberOfDays: Int, isLoadingEnabled: Boolean = true) {
-        viewModelScope.launch {
-            orderUseCase.getOrdersBaseOnTime(GetOrderBaseOnTimeRequest(numberOfDays)).flowOn(Dispatchers.IO).toLoadState().collect {
-                when (it) {
-                    LoadState.Loading -> {
-                        if (isLoadingEnabled) loading.value = true
-                    }
-                    is LoadState.Loaded -> {
-                        loading.value = false
-                        orders.value = it.data
-                    }
-                    is LoadState.Error -> {
-                        loading.value = false
-                        error.value = errorMessage(it.e)
-                    }
-                }
-            }
-        }
-    }
-    fun clearErrors() {
-        error.value = null
-    }
+//    val loading = MutableLiveData<Boolean>()
+//    val orders = MutableLiveData<List<Order>>()
+//    val error = MutableLiveData<CustomError>()
+//    fun getOrdersBaseOnTime(numberOfDays: Int, isLoadingEnabled: Boolean = true) {
+//        viewModelScope.launch {
+//            orderUseCase.getOrdersBaseOnTime(GetOrderBaseOnTimeRequest(numberOfDays)).flowOn(Dispatchers.IO).toLoadState().collect {
+//                when (it) {
+//                    LoadState.Loading -> {
+//                        if (isLoadingEnabled) loading.value = true
+//                    }
+//                    is LoadState.Loaded -> {
+//                        loading.value = false
+//                        orders.value = it.data
+//                    }
+//                    is LoadState.Error -> {
+//                        loading.value = false
+//                        error.value = errorMessage(it.e)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    fun clearErrors() {
+//        error.value = null
+//    }
 }

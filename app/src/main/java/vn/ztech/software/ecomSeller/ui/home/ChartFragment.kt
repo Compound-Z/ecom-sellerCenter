@@ -1,60 +1,178 @@
 package vn.ztech.software.ecomSeller.ui.home
 
+import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IFillFormatter
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.utils.Utils
+import kotlinx.android.synthetic.main.fragment_chart.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
+import vn.ztech.software.ecomSeller.databinding.FragmentChartBinding
+import vn.ztech.software.ecomSeller.model.OrderWithTime
+import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import java.time.LocalDate
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ChartFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ChartFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class ChartFragment : BaseFragment2<FragmentChartBinding>() {
+    private val viewModel: ChartViewModel by viewModel()
+    private val saleReportViewModel: SaleReportViewModel by sharedViewModel()
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        arguments?.takeIf { it.containsKey("indicator") }?.let {
+//            viewModel.indicator.value = it.getString("indicator")
+//            viewModel.orders.value = saleReportViewModel.orders.value
+//        }
+//    }
+//
+//    override fun setUpViews() {
+//        super.setUpViews()
+//        toastCenter("inside ChartFragment")
+////        binding.chart.setBackgroundColor(Color.RED)
+////        binding.chart.description.isEnabled = false
+////        binding.chart.setTouchEnabled(true)
+////
+//////        // set listeners
+//////        chart.setOnChartValueSelectedListener(this)
+//////        chart.setDrawGridBackground(false)
+//////
+//////
+//////        // create marker to display box when values are selected
+//////        val mv = MyMarkerView(this, R.layout.custom_marker_view)
+//////
+//////        // Set the marker to the chart
+//////
+//////        // Set the marker to the chart
+//////        mv.setChartView(chart)
+//////        chart.marker = mv
+////
+////
+////        // enable scaling and dragging
+////        binding.chart.isDragEnabled = true
+////        binding.chart.setScaleEnabled(true)
+////
+////        // force pinch zoom along both axis
+////        binding.chart.setPinchZoom(true)
+//
+//        /**axis*/
+////        binding.chart.axisRight.isEnabled = false
+//    }
+//
+//    override fun observeView() {
+//        super.observeView()
+//        viewModel.orders.observe(viewLifecycleOwner){
+//            it?.let {
+////                generateEntries(it)
+//            }
+//        }
+//        viewModel.entries.observe(viewLifecycleOwner){
+//            it?.let {
+////                setUpChart(it)
+//            }
+//        }
+//    }
+//
+//    private fun setUpChart(it: List<Pair<Float, Float>>) {
+////        binding.chart.axisLeft.axisMaximum = 200f/*viewModel.maxY * 120 / 100*/ /**set y axis with max value of 120% compare to max value of entries*/
+////        binding.chart.axisLeft.axisMinimum = 0f
+////
+////        val entries = java.util.ArrayList<Entry>()
+////
+////        for (i in 0 until 45) {
+////            val `val`: Float = (Math.random() * 200).toFloat() - 30
+////            entries.add(Entry(i.toFloat(), `val`, resources.getDrawable(R.drawable.star)))
+////        }
+////        Log.d("ENTRIES", entries.toString())
+////
+//////        val entries = ArrayList<Entry>()
+//////        it.forEach {
+//////            entries.add(Entry(it.first, it.second))
+//////        }
+////        val set1: LineDataSet
+////        if (binding.chart.data != null && binding.chart.data.dataSetCount > 0){
+////            set1 = chart.data.getDataSetByIndex(0) as LineDataSet
+////            set1.values = entries
+////            set1.notifyDataSetChanged()
+////            binding.chart.data.notifyDataChanged()
+////            binding.chart.notifyDataSetChanged()
+////        }else{
+////            set1 = LineDataSet(entries,"DataSet 1")
+////            set1.setDrawIcons(false)
+////
+////            // draw dashed line
+////            set1.enableDashedLine(10f, 5f, 0f)
+////
+////            // black lines and points
+////            set1.color = Color.BLACK
+////            set1.setCircleColor(Color.BLACK)
+////
+////            // line thickness and point size
+////            set1.lineWidth = 1f
+////            set1.circleRadius = 3f
+////
+////
+////            // draw points as solid circles
+////            set1.setDrawCircleHole(false)
+////
+////
+////            // customize legend entry
+////            set1.formLineWidth = 1f
+////            set1.formLineDashEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
+////            set1.formSize = 15f
+////
+////            // text size of values
+////            set1.valueTextSize = 9f
+////
+////            // draw selection line as dashed
+////            set1.enableDashedHighlightLine(10f, 5f, 0f)
+////
+////            set1.setDrawFilled(true)
+////            set1.fillFormatter =
+////                IFillFormatter { dataSet, dataProvider -> chart.axisLeft.axisMinimum }
+////
+////            // set color of filled area
+////            if (Utils.getSDKInt() >= 18) {
+////                // drawables only supported on api level 18 and above
+////                val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_red)
+////                set1.fillDrawable = drawable
+////            } else {
+////                set1.fillColor = Color.BLACK
+////            }
+////
+////            val dataSets = ArrayList<ILineDataSet>()
+////            dataSets.add(set1)
+////            val data = LineData(dataSets)
+////
+////            binding.chart.data = data
+////        }
+//    }
+//
+//    private fun generateEntries(it: Map<LocalDate, List<OrderWithTime>>) {
+//        viewModel.generateEntries(it)
+//    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun setViewBinding(): FragmentChartBinding {
+        return FragmentChartBinding.inflate(layoutInflater)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chart, container, false)
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        toastCenter("onStop")
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        toastCenter("onPause")
+//        Log.d("xxxxxxxx", "pause")
+//    }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ChartFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ChartFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }

@@ -17,15 +17,24 @@ class HomeFragment : BaseFragment2<FragmentHomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpUI()
+    }
+    override fun setUpViews() {
+        super.setUpViews()
+        binding.swipeRefresh.setOnRefreshListener {
+            setUpUI()
+        }
+    }
+
+    private fun setUpUI() {
         saleReportFragmentAdapter =
             SaleReportFragmentAdapter(this@HomeFragment)
         binding.pager.adapter = saleReportFragmentAdapter
         TabLayoutMediator(binding.tabLayout, binding.pager) {tab, pos->
-          tab.text =  Constants.SaleReportTimeOptions[pos].first
+            tab.text =  Constants.SaleReportTimeOptions[pos].first
         }.attach()
-    }
-    override fun setUpViews() {
-        super.setUpViews()
+
+        binding.swipeRefresh.isRefreshing = false
     }
 
     override fun observeView() {

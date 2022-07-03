@@ -10,6 +10,8 @@ import vn.ztech.software.ecomSeller.ui.auth.otp.OtpViewModel
 import vn.ztech.software.ecomSeller.ui.auth.signup.SignUpViewModel
 import vn.ztech.software.ecomSeller.ui.cart.CartViewModel
 import vn.ztech.software.ecomSeller.ui.category.CategoryViewModel
+import vn.ztech.software.ecomSeller.ui.home.ChartViewModel
+import vn.ztech.software.ecomSeller.ui.home.SaleReportViewModel
 import vn.ztech.software.ecomSeller.ui.home.HomeViewModel
 import vn.ztech.software.ecomSeller.ui.order.order.OrderViewModel
 import vn.ztech.software.ecomSeller.ui.order.order_details.OrderDetailsViewModel
@@ -33,4 +35,8 @@ fun viewModelModule() = module {
     viewModel { OrderDetailsViewModel(get())}
     viewModel { ListOrdersViewModel(get()) }
     viewModel { ProductViewModel(get()) }
+    viewModel { SaleReportViewModel(get()) }
+    viewModel { HomeViewModel(get()) }
+    viewModel { ChartViewModel(get()) }
+
 }
