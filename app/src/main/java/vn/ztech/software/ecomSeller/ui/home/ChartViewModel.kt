@@ -26,6 +26,7 @@ class ChartViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
     val error = MutableLiveData<CustomError>()
     val indicator = MutableLiveData<String>()
     val entries = MutableLiveData<List<Pair<Float, Float>>>()
+    val numberOfDays = MutableLiveData<Int>()
     var maxY: Float = 0f
     var maxX: Float = 0f
     fun generateEntries(it: Map<LocalDate, List<OrderWithTime>>) {
@@ -38,7 +39,19 @@ class ChartViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
             entriesValue.add(Pair(ChronoUnit.DAYS.between(entry.key, now).toFloat(), yValue))
         }
         maxX = it.size.toFloat()
-        entries.value = entriesValue
+        numberOfDays.value?.let {
+            for (i in 0 until it){
+                if (!isThisPointExisted(i, entriesValue)){
+                    entriesValue.add(Pair(i.toFloat(),0f))
+                }
+            }
+        }
+        entries.value = entriesValue.sortedBy { it.first }
+    }
+
+    private fun isThisPointExisted(i: Int, entriesValue: MutableList<Pair<Float, Float>>): Boolean {
+        val find = entriesValue.filter { it.first == i.toFloat() }
+        return find.isNotEmpty()
     }
 
     private fun getYValueBaseOnIndicator(value: List<OrderWithTime>, indicator: String): Float {

@@ -31,6 +31,7 @@
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2
+        android:layout_marginTop="12dp"
         android:id="@+id/pagerImportantInfo"
         android:saveEnabled="false"
         android:layout_width="match_parent"

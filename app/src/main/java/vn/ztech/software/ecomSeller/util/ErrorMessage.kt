@@ -10,7 +10,7 @@ import java.net.SocketTimeoutException
 fun errorMessage(
     e: CustomError
 ): CustomError {
-    Log.d("errorMessage", e.message.toString())
+    Log.d("errorMessage", e.e.toString())
     when (e) {
         is UnauthenticatedException -> return e
         is RefreshTokenExpiredException -> return e

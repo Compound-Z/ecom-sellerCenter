@@ -33,7 +33,7 @@ class HomeFragment : BaseFragment2<FragmentHomeBinding>() {
         TabLayoutMediator(binding.tabLayout, binding.pager) {tab, pos->
             tab.text =  Constants.SaleReportTimeOptions[pos].first
         }.attach()
-
+        binding.tabLayout.getTabAt(1)?.select()
         binding.swipeRefresh.isRefreshing = false
     }
 

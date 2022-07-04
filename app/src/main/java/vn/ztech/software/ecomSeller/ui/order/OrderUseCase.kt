@@ -65,8 +65,7 @@ class OrderUseCase(private val orderRepository: IOrderRepository): IOrderUserCas
 
     override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<Map<LocalDate, List<OrderWithTime>>> = flow {
         val orders = orderRepository.getOrdersBaseOnTime(getOrderBaseOnTimeRequest)
-        val orders2 = orders.sortedByDescending{ it.updatedAt }
-        val orders3 = orders2.map {
+        val orders3 = orders.map {
             OrderWithTime(it,
             LocalDate.parse(it.createdAt.split("T").get(0)))
         }.groupBy {

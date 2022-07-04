@@ -21,9 +21,8 @@ import java.time.LocalDate
 
 class SaleReportViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
     val loading = MutableLiveData<Boolean>()
-    val orders = MutableLiveData<Map<LocalDate, List<OrderWithTime>>>()
+    val orders = MutableLiveData<MutableMap<Int,Map<LocalDate, List<OrderWithTime>>>>()
     val error = MutableLiveData<CustomError>()
-    val numberOfDays = MutableLiveData<Int>()
     val indicator = MutableLiveData<String>()
 
     fun getOrdersBaseOnTime(numberOfDays: Int?, isLoadingEnabled: Boolean = true) {
@@ -40,7 +39,12 @@ class SaleReportViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                     }
                     is LoadState.Loaded -> {
                         loading.value = false
-                        orders.value = it.data
+                        if(orders.value == null) orders.value = mutableMapOf()
+                        val temp = orders.value
+                        temp?.let {map->
+                            map[numberOfDays] = it.data
+                        }
+                        orders.value = temp
                     }
                     is LoadState.Error -> {
                         loading.value = false

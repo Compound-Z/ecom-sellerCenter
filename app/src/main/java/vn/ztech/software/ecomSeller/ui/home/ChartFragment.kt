@@ -1,16 +1,18 @@
 package vn.ztech.software.ecomSeller.ui.home
 
 import android.graphics.Color
-import android.graphics.DashPathEffect
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IFillFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.Utils
 import kotlinx.android.synthetic.main.fragment_chart.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -19,42 +21,47 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.databinding.FragmentChartBinding
 import vn.ztech.software.ecomSeller.model.OrderWithTime
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import java.text.DateFormat
 import java.time.LocalDate
+import kotlin.math.ceil
+import kotlin.math.floor
 
 
-class ChartFragment : BaseFragment2<FragmentChartBinding>() {
+class ChartFragment : BaseFragment2<FragmentChartBinding>(),
+    OnChartValueSelectedListener {
     private val viewModel: ChartViewModel by viewModel()
     private val saleReportViewModel: SaleReportViewModel by sharedViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("indicator") }?.let {
             viewModel.indicator.value = it.getString("indicator")
-            viewModel.orders.value = saleReportViewModel.orders.value
         }
+        arguments?.takeIf { it.containsKey("numberOfDays") }?.let {
+            viewModel.numberOfDays.value = it.getInt("numberOfDays")
+            viewModel.orders.value = saleReportViewModel.orders.value?.get(viewModel.numberOfDays.value)
+        }
+
+
     }
 
     override fun setUpViews() {
         super.setUpViews()
-        toastCenter("inside ChartFragment")
         binding.chart.setBackgroundColor(Color.WHITE)
         binding.chart.description.isEnabled = false
         binding.chart.setTouchEnabled(true)
 
-////        // set listeners
-////        chart.setOnChartValueSelectedListener(this)
-////        chart.setDrawGridBackground(false)
-////
-////
-////        // create marker to display box when values are selected
-////        val mv = MyMarkerView(this, R.layout.custom_marker_view)
-////
-////        // Set the marker to the chart
-////
-////        // Set the marker to the chart
-////        mv.setChartView(chart)
-////        chart.marker = mv
-//
-//
+        // set listeners
+        binding.chart.setOnChartValueSelectedListener(this)
+        binding.chart.setDrawGridBackground(false)
+
+
+        // create marker to display box when values are selected
+        val mv = MyMarkerView(requireContext(), R.layout.custom_marker_view)
+
+        // Set the marker to the chart
+        mv.setChartView(chart)
+        binding.chart.marker = mv
+
         // enable scaling and dragging
         binding.chart.isDragEnabled = true
         binding.chart.setScaleEnabled(true)
@@ -64,6 +71,7 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
 
         /**axis*/
         binding.chart.axisRight.isEnabled = false
+        binding.chart.xAxis.valueFormatter = MyValueFormatter()
     }
 
     override fun observeView() {
@@ -81,21 +89,25 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
     }
 
     private fun setUpChart(it: List<Pair<Float, Float>>) {
-        binding.chart.axisLeft.axisMaximum = 200f/*viewModel.maxY * 120 / 100*/ /**set y axis with max value of 120% compare to max value of entries*/
-        binding.chart.axisLeft.axisMinimum = 10f
+        binding.chart.axisLeft.axisMaximum = viewModel.maxY * 120 / 100 /**set y axis with max value of 120% compare to max value of entries*/
+        binding.chart.axisLeft.axisMinimum = 0f
 
-        val entries = java.util.ArrayList<Entry>()
-
-        for (i in 0 until 45) {
-            val `val`: Float = (Math.random() * 200).toFloat() - 30
-            entries.add(Entry(i.toFloat(), `val`, resources.getDrawable(R.drawable.star)))
-        }
-        Log.d("ENTRIES", entries.toString())
-
-//        val entries = ArrayList<Entry>()
-//        it.forEach {
-//            entries.add(Entry(it.first, it.second))
+//        /**test data*/
+//        val entries = java.util.ArrayList<Entry>()
+//
+//        for (i in 45 downTo  0) {
+//            val `val`: Float = (Math.random() * 200).toFloat() - 30
+//            entries.add(Entry(i.toFloat(), `val`, resources.getDrawable(R.drawable.star)))
 //        }
+//        Log.d("ENTRIES TEST", entries.toString())
+
+
+        val entries = ArrayList<Entry>()
+        it.forEach {
+            entries.add(Entry(it.first, it.second, resources.getDrawable(R.drawable.star)))
+        }
+                Log.d("ENTRIES", entries.toString())
+
         val set1: LineDataSet
         if (binding.chart.data != null && binding.chart.data.dataSetCount > 0){
             set1 = chart.data.getDataSetByIndex(0) as LineDataSet
@@ -104,11 +116,8 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
             binding.chart.data.notifyDataChanged()
             binding.chart.notifyDataSetChanged()
         }else{
-            set1 = LineDataSet(entries,"DataSet 1")
+            set1 = LineDataSet(entries,"${viewModel.indicator.value?:"sale"} chart in ${viewModel.numberOfDays.value?:""} days")
             set1.setDrawIcons(false)
-
-            // draw dashed line
-            set1.enableDashedLine(10f, 5f, 0f)
 
             // black lines and points
             set1.color = Color.BLACK
@@ -123,13 +132,8 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
             set1.setDrawCircleHole(false)
 
 
-            // customize legend entry
-            set1.formLineWidth = 1f
-            set1.formLineDashEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
-            set1.formSize = 15f
-
             // text size of values
-            set1.valueTextSize = 9f
+            set1.valueTextSize = 12f
 
             // draw selection line as dashed
             set1.enableDashedHighlightLine(10f, 5f, 0f)
@@ -141,7 +145,7 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
             // set color of filled area
             if (Utils.getSDKInt() >= 18) {
                 // drawables only supported on api level 18 and above
-                val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_red)
+                val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_blue)
                 set1.fillDrawable = drawable
             } else {
                 set1.fillColor = Color.BLACK
@@ -150,8 +154,16 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
             val dataSets = ArrayList<ILineDataSet>()
             dataSets.add(set1)
             val data = LineData(dataSets)
+            data.setValueFormatter(DefaultValueFormatter(0))
+            if(set1.values.isEmpty()){
+                binding.chart.data = null
+            }else{
+                binding.chart.data = data
+            }
 
-            binding.chart.data = data
+
+            // draw points over time
+            chart.animateX(500)
         }
     }
 
@@ -163,6 +175,23 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>() {
         return FragmentChartBinding.inflate(layoutInflater)
     }
 
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+    }
+
+    override fun onNothingSelected() {
+    }
 
 
+}
+
+class MyValueFormatter : ValueFormatter() {
+    val now = LocalDate.now()
+    override fun getFormattedValue(value: Float): String {
+        if(ceil(value) == floor(value)){
+            var date = now.minusDays(value.toLong()).toString()
+            var dates = date.split("-")
+            return (dates[2] + "/" + dates[1])
+        }
+        return ""
+    }
 }

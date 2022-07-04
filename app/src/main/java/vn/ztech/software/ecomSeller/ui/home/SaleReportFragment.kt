@@ -14,18 +14,24 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.FragmentSaleReportBinding
+import vn.ztech.software.ecomSeller.model.OrderWithTime
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import vn.ztech.software.ecomSeller.util.extension.getAvgSale
+import vn.ztech.software.ecomSeller.util.extension.getNumberOfOrder
+import vn.ztech.software.ecomSeller.util.extension.getTotalSales
+import java.time.LocalDate
+import kotlin.properties.Delegates
 
 
 class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
     private lateinit var saleReportInformationInfoFragmentAdapter: SaleReportImportantInfoFragmentAdapter
     private val viewModel: SaleReportViewModel by sharedViewModel()
-
+    var numberOfDays by Delegates.notNull<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("numberOfDays") }?.let {
-            viewModel.numberOfDays.value = it.getInt("numberOfDays")
-            viewModel.getOrdersBaseOnTime(viewModel.numberOfDays.value)
+            numberOfDays = it.getInt("numberOfDays")
+            viewModel.getOrdersBaseOnTime(numberOfDays)
         }
     }
 
@@ -63,10 +69,9 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
     }
 
     private fun setUpTabs() {
-        saleReportInformationInfoFragmentAdapter = SaleReportImportantInfoFragmentAdapter(this@SaleReportFragment)
+        saleReportInformationInfoFragmentAdapter = SaleReportImportantInfoFragmentAdapter(this@SaleReportFragment, numberOfDays)
         binding.pagerImportantInfo.adapter = saleReportInformationInfoFragmentAdapter
         TabLayoutMediator(binding.tabLayoutImportantInfo, binding.pagerImportantInfo) {tab, pos->
-            tab.text =  Constants.SaleReportIndicator[pos]
         }.attach()
         setupCustomTabs(binding.tabLayoutImportantInfo)
     }
@@ -81,10 +86,29 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
     private fun getCustomView(index: Int, string: String): View {
         val view = layoutInflater.inflate(R.layout.custom_tab_important_info, null)
         view.tvTitle.text = string
-        view.tvContent.text = "Test content here ${index}"
+        var content = ""
+        when(index){
+            0 -> {
+                viewModel.orders.value?.get(numberOfDays)?.let {
+                    content = it.getNumberOfOrder().toString()
+                }
+            }
+            1 -> {
+                viewModel.orders.value?.get(numberOfDays)?.let {
+                    content = it.getTotalSales().toString()
+                }
+            }
+            2 -> {
+                viewModel.orders.value?.get(numberOfDays)?.let {
+                    content = it.getAvgSale().toString()
+                }
+            }
+        }
+        view.tvContent.text = content
+
         return view
     }
-    class SaleReportImportantInfoFragmentAdapter(fragment: SaleReportFragment) : FragmentStateAdapter(fragment) {
+    class SaleReportImportantInfoFragmentAdapter(fragment: SaleReportFragment, val numberOfDays: Int) : FragmentStateAdapter(fragment) {
 
         override fun getItemCount(): Int {
             return Constants.SaleReportIndicator.size
@@ -94,6 +118,7 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
             val fragment = ChartFragment()
             fragment.arguments = Bundle().apply {
                 putString("indicator", Constants.SaleReportIndicator[position])
+                putInt("numberOfDays", numberOfDays)
             }
             return fragment
         }
