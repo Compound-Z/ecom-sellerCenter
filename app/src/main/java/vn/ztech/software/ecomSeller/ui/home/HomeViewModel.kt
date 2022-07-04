@@ -20,7 +20,7 @@ private const val TAG = "HomeViewModel"
 class HomeViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
 //    val loading = MutableLiveData<Boolean>()
 //    val orders = MutableLiveData<List<Order>>()
-//    val error = MutableLiveData<CustomError>()
+    val error = MutableLiveData<CustomError>()
 //    fun getOrdersBaseOnTime(numberOfDays: Int, isLoadingEnabled: Boolean = true) {
 //        viewModelScope.launch {
 //            orderUseCase.getOrdersBaseOnTime(GetOrderBaseOnTimeRequest(numberOfDays)).flowOn(Dispatchers.IO).toLoadState().collect {
@@ -40,7 +40,7 @@ class HomeViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
 //            }
 //        }
 //    }
-//    fun clearErrors() {
-//        error.value = null
-//    }
+    fun clearErrors() {
+        error.value = null
+    }
 }

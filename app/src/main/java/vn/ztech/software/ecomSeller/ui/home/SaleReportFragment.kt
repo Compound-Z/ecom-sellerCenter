@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.distinctUntilChanged
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -26,6 +27,7 @@ import kotlin.properties.Delegates
 class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
     private lateinit var saleReportInformationInfoFragmentAdapter: SaleReportImportantInfoFragmentAdapter
     private val viewModel: SaleReportViewModel by sharedViewModel()
+    private val homeViewModel: HomeViewModel by sharedViewModel()
     var numberOfDays by Delegates.notNull<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,11 +61,11 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
                 setUpTabs()
             }
         }
-        viewModel.error.observe(viewLifecycleOwner){
+        viewModel.error.distinctUntilChanged().observe(viewLifecycleOwner){
             it?.let {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                handleError(it)
+                homeViewModel.error.value = it
             }
         }
     }
@@ -126,5 +128,10 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
 
     override fun setViewBinding(): FragmentSaleReportBinding {
         return FragmentSaleReportBinding.inflate(layoutInflater)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.clearErrors()
     }
 }

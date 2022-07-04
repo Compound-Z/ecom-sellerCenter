@@ -31,6 +31,7 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>(),
     OnChartValueSelectedListener {
     private val viewModel: ChartViewModel by viewModel()
     private val saleReportViewModel: SaleReportViewModel by sharedViewModel()
+    private val homeViewModel: HomeViewModel by sharedViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey("indicator") }?.let {
@@ -84,6 +85,11 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>(),
         viewModel.entries.observe(viewLifecycleOwner){
             it?.let {
                 setUpChart(it)
+            }
+        }
+        viewModel.error.observe(viewLifecycleOwner){
+            it?.let {
+                homeViewModel.error.value = it
             }
         }
     }
@@ -179,6 +185,11 @@ class ChartFragment : BaseFragment2<FragmentChartBinding>(),
     }
 
     override fun onNothingSelected() {
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.clearErrors()
     }
 
 
