@@ -41,4 +41,6 @@ object Constants {
         "Sales",
         "Average sales",
     )
+
+    const val NETWORK_PAGE_SIZE = 4
 }

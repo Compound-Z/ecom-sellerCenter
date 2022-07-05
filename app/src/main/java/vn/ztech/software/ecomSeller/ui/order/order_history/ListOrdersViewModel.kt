@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.ui.order.order_history
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -21,7 +22,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
     val currentSelectedOrder = MutableLiveData<Order>()
     val statusFilter = MutableLiveData<String>()
     val loading = MutableLiveData<Boolean>()
-    val orders = MutableLiveData<List<Order>>()
+    val orders = MutableLiveData<PagingData<Order>>()
     val order = MutableLiveData<Order>()
     val error = MutableLiveData<CustomError>()
 
@@ -34,8 +35,8 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                         if (isLoadingEnabled) loading.value = true
                     }
                     is LoadState.Loaded -> {
-                        loading.value = false
                         orders.value = it.data
+//                        loading.value = false
                     }
                     is LoadState.Error -> {
                         loading.value = false
@@ -107,7 +108,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                     }
                     is LoadState.Loaded -> {
                         loading.value = false
-                        orders.value = it.data
+//                        orders.value = it.data
                     }
                     is LoadState.Error -> {
                         loading.value = false
@@ -127,7 +128,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                     }
                     is LoadState.Loaded -> {
                         loading.value = false
-                        orders.value = it.data
+//                        orders.value = it.data
                     }
                     is LoadState.Error -> {
                         loading.value = false

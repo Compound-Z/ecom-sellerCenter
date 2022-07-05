@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.net.toUri
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import vn.ztech.software.ecomSeller.R
@@ -13,10 +15,9 @@ import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.ItemOrderHistoryBinding
 import vn.ztech.software.ecomSeller.model.Order
 
-class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
+class ListOrderAdapter( val context: Context,
                         val onClickListener: OnClickListener
-) : RecyclerView.Adapter<ListOrderAdapter.ViewHolder>() {
-    var orders: List<Order> = ordersArg
+) : PagingDataAdapter<Order, ListOrderAdapter.ViewHolder>(OrderComparator) {
 
     inner class ViewHolder(private val binding: ItemOrderHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -59,10 +60,10 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(orders[position])
+        holder.bind(getItem(position)!!) //todo: should be changed back to ?.let
     }
 
-    override fun getItemCount() = orders.size
+//    override fun getItemCount() = orders.size
     private fun setUIBaseOnOrderStatus(tv: TextView, status: String){
         tv.apply {
             text = status
@@ -97,6 +98,17 @@ class ListOrderAdapter( val context: Context, ordersArg: List<Order>,
         fun onClick(order: Order)
         fun onClickButtonViewDetail(order: Order)
         fun onCopyClipBoardClicked(orderId: String) {
+        }
+    }
+
+    object OrderComparator: DiffUtil.ItemCallback<Order>() {
+        override fun areItemsTheSame(oldItem: Order, newItem: Order): Boolean {
+            // Id is unique.
+            return oldItem._id == newItem._id
+        }
+
+        override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
+            return oldItem == newItem
         }
     }
 }
