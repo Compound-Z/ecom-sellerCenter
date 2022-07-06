@@ -40,6 +40,7 @@ class ProductViewModel(
     val origins = MutableLiveData<List<Country>>()
     /**add product*/
     val currentSelectedProduct = MutableLiveData<Product>()
+    val currentEditType = MutableLiveData<String>()
     val currentProductInput = MutableLiveData<CreateProductRequest>()
     val currentQuickProductInput = MutableLiveData<QuickUpdateProductRequest>()
 

@@ -54,6 +54,9 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
                 imgList.add(it.imageUrl.toUri())
             }
         }
+        arguments?.takeIf { it.containsKey("editType") }?.let {
+            viewModel.currentEditType.value = arguments?.getString("editType")
+        }
         /**if product argument does not exist*/
         if (categoryViewModel.originalCategories.value == null){
             categoryViewModel.getCategories()
@@ -93,9 +96,16 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
             binding.addProAppBar.topAppBar.title = "Add new product"
             binding.btAddEditProduct.text = "Add new product"
         }else{
-            /**setup views for editProduct feature*/
-            binding.addProAppBar.topAppBar.title = "Update product"
-            binding.btAddEditProduct.text = "Update product"
+            if(viewModel.currentEditType.value == "forkProduct"){
+                /**setup views for editProduct feature*/
+                binding.addProAppBar.topAppBar.title = "Fork product"
+                binding.btAddEditProduct.text = "Fork this product"
+            }else{
+                /**setup views for editProduct feature*/
+                binding.addProAppBar.topAppBar.title = "Update product"
+                binding.btAddEditProduct.text = "Update product"
+            }
+
         }
     }
 
@@ -179,10 +189,19 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
                 if(viewModel.currentSelectedProduct.value == null){
                     createNewProduct(viewModel.currentProductInput.value)
                 }else{
-                    updateCategory(
-                        viewModel.currentSelectedProduct.value?._id,
-                       viewModel.currentProductInput.value
-                    )
+                    /**if there is a tag forkProduct, fork this product instead of editing it*/
+                    /**forkProduct means creating a new product from an existing product, it saves time of users bcs they don't
+                     * have to type so much*/
+                    if (viewModel.currentEditType.value == "forkProduct"){
+                        createNewProduct(viewModel.currentProductInput.value)
+                    }else{
+                        if (viewModel.currentEditType.value == "fullEdit")
+                            updateCategory(
+                                viewModel.currentSelectedProduct.value?._id,
+                                viewModel.currentProductInput.value
+                            )
+                    }
+
                 }
             }
         }

@@ -217,6 +217,10 @@ class ProductFragment : Fragment() {
                         editProduct(productData)
                         true
                     }
+                    R.id.actionForkProduct -> {
+                        forkProduct(productData)
+                        true
+                    }
                     R.id.actionDelete -> {
                         deleteProduct(productData)
                         true
@@ -229,11 +233,22 @@ class ProductFragment : Fragment() {
         }
     }
 
+    private fun forkProduct(productData: Product) {
+        findNavController().navigate(
+            R.id.action_productFragment_to_addEditProductFragment,
+            bundleOf(
+                "product" to productData,
+                "editType" to "forkProduct"
+
+            ))
+    }
+
     private fun editProduct(productData: Product) {
         findNavController().navigate(
             R.id.action_productFragment_to_addEditProductFragment,
             bundleOf(
-                "product" to productData
+                "product" to productData,
+                "editType" to "fullEdit"
             ))
     }
 

@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/actionFullEdit"
         android:title="Full Edit"/>
+    <item android:id="@+id/actionForkProduct"
+        android:title="Fork Product"/>
     <item android:id="@+id/actionDelete"
         android:title="Delete"/>
 </menu>
