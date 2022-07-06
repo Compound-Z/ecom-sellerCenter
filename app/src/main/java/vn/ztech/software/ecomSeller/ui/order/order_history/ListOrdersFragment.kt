@@ -47,6 +47,9 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             statusFilter = getString("statusFilter").toString()
             viewModel.statusFilter.value = statusFilter
         }
+        setupAdapter()
+        setupSpinner()
+        setUpSearchView()
     }
 
     override fun onResume() {
@@ -60,9 +63,9 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
 
     override fun setUpViews() {
         super.setUpViews()
-        setupAdapter()
-        setupSpinner()
-        setUpSearchView()
+//        setupAdapter()
+//        setupSpinner()
+//        setUpSearchView()
     }
     override fun observeView() {
         super.observeView()
@@ -78,11 +81,11 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
                 }
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.orders.observe(viewLifecycleOwner){
                 it?.let {
                     binding.listOrders.adapter?.apply {
-                        adapter.submitData(lifecycle,it)
+                        adapter.submitData(viewLifecycleOwner.lifecycle,it)
 //                        notifyDataSetChanged()
                     }
                 }

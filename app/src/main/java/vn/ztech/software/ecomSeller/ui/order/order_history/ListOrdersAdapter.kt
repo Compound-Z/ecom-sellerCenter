@@ -108,7 +108,7 @@ class ListOrderAdapter( val context: Context,
         }
 
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
-            return oldItem == newItem
+            return oldItem.orderId == newItem.orderId
         }
     }
 }

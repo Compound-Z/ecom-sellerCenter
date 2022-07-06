@@ -4,8 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import vn.ztech.software.ecomSeller.api.request.UpdateOrderStatusBody
@@ -29,7 +31,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
     fun getOrders(statusFilter: String?, isLoadingEnabled: Boolean = true) {
         statusFilter ?: throw CustomError(customMessage = "System error")
         viewModelScope.launch {
-            orderUseCase.getOrders(statusFilter).flowOn(Dispatchers.IO).toLoadState().collect {
+            orderUseCase.getOrders(statusFilter).flowOn(Dispatchers.IO).cachedIn(viewModelScope).toLoadState().collect {
                 when (it) {
                     LoadState.Loading -> {
                         if (isLoadingEnabled) loading.value = true
