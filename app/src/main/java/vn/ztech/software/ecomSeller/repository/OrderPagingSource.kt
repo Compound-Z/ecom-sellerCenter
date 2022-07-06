@@ -13,21 +13,20 @@ class OrderPagingSource(val request: GetOrdersRequest, private val orderApi: IOr
 
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Order> {
-
         return try {
             Log.d("xxx","***")
             val position = params.key ?: 1
             request.page = position
             val response = orderApi.getOrders(request)
-            val pv = if (position == 1) null else position - 1
-            val nk = if(response.docs.isEmpty()) null else position + 1
+            val pv = response.prevPage
+            val nk = response.nextPage
             Log.d("xxxpv", pv.toString())
             Log.d("xxxpos", position.toString())
             Log.d("xxxnk", nk.toString())
 
             LoadResult.Page(data = response.docs,
-                prevKey = if (position == 1) null else position - 1,
-                nextKey = if(response.docs.isEmpty()) null else position + 1)
+                prevKey = response.prevPage,
+                nextKey = response.nextPage)
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

@@ -31,7 +31,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
     fun getOrders(statusFilter: String?, isLoadingEnabled: Boolean = true) {
         statusFilter ?: throw CustomError(customMessage = "System error")
         viewModelScope.launch {
-            orderUseCase.getOrders(statusFilter).flowOn(Dispatchers.IO).cachedIn(viewModelScope).toLoadState().collect {
+            orderUseCase.getOrders(statusFilter).cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when (it) {
                     LoadState.Loading -> {
                         if (isLoadingEnabled) loading.value = true

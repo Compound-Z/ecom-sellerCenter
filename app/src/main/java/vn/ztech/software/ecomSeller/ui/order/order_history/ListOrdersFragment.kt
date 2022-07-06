@@ -15,6 +15,8 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.item_order_history.*
 import kotlinx.coroutines.launch
@@ -47,14 +49,20 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             statusFilter = getString("statusFilter").toString()
             viewModel.statusFilter.value = statusFilter
         }
+        Log.d("xxx", viewModel.orders.value.toString())
+        if(viewModel.orders.value == null){
+            viewModel.getOrders(viewModel.statusFilter.value)
+        }
         setupAdapter()
         setupSpinner()
         setUpSearchView()
+
+
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getOrders(viewModel.statusFilter.value)
+        adapter.refresh()
     }
 
     override fun setViewBinding(): FragmentListOrderBinding {
@@ -89,7 +97,7 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
 //                        notifyDataSetChanged()
                     }
                 }
-            }
+        }
         }
 
         viewModel.order.observe(viewLifecycleOwner){
@@ -174,6 +182,7 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
                 handleAction(order)
             }
         })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.listOrders.adapter = adapter
         adapter.addLoadStateListener {loadState->
             // show empty list
