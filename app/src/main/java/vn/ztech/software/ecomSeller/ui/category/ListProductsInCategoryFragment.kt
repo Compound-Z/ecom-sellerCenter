@@ -2,6 +2,7 @@ package vn.ztech.software.ecomSeller.ui.category
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,16 +12,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentListProductsInCategoryBinding
+import vn.ztech.software.ecomSeller.exception.RefreshTokenExpiredException
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.MyOnFocusChangeListener
+import vn.ztech.software.ecomSeller.ui.auth.LoginSignupActivity
 import vn.ztech.software.ecomSeller.ui.common.ItemDecorationRecyclerViewPadding
 import vn.ztech.software.ecomSeller.ui.product.ListProductsAdapter
+import vn.ztech.software.ecomSeller.ui.splash.ISplashUseCase
+import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
 
 open class ListProductsInCategoryFragment : Fragment() {
@@ -55,7 +63,7 @@ open class ListProductsInCategoryFragment : Fragment() {
     private fun setViews() {
         setHomeTopAppBar()
         if (context != null) {
-            setUpProductAdapter(viewModel.products.value)
+            setUpProductAdapter()
             binding.productsRecyclerView.apply {
                 val gridLayoutManager = GridLayoutManager(context, 2)
                 gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -63,11 +71,7 @@ open class ListProductsInCategoryFragment : Fragment() {
                         return when (listProductsAdapter.getItemViewType(position)) {
                             2 -> 2 //ad
                             else -> {
-                                val proCount = listProductsAdapter.data.count { it is Product }
-                                val adCount = listProductsAdapter.data.size - proCount
-                                val totalCount = proCount + (adCount * 2)
-                                // product, full for last item
-                                if (position + 1 == listProductsAdapter.data.size && totalCount % 2 == 1) 2 else 1
+                               1
                             }
                         }
                     }
@@ -110,21 +114,30 @@ open class ListProductsInCategoryFragment : Fragment() {
                 showErrorDialog(it)
             }
         }
-        viewModel.products.observe(viewLifecycleOwner) { listProducts->
-            if (listProducts.isNotEmpty()) {
-                binding.tvNoProductFound.visibility = View.GONE
-                binding.loaderLayout.circularLoader.hideAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                binding.productsRecyclerView.visibility = View.VISIBLE
-                binding.productsRecyclerView.adapter?.apply {
-                    listProductsAdapter.data =
-                        getMixedDataList(listProducts, getAdsList())
-                    notifyDataSetChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.products.observe(viewLifecycleOwner) { products ->
+                products?.let {
+                    binding.productsRecyclerView.adapter?.apply {
+                        listProductsAdapter.submitData(lifecycle, products)
+                    }
                 }
-            }else{
-                binding.tvNoProductFound.visibility = View.VISIBLE
             }
         }
+//        viewModel.products.observe(viewLifecycleOwner) { listProducts->
+//            if (listProducts.isNotEmpty()) {
+//                binding.tvNoProductFound.visibility = View.GONE
+//                binding.loaderLayout.circularLoader.hideAnimationBehavior
+//                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+//                binding.productsRecyclerView.visibility = View.VISIBLE
+//                binding.productsRecyclerView.adapter?.apply {
+//                    listProductsAdapter.data =
+//                        getMixedDataList(listProducts, getAdsList())
+//                    notifyDataSetChanged()
+//                }
+//            }else{
+//                binding.tvNoProductFound.visibility = View.VISIBLE
+//            }
+//        }
     }
 
     private fun setHomeTopAppBar() {
@@ -194,8 +207,8 @@ open class ListProductsInCategoryFragment : Fragment() {
 //        }
     }
 
-    private fun setUpProductAdapter(productsList: List<Product>?) {
-        listProductsAdapter = ListProductsAdapter(productsList ?: emptyList(), requireContext())
+    private fun setUpProductAdapter() {
+        listProductsAdapter = ListProductsAdapter(requireContext())
         listProductsAdapter.onClickListener =  object : ListProductsAdapter.OnClickListener {
 
             override fun onClickAdvancedActionsButton(view: View, productData: Product) {
@@ -213,6 +226,46 @@ open class ListProductsInCategoryFragment : Fragment() {
             }
 
         }
+
+        listProductsAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        binding.productsRecyclerView.adapter = listProductsAdapter
+        listProductsAdapter.addLoadStateListener {loadState->
+            // show empty list
+            if (loadState.refresh is androidx.paging.LoadState.Loading ||
+                loadState.append is androidx.paging.LoadState.Loading){
+                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                binding.loaderLayout.circularLoader.showAnimationBehavior
+            }
+            else {
+                binding.loaderLayout.circularLoader.hideAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+                // If we have an error, show a toast
+                val errorState = when {
+                    loadState.append is androidx.paging.LoadState.Error -> loadState.append as androidx.paging.LoadState.Error
+                    loadState.prepend is androidx.paging.LoadState.Error ->  loadState.prepend as androidx.paging.LoadState.Error
+                    loadState.refresh is androidx.paging.LoadState.Error -> loadState.refresh as androidx.paging.LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    handleError(CustomError(it.error, it.error.message?:"System error"))
+                }
+            }
+        }
+    }
+
+    fun handleError(error: CustomError){
+        if(error is RefreshTokenExpiredException){
+            openLogInSignUpActivity(ISplashUseCase.PAGE.LOGIN)
+        }else{
+            showErrorDialog(error)
+        }
+    }
+
+    fun openLogInSignUpActivity(page: ISplashUseCase.PAGE){
+        val intent = Intent(activity, LoginSignupActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.putExtra("PAGE", page)
+        startActivity(intent)
     }
 
     private fun getMixedDataList(data: List<Product>, adsList: List<Int>): List<Any> {

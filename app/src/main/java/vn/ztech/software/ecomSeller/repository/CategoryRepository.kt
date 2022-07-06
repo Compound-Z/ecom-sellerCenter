@@ -1,6 +1,11 @@
 package vn.ztech.software.ecomSeller.repository
 
+import ProductInCategoryPagingSource
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -8,17 +13,20 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import vn.ztech.software.ecomSeller.api.ICategoryApi
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
+import vn.ztech.software.ecomSeller.api.request.GetProductsInCategoryRequest
+import vn.ztech.software.ecomSeller.api.request.GetProductsRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
+import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import java.io.File
 
 interface ICategoryRepository {
     suspend fun getListCategories(): List<Category>
-    suspend fun getListProductsInCategory(category: String): List<Product>
+    suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>>
     suspend fun search(searchWords: String, searchWordsProduct: String): List<Product>
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createCategory(createCategoryRequest: CreateCategoryRequest): Category
@@ -31,8 +39,17 @@ class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryReposi
         return CategoryApi.getListCategories()
     }
 
-    override suspend fun getListProductsInCategory(category: String): List<Product> {
-        return CategoryApi.getListProductsInCategory(category)
+    override suspend fun getListProductsInCategory(category: String):  Flow<PagingData<Product>> {
+        return Pager(
+                config = PagingConfig(
+                    pageSize = Constants.NETWORK_PAGE_SIZE,
+                    enablePlaceholders = false,
+                ),
+                pagingSourceFactory = {
+                    ProductInCategoryPagingSource(category, GetProductsInCategoryRequest(), CategoryApi)
+                },
+                initialKey = 1
+        ).flow
     }
 
     override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): List<Product> {

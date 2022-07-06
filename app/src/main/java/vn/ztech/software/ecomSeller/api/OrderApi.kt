@@ -3,7 +3,7 @@ package vn.ztech.software.ecomSeller.api
 import androidx.annotation.Keep
 import retrofit2.http.*
 import vn.ztech.software.ecomSeller.api.request.*
-import vn.ztech.software.ecomSeller.api.response.GetOrdersRequest
+import vn.ztech.software.ecomSeller.api.request.GetOrdersRequest
 import vn.ztech.software.ecomSeller.api.response.PagedGetAllOrdersResponse
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.model.OrderDetails

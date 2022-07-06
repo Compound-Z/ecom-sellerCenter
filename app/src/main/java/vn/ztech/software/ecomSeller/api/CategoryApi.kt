@@ -4,8 +4,10 @@ import androidx.annotation.Keep
 import okhttp3.MultipartBody
 import retrofit2.http.*
 import vn.ztech.software.ecomSeller.api.request.CreateCategoryRequest
+import vn.ztech.software.ecomSeller.api.request.GetProductsInCategoryRequest
 import vn.ztech.software.ecomSeller.api.request.SearchProductInCategoryRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
+import vn.ztech.software.ecomSeller.api.response.PagedGetAllProductsResponse
 import vn.ztech.software.ecomSeller.api.response.UpdateCategoryResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
 import vn.ztech.software.ecomSeller.model.Category
@@ -17,7 +19,7 @@ interface ICategoryApi{
     suspend fun getListCategories(): List<Category>
 
     @GET("/api/v1/categories/{category}")
-    suspend fun getListProductsInCategory(@Path("category")category: String): List<Product>
+    suspend fun getListProductsInCategory(@Path("category")category: String, @Body getProductsInCategoryRequest: GetProductsInCategoryRequest): PagedGetAllProductsResponse
 
     @POST("/api/v1/categories/search/{category_name}")
     suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): List<Product>

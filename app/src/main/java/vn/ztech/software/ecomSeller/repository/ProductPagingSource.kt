@@ -1,22 +1,20 @@
-package vn.ztech.software.ecomSeller.repository
-
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import vn.ztech.software.ecomSeller.api.IOrderApi
-import vn.ztech.software.ecomSeller.api.request.GetOrdersRequest
-import vn.ztech.software.ecomSeller.model.Order
+import vn.ztech.software.ecomSeller.api.IProductApi
+import vn.ztech.software.ecomSeller.api.request.GetProductsRequest
+import vn.ztech.software.ecomSeller.model.Product
 import java.lang.Exception
 
-class OrderPagingSource(val request: GetOrdersRequest, private val orderApi: IOrderApi): PagingSource<Int, Order>() {
+class ProductPagingSource (val request: GetProductsRequest, private val productApi: IProductApi): PagingSource<Int, Product>() {
 
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Order> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             Log.d("xxx","***")
             val position = params.key ?: 1
             request.page = position
-            val response = orderApi.getOrders(request)
+            val response = productApi.getListProducts(request)
             val pv = response.prevPage
             val nk = response.nextPage
             Log.d("xxxpv", pv.toString())
@@ -31,11 +29,8 @@ class OrderPagingSource(val request: GetOrdersRequest, private val orderApi: IOr
         }
 
     }
-    //todo: anchorPos, null next.
-    //todo: fix bug: keep position ussing anchor
-    //todo: fix bug: reload page is cut
 
-    override fun getRefreshKey(state: PagingState<Int, Order>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
         val key = state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)

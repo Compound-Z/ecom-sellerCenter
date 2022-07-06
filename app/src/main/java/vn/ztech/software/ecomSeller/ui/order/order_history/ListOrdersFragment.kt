@@ -188,12 +188,13 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             // show empty list
             if (loadState.refresh is androidx.paging.LoadState.Loading ||
                 loadState.append is androidx.paging.LoadState.Loading){
-                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
                 binding.loaderLayout.circularLoader.showAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
             }
             else {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+
                 // If we have an error, show a toast
                 val errorState = when {
                     loadState.append is androidx.paging.LoadState.Error -> loadState.append as androidx.paging.LoadState.Error

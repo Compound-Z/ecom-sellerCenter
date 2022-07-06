@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.net.toUri
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
@@ -16,13 +18,11 @@ import vn.ztech.software.ecomSeller.databinding.ItemProductListBinding
 import vn.ztech.software.ecomSeller.databinding.LayoutHomeAdBinding
 import vn.ztech.software.ecomSeller.model.Product
 
-class ListProductsAdapter(proList: List<Any>, private val context: Context) :
-	RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ListProductsAdapter(private val context: Context) :
+	PagingDataAdapter<Product, RecyclerView.ViewHolder>(ProductComparator) {
 
-	var data = proList
 
 	lateinit var onClickListener: OnClickListener
-//	private val sessionManager = ShoppingAppSessionManager(context)
 
 	inner class ItemViewHolder(binding: ItemProductListBinding) :
 		RecyclerView.ViewHolder(binding.root) {
@@ -91,13 +91,12 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 	}
 
 	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-		when (val proData = data[position]) {
-			is Int -> (holder as AdViewHolder).adImageView.setImageResource(proData)
+		when (val proData = getItem(position)) {
+//			is Int -> (holder as AdViewHolder).adImageView.setImageResource(proData)
 			is Product -> (holder as ItemViewHolder).bind(proData)
 		}
 	}
 
-	override fun getItemCount(): Int = data.size
 
 	companion object {
 		const val VIEW_TYPE_PRODUCT = 1
@@ -105,8 +104,8 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 	}
 
 	override fun getItemViewType(position: Int): Int {
-		return when (data[position]) {
-			is Int -> VIEW_TYPE_AD
+		return when (getItem(position)) {
+//			is Int -> VIEW_TYPE_AD
 			is Product -> VIEW_TYPE_PRODUCT
 			else -> VIEW_TYPE_PRODUCT
 		}
@@ -115,5 +114,15 @@ class ListProductsAdapter(proList: List<Any>, private val context: Context) :
 	interface OnClickListener {
 		fun onClickAdvancedActionsButton(view: View, productData: Product)
 		fun onEditClick(productData: Product)
+	}
+	object ProductComparator: DiffUtil.ItemCallback<Product>() {
+		override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
+			// Id is unique.
+			return oldItem._id == newItem._id
+		}
+
+		override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
+			return oldItem.name == newItem.name
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package vn.ztech.software.ecomSeller.ui.product
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
@@ -13,7 +14,7 @@ import vn.ztech.software.ecomSeller.util.CustomError
 import java.io.File
 
 interface IListProductUseCase{
-    suspend fun getListProducts(): Flow<List<Product>>
+    suspend fun getListProducts(): Flow<PagingData<Product>>
     suspend fun search(searchWords: String): Flow<List<Product>>
     suspend fun getOrigins(): Flow<List<Country>>
     suspend fun uploadImage(file: File): Flow<UploadImageResponse>
@@ -25,9 +26,8 @@ interface IListProductUseCase{
 }
 
 class ListProductsUseCase(private val productRepository: IProductRepository): IListProductUseCase {
-    override suspend fun getListProducts(): Flow<List<Product>> = flow{
-        val listProducts = productRepository.getListProducts()
-        emit(listProducts)
+    override suspend fun getListProducts(): Flow<PagingData<Product>>{
+        return productRepository.getListProducts()
     }
 
     override suspend fun search(searchWords: String): Flow<List<Product>> = flow{

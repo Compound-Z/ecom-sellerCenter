@@ -3,12 +3,10 @@ package vn.ztech.software.ecomSeller.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import vn.ztech.software.ecomSeller.api.IOrderApi
 import vn.ztech.software.ecomSeller.api.request.*
-import vn.ztech.software.ecomSeller.api.response.GetOrdersRequest
-import vn.ztech.software.ecomSeller.api.response.PagedGetAllOrdersResponse
+import vn.ztech.software.ecomSeller.api.request.GetOrdersRequest
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.model.OrderDetails
