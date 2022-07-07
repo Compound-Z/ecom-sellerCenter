@@ -17,8 +17,8 @@ interface IOrderRepository{
     suspend fun getOrders(statusFilter: String): Flow<PagingData<Order>>
     suspend fun getOrderDetails(orderId: String): OrderDetails
     suspend fun updateOrderStatus(orderId: String, updateOrderStatusBody: UpdateOrderStatusBody): Order
-    suspend fun searchByOrderId(searchWords: String, statusFilter: String): List<Order>
-    suspend fun searchByUserName(searchWords: String, statusFilter: String): List<Order>
+    suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<PagingData<Order>>
+    suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<PagingData<Order>>
     suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): List<Order>
 }
 
@@ -51,11 +51,29 @@ class OrderRepository(private val orderApi: IOrderApi): IOrderRepository{
         return orderApi.updateOrderStatus(_id, updateOrderStatusBody)
     }
 
-    override suspend fun searchByOrderId(searchWords: String, statusFilter: String): List<Order> {
-        return orderApi.searchByOrderId(SearchOrderByIdRequest(searchWords, statusFilter))
+    override suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<PagingData<Order>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = {
+                SearchOrderByIdPagingSource(SearchOrderByIdRequest(searchWords, statusFilter),orderApi)
+            },
+            initialKey = 1
+        ).flow
     }
-    override suspend fun searchByUserName(searchWords: String, statusFilter: String): List<Order> {
-        return orderApi.searchByUserName(SearchOrderByNameRequest(searchWords, statusFilter))
+    override suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<PagingData<Order>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = {
+                SearchOrderByNamePagingSource(SearchOrderByNameRequest(searchWords, statusFilter),orderApi)
+            },
+            initialKey = 1
+        ).flow
     }
     override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): List<Order> {
         return orderApi.getOrdersBaseOnTime(getOrderBaseOnTimeRequest)

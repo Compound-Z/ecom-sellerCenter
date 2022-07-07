@@ -103,14 +103,14 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
 
     private fun searchByUserName(searchWords: String, statusFilter: MutableLiveData<String>, isLoadingEnabled: Boolean = true) {
         viewModelScope.launch {
-            orderUseCase.searchByUserName(searchWords, statusFilter.value?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+            orderUseCase.searchByUserName(searchWords, statusFilter.value?:"").cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when (it) {
                     LoadState.Loading -> {
                         if (isLoadingEnabled) loading.value = true
                     }
                     is LoadState.Loaded -> {
                         loading.value = false
-//                        orders.value = it.data
+                        orders.value = it.data
                     }
                     is LoadState.Error -> {
                         loading.value = false
@@ -123,14 +123,14 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
 
     private fun searchByOrderId(searchWords: String, statusFilter: MutableLiveData<String>, isLoadingEnabled: Boolean = true) {
         viewModelScope.launch {
-            orderUseCase.searchByOrderId(searchWords, statusFilter.value?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+            orderUseCase.searchByOrderId(searchWords, statusFilter.value?:"").cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when (it) {
                     LoadState.Loading -> {
                         if (isLoadingEnabled) loading.value = true
                     }
                     is LoadState.Loaded -> {
                         loading.value = false
-//                        orders.value = it.data
+                        orders.value = it.data
                     }
                     is LoadState.Error -> {
                         loading.value = false

@@ -19,8 +19,8 @@ interface IOrderUserCase{
     suspend fun getOrders(statusFilter: String): Flow<PagingData<Order>>
     suspend fun getOrderDetails(orderId: String): Flow<OrderDetails>
     suspend fun updateOrderStatus(orderId: String, updateOrderStatusBody: UpdateOrderStatusBody): Flow<Order>
-    suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<List<Order>>
-    suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<List<Order>>
+    suspend fun searchByOrderId(searchWords: String, statusFilter: String): Flow<PagingData<Order>>
+    suspend fun searchByUserName(searchWords: String, statusFilter: String): Flow<PagingData<Order>>
     suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<Map<LocalDate, List<OrderWithTime>>>
 
 }
@@ -53,15 +53,11 @@ class OrderUseCase(private val orderRepository: IOrderRepository): IOrderUserCas
             emit(order)
         }
 
-        override suspend fun searchByOrderId(searchWords: String, statusFilter: String, ): Flow<List<Order>> = flow {
-            val orders = orderRepository.searchByOrderId(searchWords, statusFilter)
-            val orders2 = orders.sortedByDescending{ it.updatedAt }
-            emit(orders2)
+        override suspend fun searchByOrderId(searchWords: String, statusFilter: String, ): Flow<PagingData<Order>> {
+            return orderRepository.searchByOrderId(searchWords, statusFilter)
         }
-        override suspend fun searchByUserName(searchWords: String, statusFilter: String, ): Flow<List<Order>> = flow {
-            val orders = orderRepository.searchByUserName(searchWords, statusFilter)
-            val orders2 = orders.sortedByDescending{ it.updatedAt }
-            emit(orders2)
+        override suspend fun searchByUserName(searchWords: String, statusFilter: String, ): Flow<PagingData<Order>> {
+            return orderRepository.searchByUserName(searchWords, statusFilter)
         }
 
         override suspend fun getOrdersBaseOnTime(getOrderBaseOnTimeRequest: GetOrderBaseOnTimeRequest): Flow<Map<LocalDate, List<OrderWithTime>>> = flow {
