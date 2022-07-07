@@ -18,7 +18,7 @@ interface ICategoryApi{
     @GET("/api/v1/categories")
     suspend fun getListCategories(): List<Category>
 
-    @GET("/api/v1/categories/{category}")
+    @POST("/api/v1/categories/{category}")
     suspend fun getListProductsInCategory(@Path("category")category: String, @Body getProductsInCategoryRequest: GetProductsInCategoryRequest): PagedGetAllProductsResponse
 
     @POST("/api/v1/categories/search/{category_name}")

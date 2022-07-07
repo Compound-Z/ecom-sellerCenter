@@ -1,7 +1,6 @@
 package vn.ztech.software.ecomSeller.repository
 
 import ProductPagingSource
-import SearchProductPagingSource
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -12,7 +11,6 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import vn.ztech.software.ecomSeller.api.IProductApi
 import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
-import vn.ztech.software.ecomSeller.api.request.GetOrdersRequest
 import vn.ztech.software.ecomSeller.api.request.GetProductsRequest
 import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse

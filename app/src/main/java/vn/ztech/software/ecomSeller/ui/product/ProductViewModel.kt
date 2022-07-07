@@ -231,7 +231,7 @@ class ProductViewModel(
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
                         createdProduct.value = it.data
-//                        _allProducts.value?.add(it.data) //todo
+//                        _allProducts.value?.add(it.data) //todo : no need this line since after creating new product, when navigate back to the list products fragment, the app will call getProducts() automatically
                         Log.d(TAG, "LOADED"+ it.data.toString())
                     }
                     is LoadState.Error -> {
