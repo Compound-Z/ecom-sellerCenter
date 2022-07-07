@@ -1,6 +1,7 @@
 package vn.ztech.software.ecomSeller.repository
 
 import ProductPagingSource
+import SearchProductPagingSource
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -25,7 +26,7 @@ import java.io.File
 interface IProductRepository {
     suspend fun getListProducts(): Flow<PagingData<Product>>
     suspend fun getProductDetails(productId: String): ProductDetails
-    suspend fun search(searchWords: String): List<Product>
+    suspend fun search(searchWords: String): Flow<PagingData<Product>>
     suspend fun getOrigins(): List<Country>
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Product
@@ -53,8 +54,17 @@ class ProductRepository(private val productApi: IProductApi): IProductRepository
         return productApi.getProductDetails(productId)
     }
 
-    override suspend fun search(searchWords: String): List<Product> {
-        return productApi.search(searchWords)
+    override suspend fun search(searchWords: String): Flow<PagingData<Product>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = {
+                SearchProductPagingSource(searchWords, GetProductsRequest(), productApi)
+            },
+            initialKey = 1
+        ).flow
     }
 
     override suspend fun getOrigins(): List<Country> {

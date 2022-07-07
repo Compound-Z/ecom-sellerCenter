@@ -15,7 +15,7 @@ import java.io.File
 
 interface IListProductUseCase{
     suspend fun getListProducts(): Flow<PagingData<Product>>
-    suspend fun search(searchWords: String): Flow<List<Product>>
+    suspend fun search(searchWords: String): Flow<PagingData<Product>>
     suspend fun getOrigins(): Flow<List<Country>>
     suspend fun uploadImage(file: File): Flow<UploadImageResponse>
     suspend fun createProduct(createProductRequest: CreateProductRequest?): Flow<Product>
@@ -30,8 +30,8 @@ class ListProductsUseCase(private val productRepository: IProductRepository): IL
         return productRepository.getListProducts()
     }
 
-    override suspend fun search(searchWords: String): Flow<List<Product>> = flow{
-        emit(productRepository.search(searchWords))
+    override suspend fun search(searchWords: String): Flow<PagingData<Product>> {
+        return productRepository.search(searchWords)
     }
 
     override suspend fun getOrigins(): Flow<List<Country>> = flow {

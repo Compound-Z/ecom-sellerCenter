@@ -22,8 +22,8 @@ interface IProductApi{
     @GET("/api/v1/products/{id}")
     suspend fun getProductDetails(@Path("id")id: String): ProductDetails
 
-    @GET("/api/v1/products/search/{searchWords}")
-    suspend fun search(@Path("searchWords")searchWords: String): List<Product>
+    @POST("/api/v1/products/search/{searchWords}")
+    suspend fun search(@Path("searchWords")searchWords: String, @Body getProductsRequest: GetProductsRequest): PagedGetAllProductsResponse
 
     @GET("/api/v1/products/origins")
     suspend fun getOrigins(): List<Country>

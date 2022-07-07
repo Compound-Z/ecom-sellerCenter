@@ -79,14 +79,14 @@ class ProductViewModel(
 
     fun search(searchWords: String){
         viewModelScope.launch {
-            listProductsUseCase.search(searchWords).flowOn(Dispatchers.IO).toLoadState().collect {
+            listProductsUseCase.search(searchWords).cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-//                        _allProducts.value = it.data.toMutableList()?: mutableListOf() //todo
+                        _allProducts.value = it.data
                         Log.d(TAG, "SEARCH LOADED")
                     }
                     is LoadState.Error -> {

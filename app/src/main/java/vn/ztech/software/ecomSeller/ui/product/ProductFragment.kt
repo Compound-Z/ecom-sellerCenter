@@ -186,7 +186,13 @@ class ProductFragment : Fragment() {
             val inputManager =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(it.windowToken, 0)
-//			viewModel.filterProducts("All")
+        }
+        binding.homeTopAppBar.searchOutlinedTextLayout.setStartIconOnClickListener {
+            it.clearFocus()
+            val inputManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(it.windowToken, 0)
+            performSearch(binding.homeTopAppBar.searchOutlinedTextLayout.editText?.text.toString())
         }
     }
 
