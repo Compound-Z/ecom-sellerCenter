@@ -13,8 +13,11 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
@@ -58,8 +61,7 @@ class ProductFragment : Fragment() {
     private fun setViews() {
         setHomeTopAppBar()
         if (context != null) {
-            setUpProductAdapter(viewModel.allProducts.value)
-            binding.productsRecyclerView.adapter = listProductsAdapter
+            setUpProductAdapter()
         }
         binding.homeFabAddProduct.setOnClickListener {
             findNavController().navigate(R.id.action_productFragment_to_addEditProductFragment)
@@ -80,30 +82,39 @@ class ProductFragment : Fragment() {
                 binding.swipeRefresh.isRefreshing = false
             }
         }
-        viewModel.allProducts.observe(viewLifecycleOwner) { listProducts->
-            listProducts?.let{
-                if (listProducts.isEmpty()) {
-                    binding.tvNoProductFound.visibility = View.VISIBLE
-                    binding.productsRecyclerView.visibility = View.GONE
-                }else {
-                    binding.tvNoProductFound.visibility = View.GONE
-                    binding.loaderLayout.circularLoader.hideAnimationBehavior
-                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                    binding.productsRecyclerView.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.allProducts.observe(viewLifecycleOwner) { listProducts ->
+                listProducts?.let {
                     binding.productsRecyclerView.adapter?.apply {
-                        listProductsAdapter.data =
-                            getMixedDataList(listProducts, getAdsList())
-                        notifyDataSetChanged()
+                        listProductsAdapter.submitData(lifecycle, listProducts)
                     }
                 }
             }
-            if (listProducts==null){
-                binding.loaderLayout.circularLoader.hideAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                binding.productsRecyclerView.visibility = View.GONE
-                binding.tvNoProductFound.visibility = View.VISIBLE
-            }
         }
+//        viewModel.allProducts.observe(viewLifecycleOwner) { listProducts->
+//            listProducts?.let{
+//                if (listProducts.isEmpty()) {
+//                    binding.tvNoProductFound.visibility = View.VISIBLE
+//                    binding.productsRecyclerView.visibility = View.GONE
+//                }else {
+//                    binding.tvNoProductFound.visibility = View.GONE
+//                    binding.loaderLayout.circularLoader.hideAnimationBehavior
+//                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+//                    binding.productsRecyclerView.visibility = View.VISIBLE
+//                    binding.productsRecyclerView.adapter?.apply {
+//                        listProductsAdapter.data =
+//                            getMixedDataList(listProducts, getAdsList())
+//                        notifyDataSetChanged()
+//                    }
+//                }
+//            }
+//            if (listProducts==null){
+//                binding.loaderLayout.circularLoader.hideAnimationBehavior
+//                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+//                binding.productsRecyclerView.visibility = View.GONE
+//                binding.tvNoProductFound.visibility = View.VISIBLE
+//            }
+//        }
         viewModel.deletedProductStatus.observe(viewLifecycleOwner){
             it?.let {
                 Toast.makeText(requireContext(), "Delete product successfully!", Toast.LENGTH_LONG).apply {
@@ -175,7 +186,13 @@ class ProductFragment : Fragment() {
             val inputManager =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(it.windowToken, 0)
-//			viewModel.filterProducts("All")
+        }
+        binding.homeTopAppBar.searchOutlinedTextLayout.setStartIconOnClickListener {
+            it.clearFocus()
+            val inputManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(it.windowToken, 0)
+            performSearch(binding.homeTopAppBar.searchOutlinedTextLayout.editText?.text.toString())
         }
     }
 
@@ -183,19 +200,13 @@ class ProductFragment : Fragment() {
         viewModel.search(searchWords)
     }
 
-    private fun setUpProductAdapter(productsList: List<Product>?) {
-        listProductsAdapter = ListProductsAdapter(productsList ?: emptyList(), requireContext())
+    private fun setUpProductAdapter() {
+        listProductsAdapter = ListProductsAdapter(requireContext())
         listProductsAdapter.onClickListener =  object : ListProductsAdapter.OnClickListener {
 
             override fun onClickAdvancedActionsButton(view: View, productData: Product) {
                 showPopup(view, productData)
             }
-//
-//            override fun onDeleteClick(productData: Product) {
-//                Toast.makeText(requireContext(), "Delete", Toast.LENGTH_LONG).show()
-////                Log.d(TAG, "onDeleteProduct: initiated for ${productData.productId}")
-////                showDeleteDialog(productData.name, productData.productId)
-//            }
 
             override fun onEditClick(productData: Product) {
                 findNavController().navigate(
@@ -207,6 +218,39 @@ class ProductFragment : Fragment() {
 
             }
         }
+
+        listProductsAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        binding.productsRecyclerView.adapter = listProductsAdapter
+        listProductsAdapter.addLoadStateListener {loadState->
+            // show empty list
+            if (loadState.refresh is androidx.paging.LoadState.Loading ||
+                loadState.append is androidx.paging.LoadState.Loading){
+                binding.loaderLayout.circularLoader.showAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+            }
+            else {
+                binding.loaderLayout.circularLoader.hideAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+
+                if (listProductsAdapter.itemCount == 0){
+                    binding.tvNoProductFound.visibility = View.VISIBLE
+                    binding.productsRecyclerView.visibility = View.GONE
+                }else{
+                    binding.tvNoProductFound.visibility = View.GONE
+                    binding.productsRecyclerView.visibility = View.VISIBLE
+                }
+                // If we have an error, show a toast
+                val errorState = when {
+                    loadState.append is androidx.paging.LoadState.Error -> loadState.append as androidx.paging.LoadState.Error
+                    loadState.prepend is androidx.paging.LoadState.Error ->  loadState.prepend as androidx.paging.LoadState.Error
+                    loadState.refresh is androidx.paging.LoadState.Error -> loadState.refresh as androidx.paging.LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    handleError(CustomError(it.error, it.error.message?:"System error"))
+                }
+            }
+        }
     }
 
     private fun showPopup(view: View, productData: Product) {
@@ -215,6 +259,10 @@ class ProductFragment : Fragment() {
                 when(it.itemId){
                     R.id.actionFullEdit -> {
                         editProduct(productData)
+                        true
+                    }
+                    R.id.actionForkProduct -> {
+                        forkProduct(productData)
                         true
                     }
                     R.id.actionDelete -> {
@@ -229,11 +277,22 @@ class ProductFragment : Fragment() {
         }
     }
 
+    private fun forkProduct(productData: Product) {
+        findNavController().navigate(
+            R.id.action_productFragment_to_addEditProductFragment,
+            bundleOf(
+                "product" to productData,
+                "editType" to "forkProduct"
+
+            ))
+    }
+
     private fun editProduct(productData: Product) {
         findNavController().navigate(
             R.id.action_productFragment_to_addEditProductFragment,
             bundleOf(
-                "product" to productData
+                "product" to productData,
+                "editType" to "fullEdit"
             ))
     }
 

@@ -37,8 +37,6 @@ class ApiNetworkInterceptor(private val gson: Gson, private val userManager: Use
             delay(500)
         }
         request.addHeader(HEADER_AUTHORIZATION, "Bearer $token")
-
-
         var response = chain.proceed(request.build())
         Log.d("RESPONSE", response.peekBody(2048).string() +" " + response?.code)
 

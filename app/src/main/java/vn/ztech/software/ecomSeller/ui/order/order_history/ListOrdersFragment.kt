@@ -14,16 +14,22 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.item_order_history.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import vn.ztech.software.ecomSeller.databinding.FragmentListOrderBinding
 import vn.ztech.software.ecomSeller.ui.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
+import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.model.Order
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import vn.ztech.software.ecomSeller.util.CustomError
 
 const val TAG = "ListOrdersFragment"
 class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
@@ -43,11 +49,20 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             statusFilter = getString("statusFilter").toString()
             viewModel.statusFilter.value = statusFilter
         }
+        Log.d("xxx", viewModel.orders.value.toString())
+        if(viewModel.orders.value == null){
+            viewModel.getOrders(viewModel.statusFilter.value)
+        }
+        setupAdapter()
+        setupSpinner()
+        setUpSearchView()
+
+
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getOrders(viewModel.statusFilter.value)
+        adapter.refresh()
     }
 
     override fun setViewBinding(): FragmentListOrderBinding {
@@ -56,9 +71,47 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
 
     override fun setUpViews() {
         super.setUpViews()
-        setupAdapter(viewModel.orders.value)
-        setupSpinner()
-        setUpSearchView()
+//        setupAdapter()
+//        setupSpinner()
+//        setUpSearchView()
+    }
+    override fun observeView() {
+        super.observeView()
+        viewModel.loading.observe(viewLifecycleOwner){
+            when (it) {
+                true -> {
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                    binding.loaderLayout.circularLoader.showAnimationBehavior
+                }
+                false -> {
+                    binding.loaderLayout.circularLoader.hideAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.orders.observe(viewLifecycleOwner){
+                it?.let {
+                    binding.listOrders.adapter?.apply {
+                        adapter.submitData(viewLifecycleOwner.lifecycle,it)
+//                        notifyDataSetChanged()
+                    }
+                }
+        }
+        }
+
+        viewModel.order.observe(viewLifecycleOwner){
+            it?.let {
+                viewModel.getOrders(viewModel.statusFilter.value)
+            }
+        }
+        viewModel.error.observe(viewLifecycleOwner){
+            it?.let {
+                binding.loaderLayout.circularLoader.hideAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+                handleError(it)
+            }
+        }
     }
 
     private fun setUpSearchView() {
@@ -116,9 +169,8 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
         }
     }
 
-    private fun setupAdapter(_orders: List<Order>?){
-        val orders = _orders?: emptyList()
-        adapter = ListOrderAdapter(requireContext(), orders, object : ListOrderAdapter.OnClickListener{
+    private fun setupAdapter(){
+        adapter = ListOrderAdapter(requireContext(), object : ListOrderAdapter.OnClickListener{
             override fun onClick(order: Order) {
                 callBack.onClickViewDetails(order._id)
             }
@@ -130,7 +182,32 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
                 handleAction(order)
             }
         })
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.listOrders.adapter = adapter
+        adapter.addLoadStateListener {loadState->
+            // show empty list
+            if (loadState.refresh is androidx.paging.LoadState.Loading ||
+                loadState.append is androidx.paging.LoadState.Loading){
+                binding.loaderLayout.circularLoader.showAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+            }
+            else {
+                binding.loaderLayout.circularLoader.hideAnimationBehavior
+                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
+
+                // If we have an error, show a toast
+                val errorState = when {
+                    loadState.append is androidx.paging.LoadState.Error -> loadState.append as androidx.paging.LoadState.Error
+                    loadState.prepend is androidx.paging.LoadState.Error ->  loadState.prepend as androidx.paging.LoadState.Error
+                    loadState.refresh is androidx.paging.LoadState.Error -> loadState.refresh as androidx.paging.LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    handleError(CustomError(it.error, it.error.message?:"System error"))
+                }
+
+            }
+        }
     }
 
     private fun copyToClipBoard(orderId: String) {
@@ -165,41 +242,6 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
         }
     }
 
-    override fun observeView() {
-        super.observeView()
-        viewModel.loading.observe(viewLifecycleOwner){
-            when (it) {
-                true -> {
-                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
-                    binding.loaderLayout.circularLoader.showAnimationBehavior
-                }
-                false -> {
-                    binding.loaderLayout.circularLoader.hideAnimationBehavior
-                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                }
-            }
-        }
-        viewModel.orders.observe(viewLifecycleOwner){
-            it?.let {
-                binding.listOrders.adapter?.apply {
-                    adapter.orders = it
-                    notifyDataSetChanged()
-                }
-            }
-        }
-        viewModel.order.observe(viewLifecycleOwner){
-            it?.let {
-                viewModel.getOrders(viewModel.statusFilter.value)
-            }
-        }
-        viewModel.error.observe(viewLifecycleOwner){
-            it?.let {
-                binding.loaderLayout.circularLoader.hideAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                handleError(it)
-            }
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

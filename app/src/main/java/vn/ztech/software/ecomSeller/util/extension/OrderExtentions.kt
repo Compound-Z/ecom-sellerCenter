@@ -21,5 +21,7 @@ fun Map<LocalDate, List<OrderWithTime>>.getTotalSales(): Int {
     return sum
 }
 fun Map<LocalDate, List<OrderWithTime>>.getAvgSale(): Int {
+    val numberOfOrder = this.getNumberOfOrder()
+    if (numberOfOrder==0) return 0
     return this.getTotalSales() / this.getNumberOfOrder()
 }

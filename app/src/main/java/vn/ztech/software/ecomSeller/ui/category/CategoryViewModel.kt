@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -34,7 +35,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     val originalCategories = MutableLiveData<MutableList<Category>>()
 
     val isSearchCategoriesResultEmpty = MutableLiveData<Boolean>()
-    val products = MutableLiveData<List<Product>>()
+    val products = MutableLiveData<PagingData<Product>>()
 
     private val _storeDataStatus = MutableLiveData<StoreDataStatus>()
     val storeDataStatus: LiveData<StoreDataStatus> get() = _storeDataStatus
@@ -79,7 +80,8 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-                        products.value = it.data?: emptyList()
+                        products.value = it.data
+                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
                         Log.d(TAG, "LOADED")
                     }
                     is LoadState.Error -> {
@@ -100,7 +102,8 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-                        products.value = it.data?: emptyList()
+//                        products.value = it.data?: emptyList() //todo: ipl
+                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
                         Log.d(TAG, "SEARCH LOADED")
                     }
                     is LoadState.Error -> {
@@ -133,7 +136,8 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-                        products.value = it.data?: emptyList()
+//                        products.value = it.data?: emptyList()
+                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
                         Log.d(TAG, "SEARCH LOADED")
                     }
                     is LoadState.Error -> {
