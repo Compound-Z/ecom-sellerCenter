@@ -17,4 +17,9 @@ open class CustomError( val e: Throwable = Throwable(), open var customMessage: 
             .setPositiveButton(R.string.ok, listener)
             .show()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        return this.customMessage == (other as CustomError).customMessage
+    }
 }
