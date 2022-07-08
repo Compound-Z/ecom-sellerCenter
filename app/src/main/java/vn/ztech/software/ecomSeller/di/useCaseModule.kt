@@ -19,6 +19,8 @@ import vn.ztech.software.ecomSeller.ui.cart.CartUseCase
 import vn.ztech.software.ecomSeller.ui.cart.ICartUseCase
 import vn.ztech.software.ecomSeller.ui.category.IListCategoriesUseCase
 import vn.ztech.software.ecomSeller.ui.category.ListCategoriesUseCase
+import vn.ztech.software.ecomSeller.ui.main.IMainUseCase
+import vn.ztech.software.ecomSeller.ui.main.MainUseCase
 import vn.ztech.software.ecomSeller.ui.order.IOrderUserCase
 import vn.ztech.software.ecomSeller.ui.order.order.IShippingUserCase
 import vn.ztech.software.ecomSeller.ui.order.OrderUseCase
@@ -42,5 +44,6 @@ fun useCaseModule() = module {
     factory<IAddressUseCase> { AddressUseCase(get()) }
     factory<IShippingUserCase> { ShippingUseCase(get()) }
     factory<IOrderUserCase> { OrderUseCase(get()) }
+    factory<IMainUseCase> { MainUseCase(get()) }
 
 }

@@ -56,8 +56,6 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
         setupAdapter()
         setupSpinner()
         setUpSearchView()
-
-
     }
 
     override fun onResume() {

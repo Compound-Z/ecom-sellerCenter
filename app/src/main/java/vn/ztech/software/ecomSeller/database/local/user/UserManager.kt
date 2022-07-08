@@ -325,7 +325,53 @@ class UserManager (context: Context): Serializable {
             mPrefsLock.unlock()
         }
     }
-//
+    @AnyThread
+    fun getFCMToken(): String {
+        mPrefsLock.lock()
+        try {
+            return mPrefs.getString(FCM_TOKEN, null) ?: return ""
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+    @AnyThread
+    fun saveNewFCMToken(token: String) {
+        mPrefsLock.lock()
+        try {
+            val editor = mPrefs.edit()
+                editor.putString(FCM_TOKEN, token)
+                editor.putBoolean(IS_FCM_TOKEN_NEW, true)
+            if (!editor.commit()) {
+                throw IllegalStateException("Failed to write login to shared prefs")
+            }
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+
+    fun getIsFCMTokenNew(): Boolean {
+        mPrefsLock.lock()
+        try {
+            return mPrefs.getBoolean(IS_FCM_TOKEN_NEW, false)
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+
+    fun updateIsFCMTokenNew(isNew: Boolean) {
+        mPrefsLock.lock()
+        try {
+            val editor = mPrefs.edit()
+            editor.putBoolean(IS_FCM_TOKEN_NEW, isNew)
+            if (!editor.commit()) {
+                throw IllegalStateException("Failed to write login to shared prefs")
+            }
+        } finally {
+            mPrefsLock.unlock()
+        }
+    }
+
+    //
 //    @AnyThread
 //    fun getState(): String {
 //        mPrefsLock.lock()
@@ -391,6 +437,9 @@ class UserManager (context: Context): Serializable {
         private const val REFRESH_TOKEN_EXPIRES = "REFRESH_TOKEN_EXPIRES"
         private const val ACCESS_TOKEN = "ACCESS_TOKEN"
         private const val ACCESS_TOKEN_EXPIRES = "ACCESS_TOKEN_EXPIRES"
+        private const val FCM_TOKEN = "FCM_TOKEN"
+        private const val IS_FCM_TOKEN_NEW = "IS_FCM_TOKEN_NEW"
+
 //        private const val ROOT_PLACE_ID = "ROOT_PLACE_ID"
 //        private const val ITEM_GROUP_ID = "ITEM_GROUP_ID"
 //        private const val LATEST_TIMESTAMP_UPDATE_JWT = "LATEST_TIMESTAMP_UPDATE_JWT"

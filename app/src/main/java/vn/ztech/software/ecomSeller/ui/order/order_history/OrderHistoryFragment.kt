@@ -16,9 +16,13 @@ import vn.ztech.software.ecomSeller.ui.BaseFragment2
 
 class OrderHistoryFragment : BaseFragment2<FragmentOrderHistoryBinding>(), ListOrdersFragment.OnClickListener {
     private lateinit var listOrdersFragmentAdapter: ListOrdersFragmentAdapter
-
+    var allowRefresh = true
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpUI()
+    }
+
+    private fun setUpUI() {
         listOrdersFragmentAdapter = ListOrdersFragmentAdapter(this@OrderHistoryFragment)
         binding.pager.adapter = listOrdersFragmentAdapter
         TabLayoutMediator(binding.tabLayout, binding.pager) {tab, pos->
@@ -65,4 +69,13 @@ class OrderHistoryFragment : BaseFragment2<FragmentOrderHistoryBinding>(), ListO
         )
     }
 
+    override fun onStop() {
+        super.onStop()
+        allowRefresh = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+            parentFragmentManager.beginTransaction().detach(this).attach(this).commit()
+    }
 }

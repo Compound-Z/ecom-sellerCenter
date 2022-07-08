@@ -14,6 +14,7 @@ import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.FragmentOrderDetailsBinding
 import vn.ztech.software.ecomSeller.model.*
 import vn.ztech.software.ecomSeller.ui.BaseFragment
+import vn.ztech.software.ecomSeller.ui.main.MainActivity
 import vn.ztech.software.ecomSeller.ui.order.OrderProductsAdapter
 import vn.ztech.software.ecomSeller.ui.order.order_history.ListOrdersViewModel
 import vn.ztech.software.ecomSeller.util.CustomError
@@ -27,6 +28,7 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
     private val viewModel: OrderDetailsViewModel by viewModel()
     private val listOrdersViewModel: ListOrdersViewModel by viewModel()
 	private lateinit var productsAdapter: OrderProductsAdapter
+    var isLaunchedFromNoti = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,12 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                     viewModel.orderDetails.value = orderDetails
                 }
             }
+            "MainActivity"->{
+                arguments?.takeIf { it.containsKey("orderId") }?.apply {
+                    viewModel.getOrderDetails(getString("orderId"))
+                    isLaunchedFromNoti = true
+                }
+            }
         }
     }
 
@@ -56,7 +64,14 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
     override fun setUpViews() {
         super.setUpViews()
         binding.orderDetailAppBar.topAppBar.title = getString(R.string.order_details_fragment_title)
-		binding.orderDetailAppBar.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
+		binding.orderDetailAppBar.topAppBar.setNavigationOnClickListener {
+            if (isLaunchedFromNoti){
+                /**this is a trick to force orderFragment to re-render, otherwise it will be blank, another solution should be research to replace this :((, but i have no time, so temporarily accept this*/
+                (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.accountFragment
+                (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.orderFragment
+            }
+            findNavController().navigateUp()
+        }
 		binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
 //
 		if (context != null) {
