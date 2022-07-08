@@ -92,7 +92,6 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
                 it?.let {
                     binding.listOrders.adapter?.apply {
                         adapter.submitData(viewLifecycleOwner.lifecycle,it)
-//                        notifyDataSetChanged()
                     }
                 }
         }
@@ -101,6 +100,7 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
         viewModel.order.observe(viewLifecycleOwner){
             it?.let {
                 viewModel.getOrders(viewModel.statusFilter.value)
+                adapter.refresh()
             }
         }
         viewModel.error.observe(viewLifecycleOwner){

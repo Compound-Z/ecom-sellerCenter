@@ -5,22 +5,23 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.os.bundleOf
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.database.local.user.UserManager
 import vn.ztech.software.ecomSeller.ui.main.MainActivity
-import java.sql.Time
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import kotlin.random.Random
+
 
 const val TAG = "MyFirebaseMessagingService"
 class MyFirebaseMessagingService: FirebaseMessagingService() {
@@ -28,9 +29,11 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         val title = message.data?.get("title").toString()
         val content = message.data?.get("content").toString()
         var orderId = message.data?.get("orderId").toString()
-        //test: orderId
-        orderId ="62c703ecd8764c7a94d34703"
-        Noti.showNoti(this, System.currentTimeMillis(), title, content, orderId)
+        val imageUrl = message.data?.get("imageUrl").toString()
+        Log.d("xxx url", imageUrl)
+        Log.d("xxx data", message.data.toString())
+        val image = getBitmapFromUrl(imageUrl)
+        Noti.showNoti(this, System.currentTimeMillis(), title, content, orderId, image)
     }
 
     override fun onNewToken(token: String) {
@@ -40,7 +43,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         userManager.saveNewFCMToken(token)
     }
     object Noti{
-        fun showNoti(context: Context, timeStamp: Long, title: String, content: String, orderId: String) {
+        fun showNoti(context: Context, timeStamp: Long, title: String, content: String, orderId: String, image: Bitmap?) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val name = "Order notification"
                 val descriptionText = "Channel for receive notis related to order services"
@@ -56,7 +59,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
             // Create an explicit intent for an Activity in your app
             val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
             }
             intent.putExtra("launchFromNoti", true)
@@ -75,11 +78,27 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
                 .setShowWhen(true)
                 .setWhen(timeStamp)
                 .setAutoCancel(true)
-
+            image?.let {
+                builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(it))
+            }
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
                 notify(Random.nextInt(999999), builder.build())
             }
+        }
+    }
+
+    private fun getBitmapFromUrl(imageUrl: String?): Bitmap? {
+        return try {
+            val url = URL(imageUrl)
+            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val input: InputStream = connection.getInputStream()
+            BitmapFactory.decodeStream(input)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }
