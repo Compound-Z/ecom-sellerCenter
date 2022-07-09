@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
 
         val launchFromNoti = intent.getBooleanExtra("launchFromNoti", false)
         Log.d("xxx launch", intent.getBooleanExtra("launchFromNoti",false).toString())
+
+        val orderId = intent.getStringExtra("orderId")
+        Log.d("xxx orderId", orderId.toString())
+
         if (launchFromNoti){
             val orderId = intent.getStringExtra("orderId")
             Log.d("xxx orderId", orderId.toString())
@@ -84,6 +88,14 @@ class MainActivity : AppCompatActivity() {
                 if (localFCMToken == token.toString()){
                     if(isFCMTokenNew){
                         viewModel.updateFCMToken(token.toString())
+                        FirebaseMessaging.getInstance().subscribeToTopic("admin").addOnCompleteListener {task->
+                            if(!task.isSuccessful){
+                                Log.d("FCM", "Subscribe topic failed!")
+                            }else{
+                                Log.d("FCM", "Subscribe topic successfully!" + task.toString())
+                            }
+
+                        }
                     }else{
                         return@OnCompleteListener
                     }
@@ -91,6 +103,13 @@ class MainActivity : AppCompatActivity() {
                     /**update localFCMToken with new token*/
                     Log.d(TAG, "update token ${token}")
                     viewModel.updateFCMToken(token.toString())
+                    FirebaseMessaging.getInstance().subscribeToTopic("admin").addOnCompleteListener {task->
+                        if(!task.isSuccessful){
+                            Log.d("FCM", "Subscribe topic failed!")
+                        }else{
+                            Log.d("FCM", "Subscribe topic successfully!" + task.toString())
+                        }
+                    }
                     userManager.saveNewFCMToken(token.toString())
                     //todo: warning: no error checking here
                 }

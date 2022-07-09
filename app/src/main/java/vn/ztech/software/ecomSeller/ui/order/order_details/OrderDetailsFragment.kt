@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.navigation.fragment.findNavController
@@ -63,12 +64,20 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
 
     override fun setUpViews() {
         super.setUpViews()
+        if(isLaunchedFromNoti){
+            activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,object :
+                OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.accountFragment
+                    findNavController().navigateUp()
+                }
+            })
+        }
         binding.orderDetailAppBar.topAppBar.title = getString(R.string.order_details_fragment_title)
 		binding.orderDetailAppBar.topAppBar.setNavigationOnClickListener {
             if (isLaunchedFromNoti){
                 /**this is a trick to force orderFragment to re-render, otherwise it will be blank, another solution should be research to replace this :((, but i have no time, so temporarily accept this*/
                 (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.accountFragment
-                (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.orderFragment
             }
             findNavController().navigateUp()
         }

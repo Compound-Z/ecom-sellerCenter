@@ -59,8 +59,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
             // Create an explicit intent for an Activity in your app
             val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             }
             intent.putExtra("launchFromNoti", true)
             intent.putExtra("orderId", orderId)
@@ -69,18 +68,18 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
             var builder = NotificationCompat.Builder(context, Constants.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_add_shopping_cart_24))
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_filled_location_on_24))
                 .setContentTitle(title)
-                .setContentText(content)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setShowWhen(true)
                 .setWhen(timeStamp)
                 .setAutoCancel(true)
-            image?.let {
-                builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(it))
-            }
+                .setStyle(NotificationCompat.BigTextStyle().bigText(content))
+//            image?.let {
+//                builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(it))
+//            }
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
                 notify(Random.nextInt(999999), builder.build())

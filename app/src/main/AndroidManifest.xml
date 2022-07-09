@@ -21,8 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="vn.ztech.software.ecomSeller.ui.main.MainActivity"
-            android:launchMode="singleTop">
+        <activity android:name="vn.ztech.software.ecomSeller.ui.main.MainActivity">
         </activity>
         <activity android:name="vn.ztech.software.ecomSeller.ui.auth.LoginSignupActivity">
         </activity>
