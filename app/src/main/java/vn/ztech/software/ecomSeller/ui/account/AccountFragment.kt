@@ -1,4 +1,4 @@
-package vn.ztech.software.ecomSeller.ui.account.logout
+package vn.ztech.software.ecomSeller.ui.account
 
 import android.content.Intent
 import androidx.core.os.bundleOf
@@ -30,6 +30,11 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 //		}
 		binding.accountOrdersTv.setOnClickListener {
 			(activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.orderHistoryFragment
+		}
+		binding.accountReviewTv.setOnClickListener {
+			findNavController().navigate(
+				R.id.action_accountFragment_to_listReviewFragment,
+			)
 		}
 		binding.accountAddressTv.setOnClickListener {
 			findNavController().navigate(

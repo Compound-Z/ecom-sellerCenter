@@ -2,7 +2,7 @@ package vn.ztech.software.ecomSeller.di
 
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import vn.ztech.software.ecomSeller.ui.account.logout.AccountViewModel
+import vn.ztech.software.ecomSeller.ui.account.AccountViewModel
 import vn.ztech.software.ecomSeller.ui.address.AddressViewModel
 import vn.ztech.software.ecomSeller.ui.auth.login.ForgotPasswordViewModel
 import vn.ztech.software.ecomSeller.ui.auth.login.LogInViewModel

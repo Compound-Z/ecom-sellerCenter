@@ -3,8 +3,8 @@ package vn.ztech.software.ecomSeller.di
 import org.koin.dsl.module
 import vn.ztech.software.ecomSeller.domain.use_case.get_product_details.IProductDetailsUseCase
 import vn.ztech.software.ecomSeller.domain.use_case.get_product_details.ProductDetailsUseCase
-import vn.ztech.software.ecomSeller.ui.account.logout.AccountUseCase
-import vn.ztech.software.ecomSeller.ui.account.logout.IAccountUseCase
+import vn.ztech.software.ecomSeller.ui.account.AccountUseCase
+import vn.ztech.software.ecomSeller.ui.account.IAccountUseCase
 import vn.ztech.software.ecomSeller.ui.address.AddressUseCase
 import vn.ztech.software.ecomSeller.ui.address.IAddressUseCase
 import vn.ztech.software.ecomSeller.ui.auth.forgot_password.IResetPasswordUseCase

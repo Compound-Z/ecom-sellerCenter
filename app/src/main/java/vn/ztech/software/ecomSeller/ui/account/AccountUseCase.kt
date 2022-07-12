@@ -1,4 +1,4 @@
-package vn.ztech.software.ecomSeller.ui.account.logout
+package vn.ztech.software.ecomSeller.ui.account
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,7 +11,8 @@ interface IAccountUseCase{
     fun clearLogs()
 }
 
-class AccountUseCase(private val authRepository: IAuthRepository, private val userManager: UserManager): IAccountUseCase {
+class AccountUseCase(private val authRepository: IAuthRepository, private val userManager: UserManager):
+    IAccountUseCase {
     override fun logOut(): Flow<BasicResponse> = flow {
         emit(authRepository.logout())
     }

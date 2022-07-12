@@ -167,7 +167,7 @@
 <!--    </fragment>-->
     <fragment
         android:id="@+id/accountFragment"
-        android:name="vn.ztech.software.ecomSeller.ui.account.logout.AccountFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" >
         <action
@@ -176,9 +176,18 @@
         <action
             android:id="@+id/action_accountFragment_to_addressFragment"
             app:destination="@id/addressFragment" />
-<!--        <action-->
-<!--            android:id="@+id/action_accountFragment_to_profileFragment"-->
-<!--            app:destination="@id/profileFragment" />-->
+        <action
+            android:id="@+id/action_accountFragment_to_listReviewFragment"
+            app:destination="@id/listReviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listReviewFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.review.ListReviewFragment"
+        android:label="fragment_list_review"
+        tools:layout="@layout/fragment_list_review" >
+        <action
+            android:id="@+id/action_listReviewFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderFragment"
