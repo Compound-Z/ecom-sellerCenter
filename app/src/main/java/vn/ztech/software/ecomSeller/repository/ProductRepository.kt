@@ -31,6 +31,7 @@ interface IProductRepository {
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Product
     suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Product
     suspend fun deleteProduct(productId: String): BasicResponse
+    suspend fun getOneProduct(productId: String): Product
 
 }
 
@@ -90,5 +91,9 @@ class ProductRepository(private val productApi: IProductApi): IProductRepository
 
     override suspend fun deleteProduct(productId: String): BasicResponse {
         return productApi.deleteProduct(productId)
+    }
+
+    override suspend fun getOneProduct(productId: String): Product {
+        return productApi.getOneProduct(productId)
     }
 }

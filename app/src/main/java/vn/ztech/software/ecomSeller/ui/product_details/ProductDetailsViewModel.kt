@@ -14,14 +14,18 @@ import vn.ztech.software.ecomSeller.common.extension.toLoadState
 import vn.ztech.software.ecomSeller.model.ProductDetails
 import vn.ztech.software.ecomSeller.domain.use_case.get_product_details.IProductDetailsUseCase;
 import vn.ztech.software.ecomSeller.model.Product
+import vn.ztech.software.ecomSeller.ui.product.IListProductUseCase
+import vn.ztech.software.ecomSeller.ui.product.ListProductsUseCase
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 
 private const val TAG = "ProductViewModel"
 
 class ProductDetailsViewModel(
-    private val productDetailsUseCase: IProductDetailsUseCase
+    private val productDetailsUseCase: IProductDetailsUseCase,
+    private val listProductsUseCase: IListProductUseCase
     ) : ViewModel(){
+    val loadingProduct = MutableLiveData<Boolean>()
     private val _productDetails = MutableLiveData<ProductDetails?>()
     val productDetails: LiveData<ProductDetails?> get() = _productDetails
     
@@ -54,7 +58,33 @@ class ProductDetailsViewModel(
             }
         }
     }
+    fun getProduct(productId: String) {
+        viewModelScope.launch {
+            listProductsUseCase.getOneProduct(productId).flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        loadingProduct.value = true
+                    }
+                    is LoadState.Loaded -> {
+                        loadingProduct.value = false
+                        product.value = it.data
+                    }
+                    is LoadState.Error -> {
+                        loadingProduct.value = false
+                        error.value = errorMessage(it.e)
+
+                    }
+                }
+            }
+        }
+    }
     fun clearErrors() {
         error.value = null
     }
+
+    fun checkIsDataReady(): Boolean {
+        return (product.value!=null && productDetails.value!=null)
+    }
+
+
 }

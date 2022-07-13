@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.di
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import vn.ztech.software.ecomSeller.ui.account.AccountViewModel
+import vn.ztech.software.ecomSeller.ui.account.review.ListReviewViewModel
 import vn.ztech.software.ecomSeller.ui.address.AddressViewModel
 import vn.ztech.software.ecomSeller.ui.auth.login.ForgotPasswordViewModel
 import vn.ztech.software.ecomSeller.ui.auth.login.LogInViewModel
@@ -25,7 +26,7 @@ fun viewModelModule() = module {
     viewModel { SplashViewModel(get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { LogInViewModel(get()) }
-    viewModel { ProductDetailsViewModel(get()) }
+    viewModel { ProductDetailsViewModel(get(), get()) }
     viewModel { OtpViewModel(get()) }
     viewModel { ForgotPasswordViewModel(get()) }
     viewModel { AccountViewModel(get()) }
@@ -40,5 +41,5 @@ fun viewModelModule() = module {
     viewModel { HomeViewModel(get()) }
     viewModel { ChartViewModel(get()) }
     viewModel { MainViewModel(get()) }
-
+    viewModel { ListReviewViewModel(get()) }
 }

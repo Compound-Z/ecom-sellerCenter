@@ -22,6 +22,7 @@ interface IListProductUseCase{
     suspend fun updateProduct(productId: String, createProductRequest: CreateProductRequest?): Flow<Product>
     suspend fun quickUpdateProduct(productId: String, request: QuickUpdateProductRequest): Flow<Product>
     suspend fun deleteProduct(productId: String): Flow<BasicResponse>
+    suspend fun getOneProduct(productId: String): Flow<Product>
 
 }
 
@@ -63,6 +64,10 @@ class ListProductsUseCase(private val productRepository: IProductRepository): IL
     override suspend fun deleteProduct(productId: String): Flow<BasicResponse> = flow {
         val product = productRepository.deleteProduct(productId)
         emit(product)
+    }
+
+    override suspend fun getOneProduct(productId: String): Flow<Product> = flow {
+        emit(productRepository.getOneProduct(productId))
     }
 
 }

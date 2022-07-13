@@ -41,4 +41,18 @@
         <item name="itemTextColor">@drawable/bottom_nav_selector</item>
         <item name="itemIconTint">@drawable/bottom_nav_selector</item>
     </style>
+
+    <style name="chip_hobby" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@drawable/chip_color</item>
+        <item name="checkedIcon">@null</item>
+<!--        <item name="chipStrokeColor">@color/text_dark</item>-->
+<!--        <item name="chipStrokeWidth">@dimen/stroke_width</item>-->
+<!--        <item name="android:textColor">@color/text_black</item>-->
+<!--        <item name="rippleColor">@color/colorYellow</item>-->
+<!--        <item name="android:textAppearance">@style/chip_text_appearance</item>-->
+    </style>
+    <style name="chip_group_center" parent="Widget.MaterialComponents.ChipGroup">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
 </resources>

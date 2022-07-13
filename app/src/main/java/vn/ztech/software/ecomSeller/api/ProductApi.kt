@@ -42,6 +42,9 @@ interface IProductApi{
 
     @DELETE("/api/v1/products/{productId}")
     suspend fun deleteProduct(@Path("productId") productId: String): BasicResponse
+
+    @GET("/api/v1/products/get-one-product/{productId}")
+    suspend fun getOneProduct(@Path("productId") productId: String): Product
 }
 
 
