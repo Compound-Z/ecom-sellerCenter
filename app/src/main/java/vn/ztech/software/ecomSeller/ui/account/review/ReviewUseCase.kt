@@ -2,6 +2,8 @@ package vn.ztech.software.ecomSeller.ui.account.review
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import vn.ztech.software.ecomSeller.api.response.PagedGetReviewResponse
 import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.model.ReviewQueue
 import vn.ztech.software.ecomSeller.repository.IReviewRepository
@@ -14,6 +16,7 @@ interface IReviewUseCase{
     suspend fun getMyReviewQueue(startFilter: String): Flow<PagingData<ReviewQueue>>
     suspend fun createReview(productId: String, reviewQueueId: String, rating: Int, content: String): Review
     suspend fun updateReview(reviewId: String, rating: Int, content: String): Review
+    suspend fun getListReviewPreviewOfAProduct(productId: String, starFilter: Int?): Flow<PagedGetReviewResponse>
 }
 
 class ReviewUseCase( private val reviewRepository: IReviewRepository): IReviewUseCase {
@@ -38,6 +41,13 @@ class ReviewUseCase( private val reviewRepository: IReviewRepository): IReviewUs
 
     override suspend fun updateReview(reviewId: String, rating: Int, content: String): Review {
         return reviewRepository.updateReview(reviewId,rating,content)
+    }
+
+    override suspend fun getListReviewPreviewOfAProduct(
+        productId: String,
+        starFilter: Int?
+    ): Flow<PagedGetReviewResponse> = flow {
+        emit(reviewRepository.getListReviewPreviewOfAProduct(productId = productId, starFilter = starFilter))
     }
 
 }

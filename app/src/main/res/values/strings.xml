@@ -70,6 +70,7 @@
     <string name="pro_details_select_size_lable_text">Select Size</string>
     <string name="pro_details_select_color_label_text">Select Color</string>
     <string name="pro_details_specif_label_text">Descriptions</string>
+    <string name="pro_reviews_label_text">Product reviews</string>
     <string name="pro_details_information_label_text">Detailed information</string>
     <string name="pro_details_price_value">$%s</string>
     <string name="pro_details_actual_strike_value">$%s</string>

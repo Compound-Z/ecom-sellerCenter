@@ -43,5 +43,7 @@ object Constants {
     )
 
     const val NETWORK_PAGE_SIZE = 10
+    const val REVIEW_PREVIEW_PAGE_SIZE = 3
     const val CHANNEL_ID = "666"
+
 }

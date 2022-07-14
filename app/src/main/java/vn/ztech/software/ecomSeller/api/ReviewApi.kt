@@ -23,4 +23,5 @@ interface IReviewApi{
 
     @POST("/api/v1/reviews/{productId}")
     suspend fun getListReviewOfAProduct(@Path("productId") productId: String, @Body request: GetReviewsRequest): PagedGetReviewResponse
+
 }

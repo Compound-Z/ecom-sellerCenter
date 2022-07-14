@@ -1,23 +1,32 @@
 package vn.ztech.software.ecomSeller.ui.product_details
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.bumptech.glide.Glide
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.databinding.FragmentProductDetailsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
+import vn.ztech.software.ecomSeller.databinding.ItemPreviewReviewSellerBinding
+import vn.ztech.software.ecomSeller.databinding.ItemReviewSellerBinding
 import vn.ztech.software.ecomSeller.model.Product
+import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.ui.cart.CartViewModel
 import vn.ztech.software.ecomSeller.ui.cart.DialogAddToCartSuccessFragment
 import vn.ztech.software.ecomSeller.ui.main.MainActivity
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
+import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
 class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
     val TAG = "ProductDetailsFragment"
@@ -28,6 +37,7 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
         val productId = arguments?.getString("productId") as String?
         viewModel.getProduct(productId?:"")
         viewModel.getProductDetails(productId?:"")
+        viewModel.getReviewsOfThisProduct(productId?:"")
     }
 
     override fun setUpViews() {
@@ -66,10 +76,51 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
                 setViews()
             }
         }
+        viewModel.reviews.observe(viewLifecycleOwner){
+            it?.let {
+                addReviewUI(it)
+            }
+        }
         viewModel.error.observe(viewLifecycleOwner){
             it?.let {
                 handleError(it)
             }
+        }
+    }
+
+    private fun addReviewUI(it: List<Review>) {
+
+        if(viewModel.hasNextPage.value == true) {
+            binding.btViewAllReview.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    Toast.makeText(requireContext(), "View list all review", Toast.LENGTH_LONG).show()
+                }
+            }
+        } else {
+            binding.btViewAllReview.apply {
+                visibility = View.GONE
+
+            }
+        }
+
+        val layoutReview = binding.layoutReviews
+        it.forEach {
+            val view = ItemPreviewReviewSellerBinding.inflate(layoutInflater)
+            if (it.imageUrl.isNotEmpty()) {
+                val imgUrl = it.imageUrl.toUri().buildUpon().scheme("https").build()
+                Glide.with(requireContext())
+                    .asBitmap()
+                    .load(imgUrl)
+                    .into(view.ivProduct)
+                view.ivProduct.clipToOutline = true
+            }
+            view.tvUserName.text = it.userName
+            view.ratingBar.rating = it.rating.toFloat()
+            view.tvReviewContent.text = it.content
+            view.tvDateTime.text = it.updatedAt.toDateTimeString()
+
+            layoutReview.addView(view.root)
         }
     }
 
@@ -97,6 +148,10 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
         binding.unitValue.text = viewModel.productDetails.value?.unit
         binding.brandValue.text = viewModel.productDetails.value?.brandName
         binding.originValue.text = viewModel.productDetails.value?.origin
+
+
+        binding.ratingBar.rating = viewModel.product.value?.averageRating?:0f
+        binding.numOfReview.text = "(${viewModel.product.value?.numberOfRating} reviews)"
     }
 
     private fun setImagesView() {

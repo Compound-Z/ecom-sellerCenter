@@ -9,6 +9,7 @@ import vn.ztech.software.ecomSeller.api.request.CreateReviewRequest
 import vn.ztech.software.ecomSeller.api.request.GetMyReviewQueueRequest
 import vn.ztech.software.ecomSeller.api.request.GetReviewsRequest
 import vn.ztech.software.ecomSeller.api.request.UpdateReviewRequest
+import vn.ztech.software.ecomSeller.api.response.PagedGetReviewResponse
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.model.ReviewQueue
@@ -16,6 +17,7 @@ import vn.ztech.software.ecomSeller.model.ReviewQueue
 interface IReviewRepository {
     suspend fun getAllReview(starFilter: Int?): Flow<PagingData<Review>>
     suspend fun getListReviewOfAProduct(productId: String, startFilter: Int?): Flow<PagingData<Review>>
+    suspend fun getListReviewPreviewOfAProduct(productId: String, starFilter: Int?): PagedGetReviewResponse
     suspend fun getMyReviewQueue(startFilter: String): Flow<PagingData<ReviewQueue>>
     suspend fun createReview(productId: String, reviewQueueId: String, rating: Int, content: String): Review
     suspend fun updateReview(reviewId: String, rating: Int, content: String): Review
@@ -50,6 +52,14 @@ class ReviewRepository(private val reviewApi: IReviewApi): IReviewRepository{
             initialKey = 1
         ).flow
     }
+
+    override suspend fun getListReviewPreviewOfAProduct(
+        productId: String,
+        starFilter: Int?
+    ): PagedGetReviewResponse {
+        return reviewApi.getListReviewOfAProduct(productId, GetReviewsRequest(starFilter = starFilter, pageSize = Constants.REVIEW_PREVIEW_PAGE_SIZE))
+    }
+
 
     override suspend fun getMyReviewQueue(startFilter: String): Flow<PagingData<ReviewQueue>> {
         return Pager(
