@@ -94,6 +94,10 @@
             android:id="@+id/action_productDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment"
             />
+        <action
+            android:id="@+id/action_productDetailsFragment_to_listReviewOfProductFragment"
+            app:destination="@id/allReviewOfProductFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
@@ -188,6 +192,12 @@
         <action
             android:id="@+id/action_listReviewFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allReviewOfProductFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.product_details.AllReviewOfProductFragment"
+        android:label="fragment_all_review_of_product"
+        tools:layout="@layout/fragment_all_review_of_product">
     </fragment>
     <fragment
         android:id="@+id/orderFragment"

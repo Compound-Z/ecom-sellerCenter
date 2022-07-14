@@ -1,31 +1,22 @@
 package vn.ztech.software.ecomSeller.ui.product_details
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.fragment_product_details.view.*
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.databinding.FragmentProductDetailsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.ItemPreviewReviewSellerBinding
-import vn.ztech.software.ecomSeller.databinding.ItemReviewSellerBinding
-import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
-import vn.ztech.software.ecomSeller.ui.cart.CartViewModel
-import vn.ztech.software.ecomSeller.ui.cart.DialogAddToCartSuccessFragment
-import vn.ztech.software.ecomSeller.ui.main.MainActivity
-import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
 import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
 class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
@@ -37,7 +28,9 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
         val productId = arguments?.getString("productId") as String?
         viewModel.getProduct(productId?:"")
         viewModel.getProductDetails(productId?:"")
-        viewModel.getReviewsOfThisProduct(productId?:"")
+        if (viewModel.reviews.value == null || viewModel.reviews.value?.isEmpty() == true){
+            viewModel.getReviewsOfThisProduct(productId?:"")
+        }
     }
 
     override fun setUpViews() {
@@ -94,7 +87,12 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
             binding.btViewAllReview.apply {
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    Toast.makeText(requireContext(), "View list all review", Toast.LENGTH_LONG).show()
+                    findNavController().navigate(
+                        R.id.action_productDetailsFragment_to_listReviewOfProductFragment,
+                        bundleOf(
+                            "product" to viewModel.product.value
+                        )
+                    )
                 }
             }
         } else {
@@ -104,23 +102,16 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
             }
         }
 
-        val layoutReview = binding.layoutReviews
+        val layoutReviewItems = binding.layoutReviewItems
+        layoutReviewItems.removeAllViews()
         it.forEach {
             val view = ItemPreviewReviewSellerBinding.inflate(layoutInflater)
-            if (it.imageUrl.isNotEmpty()) {
-                val imgUrl = it.imageUrl.toUri().buildUpon().scheme("https").build()
-                Glide.with(requireContext())
-                    .asBitmap()
-                    .load(imgUrl)
-                    .into(view.ivProduct)
-                view.ivProduct.clipToOutline = true
-            }
             view.tvUserName.text = it.userName
             view.ratingBar.rating = it.rating.toFloat()
             view.tvReviewContent.text = it.content
             view.tvDateTime.text = it.updatedAt.toDateTimeString()
 
-            layoutReview.addView(view.root)
+            layoutReviewItems.addView(view.root)
         }
     }
 

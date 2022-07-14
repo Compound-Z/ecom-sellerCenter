@@ -108,14 +108,9 @@ class ProductDetailsViewModel(
     }
     fun clearErrors() {
         error.value = null
-        hasNextPage.value = null
     }
 
     fun checkIsDataReady(): Boolean {
         return (product.value!=null && productDetails.value!=null)
     }
-
-
-
-
 }
