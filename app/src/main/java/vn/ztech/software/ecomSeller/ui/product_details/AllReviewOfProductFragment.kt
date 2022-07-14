@@ -98,16 +98,7 @@ class AllReviewOfProductFragment : BaseFragment2<FragmentAllReviewOfProductBindi
     }
 
     private fun setupAdapter() {
-        adapter = ListReviewOfProductAdapter(requireContext(), object : ListReviewOfProductAdapter.OnClickListener{
-            override fun onClick(productId: String) {
-                findNavController().navigate(
-                    R.id.action_listReviewFragment_to_productDetailsFragment,
-                    bundleOf(
-                        "productId" to productId
-                    )
-                )
-            }
-        })
+        adapter = ListReviewOfProductAdapter(requireContext())
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.listReviews.adapter = adapter
         adapter.addLoadStateListener {loadState->
