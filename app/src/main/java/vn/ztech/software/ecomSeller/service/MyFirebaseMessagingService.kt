@@ -64,7 +64,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             intent.putExtra("launchFromNoti", true)
             intent.putExtra("orderId", orderId)
 
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             var builder = NotificationCompat.Builder(context, Constants.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)

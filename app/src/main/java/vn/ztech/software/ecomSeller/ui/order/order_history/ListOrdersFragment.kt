@@ -60,9 +60,14 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
 
     override fun onResume() {
         super.onResume()
-        adapter.refresh()
+        if (viewModel.existed) {
+            adapter.refresh()
+        }
     }
-
+    override fun onPause(){
+        super.onPause()
+        viewModel.existed = true
+    }
     override fun setViewBinding(): FragmentListOrderBinding {
         return FragmentListOrderBinding.inflate(layoutInflater)
     }
@@ -99,7 +104,7 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
 
         viewModel.order.observe(viewLifecycleOwner){
             it?.let {
-                viewModel.getOrders(viewModel.statusFilter.value)
+//                viewModel.getOrders(viewModel.statusFilter.value)
                 adapter.refresh()
             }
         }
@@ -186,8 +191,10 @@ class ListOrdersFragment() : BaseFragment2<FragmentListOrderBinding>() {
             // show empty list
             if (loadState.refresh is androidx.paging.LoadState.Loading ||
                 loadState.append is androidx.paging.LoadState.Loading){
-                binding.loaderLayout.circularLoader.showAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                if(!viewModel.existed){
+                    binding.loaderLayout.circularLoader.showAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                }
             }
             else {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior

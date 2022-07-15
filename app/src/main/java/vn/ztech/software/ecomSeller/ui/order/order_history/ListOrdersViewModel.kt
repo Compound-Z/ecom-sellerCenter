@@ -19,6 +19,7 @@ import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 
 class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel() {
+    var existed: Boolean = false
     val listSearchCriteria = MutableLiveData<List<String>>()
     val currentSelectedSearchCriteria = MutableLiveData<String>()
     val currentSelectedOrder = MutableLiveData<Order>()
@@ -38,7 +39,7 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
                     }
                     is LoadState.Loaded -> {
                         orders.value = it.data
-//                        loading.value = false
+                        loading.value = false
                     }
                     is LoadState.Error -> {
                         loading.value = false
