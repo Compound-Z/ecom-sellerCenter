@@ -91,14 +91,16 @@
                 app:layout_constraintTop_toBottomOf="@id/pro_details_title_tv" />
 
             <TextView
-                android:id="@+id/tvNumberOfReviews"
+                android:id="@+id/tvAverageRating"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                app:layout_constraintStart_toEndOf="@id/pro_details_rating_bar"
+                app:layout_constraintBottom_toBottomOf="@id/pro_details_rating_bar"
+                tools:text="4.8"
+                android:textColor="@color/gold_dark"
                 android:layout_marginStart="4dp"
                 android:foregroundGravity="center"
-                app:layout_constraintBottom_toBottomOf="@id/pro_details_rating_bar"
-                app:layout_constraintStart_toEndOf="@id/pro_details_rating_bar"
-                tools:text="(2)">
+                >
             </TextView>
 
             <TextView
@@ -108,9 +110,9 @@
                 android:layout_marginStart="10dp"
                 android:textColor="#CCC2C2"
                 android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="@id/tvNumberOfReviews"
-                app:layout_constraintStart_toEndOf="@id/tvNumberOfReviews"
-                app:layout_constraintTop_toTopOf="@id/tvNumberOfReviews"
+                app:layout_constraintStart_toEndOf="@id/tvAverageRating"
+                app:layout_constraintBottom_toBottomOf="@id/tvAverageRating"
+                app:layout_constraintTop_toTopOf="@id/tvAverageRating"
                 tools:text="|">
             </TextView>
 
@@ -323,6 +325,19 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/reviewLabel" />
                     <TextView
+                        android:id="@+id/tvAverageRating2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gold_dark"
+                        app:layout_constraintStart_toEndOf="@id/ratingBar"
+                        app:layout_constraintTop_toTopOf="@+id/ratingBar"
+                        app:layout_constraintBottom_toBottomOf="@id/ratingBar"
+                        tools:text="4.5/5" />
+                    <TextView
                         android:id="@+id/numOfReview"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -330,7 +345,7 @@
                         android:layout_marginEnd="16dp"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="@id/btViewAllReview"
-                        app:layout_constraintStart_toEndOf="@id/ratingBar"
+                        app:layout_constraintStart_toEndOf="@id/tvAverageRating2"
                         app:layout_constraintTop_toTopOf="@+id/ratingBar"
                         app:layout_constraintBottom_toBottomOf="@id/ratingBar"
                         tools:text="TextViewveoihj" />

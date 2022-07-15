@@ -25,4 +25,6 @@
     <color name="loader_background_color">#55AAAAAA</color>
     <color name="bg_loader_layout">#86ACB1B5</color>
     <color name="dark_yellow">#FFC107</color>
+    <color name="gold_dark">#EAAE15</color>
+
 </resources>

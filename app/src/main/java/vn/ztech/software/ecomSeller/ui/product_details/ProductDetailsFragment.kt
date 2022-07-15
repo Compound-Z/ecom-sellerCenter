@@ -17,6 +17,7 @@ import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.ItemPreviewReviewSellerBinding
 import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import vn.ztech.software.ecomSeller.util.extension.round1Decimal
 import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
 class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
@@ -127,7 +128,7 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
 
         binding.proDetailsTitleTv.text = viewModel.product.value?.name.toString()
         binding.proDetailsRatingBar.rating = (viewModel.product.value?.averageRating ?: 0.0f)
-        binding.tvNumberOfReviews.text = "(${viewModel.product.value?.numberOfRating.toString()})"
+        binding.tvAverageRating.text = "${viewModel.product.value?.averageRating?.round1Decimal().toString()}"
         binding.tvSoldNumber.text = "Sold: ${viewModel.product.value?.saleNumber.toString()}"
 
         binding.proDetailsPriceTv.text = resources.getString(
@@ -142,6 +143,7 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
 
 
         binding.ratingBar.rating = viewModel.product.value?.averageRating?:0f
+        binding.tvAverageRating2.text = "${viewModel.product.value?.averageRating} / 5"
         binding.numOfReview.text = "(${viewModel.product.value?.numberOfRating} reviews)"
     }
 
