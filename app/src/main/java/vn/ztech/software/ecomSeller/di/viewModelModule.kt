@@ -25,7 +25,7 @@ import vn.ztech.software.ecomSeller.ui.splash.SplashViewModel
 
 fun viewModelModule() = module {
     viewModel { SplashViewModel(get()) }
-    viewModel { SignUpViewModel(get()) }
+    viewModel { SignUpViewModel(get(), get(), get()) }
     viewModel { LogInViewModel(get()) }
     viewModel { ProductDetailsViewModel(get(), get(), get()) }
     viewModel { OtpViewModel(get()) }

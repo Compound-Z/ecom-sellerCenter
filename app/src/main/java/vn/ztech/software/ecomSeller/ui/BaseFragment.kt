@@ -3,10 +3,12 @@ package vn.ztech.software.ecomSeller.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
@@ -83,6 +85,10 @@ abstract class BaseFragment<VBinding : ViewBinding>: Fragment() {
             showErrorDialog(error)
         }
     }
-
+    fun toastCenter(message: String){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).apply {
+            setGravity(Gravity.CENTER, 0, 0)
+        }.show()
+    }
 
 }

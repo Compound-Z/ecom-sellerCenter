@@ -52,8 +52,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 			if (it){
 				val isRemOn = binding.loginRemSwitch.isChecked
 				val bundle = bundleOf(
-					"USER_DATA" to viewModel.userData,
-					"REMEMBER_ME" to isRemOn
+//					"USER_DATA" to viewModel.userData,
+//					"REMEMBER_ME" to isRemOn
 				)
 				goHome(bundle)
 			}
