@@ -70,6 +70,7 @@
                 tools:listitem="@layout/item_category_list" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <Button
         android:id="@+id/btAddEditCategory"
         android:layout_width="match_parent"
@@ -77,9 +78,12 @@
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="8dp"
-        android:elevation="8dp"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:clickable="false"
+        android:enabled="false"
         android:backgroundTint="@color/blue_accent_300"
+        android:elevation="8dp"
         android:padding="16dp"
         android:text="@string/add_category_btn_text"
         android:textAllCaps="false"

@@ -15,7 +15,7 @@ import vn.ztech.software.ecomSeller.model.Product
 
 @Keep
 interface ICategoryApi{
-    @GET("/api/v1/categories")
+    @GET("/api/v1/categories/my-categories")
     suspend fun getListCategories(): List<Category>
 
     @POST("/api/v1/categories/{category}")
