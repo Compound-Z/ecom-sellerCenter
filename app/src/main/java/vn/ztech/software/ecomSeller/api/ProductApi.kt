@@ -22,7 +22,7 @@ interface IProductApi{
     @GET("/api/v1/products/{id}")
     suspend fun getProductDetails(@Path("id")id: String): ProductDetails
 
-    @POST("/api/v1/products/search/{searchWords}")
+    @POST("/api/v1/products/search-seller/{searchWords}")
     suspend fun search(@Path("searchWords")searchWords: String, @Body getProductsRequest: GetProductsRequest): PagedGetAllProductsResponse
 
     @GET("/api/v1/products/origins")
