@@ -16,7 +16,7 @@ import vn.ztech.software.ecomSeller.model.ProductDetails
 
 @Keep
 interface IProductApi{
-    @POST("/api/v1/products/all")
+    @POST("/api/v1/products/my-products")
     suspend fun getListProducts(@Body getProductsRequest: GetProductsRequest): PagedGetAllProductsResponse
 
     @GET("/api/v1/products/{id}")
