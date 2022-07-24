@@ -13,6 +13,7 @@ import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.extension.toLoadState
 import vn.ztech.software.ecomSeller.model.UserData
 import vn.ztech.software.ecomSeller.ui.LoginViewErrors
+import vn.ztech.software.ecomSeller.ui.UserType
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import vn.ztech.software.ecomSeller.util.isPasswordValid
@@ -37,11 +38,17 @@ class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
                         }
                         is LoadState.Loaded -> {
                             Log.d("LOGIN:", "LoadState.Loaded ${it.data}")
-                            userData = it.data.user
-                            tokens = it.data.tokens
-                            loading.value = false
-                            saveLogInInfo(userData, tokens)
-                            isLogInSuccessfully.value = true
+                            if(checkIdSeller(it.data.user)){
+                                userData = it.data.user
+                                tokens = it.data.tokens
+                                loading.value = false
+                                saveLogInInfo(userData, tokens)
+                                isLogInSuccessfully.value = true
+                            }else{
+                                loading.value = false
+                                error.value = errorMessage(CustomError(customMessage = "Wrong account type, please use an Seller account to use this app"))
+                            }
+
                         }
                         is LoadState.Error -> {
 //                        if (it.e is TokenRefreshing) {
@@ -54,6 +61,10 @@ class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
                     }
                 }
             }
+    }
+
+    private fun checkIdSeller(user: UserData): Boolean {
+        return user.role == UserType.seller.name
     }
 
     private fun saveLogInInfo(userData: UserData?, tokens: TokenResponse?) {
