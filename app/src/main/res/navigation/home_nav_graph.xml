@@ -75,6 +75,14 @@
         <action
             android:id="@+id/action_list_pro_in_cart_2_pro_details"
             app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/action_listProductsInCategoryFragment_to_addEditProductFragment"
+            app:destination="@id/addEditProductFragment"
+            />
+        <action
+            android:id="@+id/action_listProductsInCategoryFragment_to_quickEditProductFragment"
+            app:destination="@id/quickEditProductFragment"
+            />
         <!--        <action-->
         <!--            android:id="@+id/action_goto_addProduct"-->
         <!--            app:destination="@id/addEditProductFragment" />-->

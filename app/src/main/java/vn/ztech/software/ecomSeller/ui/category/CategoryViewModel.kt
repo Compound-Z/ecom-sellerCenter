@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -74,7 +75,7 @@ class CategoryViewModel(val productViewModel: ProductViewModel, private val list
     }
     fun getProductsInCategory(){
         viewModelScope.launch {
-            listCategoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+            listCategoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"").cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING
@@ -129,15 +130,14 @@ class CategoryViewModel(val productViewModel: ProductViewModel, private val list
     fun searchProductsInCategory(searchWordsProduct: String){
         Log.d("searchProductsInCategory", searchWordsProduct + currentSelectedCategory.value?.name?:"")
         viewModelScope.launch {
-            listCategoriesUseCase.search(currentSelectedCategory.value?.name?:"", searchWordsProduct).flowOn(Dispatchers.IO).toLoadState().collect {
+            listCategoriesUseCase.search(currentSelectedCategory.value?.name?:"", searchWordsProduct).cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-//                        products.value = it.data?: emptyList()
-                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
+                        products.value = it.data
                         Log.d(TAG, "SEARCH LOADED")
                     }
                     is LoadState.Error -> {

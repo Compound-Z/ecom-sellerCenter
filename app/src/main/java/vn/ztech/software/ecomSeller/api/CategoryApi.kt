@@ -22,7 +22,7 @@ interface ICategoryApi{
     suspend fun getListProductsInCategory(@Path("category")category: String, @Body getProductsInCategoryRequest: GetProductsInCategoryRequest): PagedGetAllProductsResponse
 
     @POST("/api/v1/categories/seller/search/{category_name}")
-    suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): List<Product>
+    suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): PagedGetAllProductsResponse
 
     @Multipart
     @POST("/api/v1/categories/uploadImage")

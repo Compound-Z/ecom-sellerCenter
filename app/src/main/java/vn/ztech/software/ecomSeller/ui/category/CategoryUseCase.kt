@@ -17,7 +17,7 @@ import java.io.File
 interface IListCategoriesUseCase{
     suspend fun getListCategories(): Flow<List<Category>>
     suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>>
-    suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<List<Product>>
+    suspend fun search(searchWordsCategory: String, searchWordsProduct: String):Flow<PagingData<Product>>
     suspend fun uploadImage(file: File): Flow<UploadImageResponse>
     suspend fun crateCategory(createCategoryRequest: CreateCategoryRequest): Flow<Category>
     suspend fun deleteCategory(categoryId: String): Flow<BasicResponse>
@@ -36,8 +36,8 @@ class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository)
     override suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>> {
         return categoryRepository.getListProductsInCategory(category)
     }
-    override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<List<Product>> = flow{
-        emit(categoryRepository.search(searchWordsCategory, searchWordsProduct))
+    override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<PagingData<Product>> {
+        return categoryRepository.search(searchWordsCategory, searchWordsProduct)
     }
     override suspend fun uploadImage(file: File): Flow<UploadImageResponse> = flow{
         if(!"jpg|png|jpeg".contains(file.extension)) throw CustomError(customMessage = "Wrong file type, please submit image")

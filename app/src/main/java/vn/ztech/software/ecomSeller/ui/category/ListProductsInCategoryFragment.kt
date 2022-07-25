@@ -23,7 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentListProductsInCategoryBinding
-import vn.ztech.software.ecomSeller.databinding.FragmentProductBinding
 import vn.ztech.software.ecomSeller.exception.RefreshTokenExpiredException
 import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
@@ -40,6 +39,7 @@ open class ListProductsInCategoryFragment : Fragment() {
 
     private lateinit var binding: FragmentListProductsInCategoryBinding
     private val viewModel: CategoryViewModel by viewModel()
+    private val productViewModel: ProductViewModel by sharedViewModel()
     private lateinit var listProductsAdapter: ListProductsAdapter
     protected val focusChangeListener = MyOnFocusChangeListener()
 
@@ -70,13 +70,17 @@ open class ListProductsInCategoryFragment : Fragment() {
     }
 
     private fun setViews() {
+        binding.cateAppBar.topAppBar.title = viewModel.currentSelectedCategory.value?.name?:"List product in category"
+        binding.cateAppBar.topAppBar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         setHomeTopAppBar()
         if (context != null) {
             setUpProductAdapter()
         }
-//        binding.homeFabAddProduct.setOnClickListener {
-//            findNavController().navigate(R.id.action_productFragment_to_addEditProductFragment)
-//        }
+        binding.homeFabAddProduct.setOnClickListener {
+            findNavController().navigate(R.id.action_listProductsInCategoryFragment_to_addEditProductFragment)
+        }
         binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
         binding.loaderLayout.circularLoader.showAnimationBehavior
     }
@@ -221,7 +225,7 @@ open class ListProductsInCategoryFragment : Fragment() {
 
             override fun onEditClick(productData: Product) {
                 findNavController().navigate(
-                    R.id.action_productFragment_to_quickEditProductFragment,
+                    R.id.action_listProductsInCategoryFragment_to_quickEditProductFragment,
                     bundleOf(
                         "product" to productData
                     )
@@ -290,7 +294,7 @@ open class ListProductsInCategoryFragment : Fragment() {
 
     private fun forkProduct(productData: Product) {
         findNavController().navigate(
-            R.id.action_productFragment_to_addEditProductFragment,
+            R.id.action_listProductsInCategoryFragment_to_addEditProductFragment,
             bundleOf(
                 "product" to productData,
                 "editType" to "forkProduct"
@@ -301,7 +305,7 @@ open class ListProductsInCategoryFragment : Fragment() {
 
     private fun editProduct(productData: Product) {
         findNavController().navigate(
-            R.id.action_productFragment_to_addEditProductFragment,
+            R.id.action_listProductsInCategoryFragment_to_addEditProductFragment,
             bundleOf(
                 "product" to productData,
                 "editType" to "fullEdit"
@@ -353,10 +357,13 @@ open class ListProductsInCategoryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.productViewModel.clearSelected()
+        productViewModel.clearSelected()
+
     }
     override fun onStop() {
         super.onStop()
         viewModel.clearErrors()
+        productViewModel.clearErrors()
     }
 
 
