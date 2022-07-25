@@ -23,6 +23,7 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentProductBinding
 import vn.ztech.software.ecomSeller.exception.RefreshTokenExpiredException
+import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.MyOnFocusChangeListener
 import vn.ztech.software.ecomSeller.ui.auth.LoginSignupActivity
@@ -38,6 +39,13 @@ class ProductFragment : Fragment() {
     private val viewModel: ProductViewModel by sharedViewModel()
     private lateinit var listProductsAdapter: ListProductsAdapter
     protected val focusChangeListener = MyOnFocusChangeListener()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.takeIf { it.containsKey("category") }?.let {
+            viewModel.currentSelectedCategory.value = arguments!!.getParcelable<Category>("category")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

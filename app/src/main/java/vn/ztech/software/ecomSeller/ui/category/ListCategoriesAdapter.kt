@@ -21,13 +21,17 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
     inner class ItemViewHolder(binding: ItemCategoryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val categoryName = binding.categoryNameTv
-        private val productCard = binding.categoryCard
+        private val categoryCard = binding.categoryCard
         private val categoryImage = binding.categoryImageView
         private val btEdit = binding.btEdit
         private val btDelete = binding.btDelete
         private val tvNumberOfProduct = binding.tvNumberOfProduct
 
         fun bind(categoryData: Category) {
+            categoryCard.setOnClickListener {
+                onClickListener.onClick(categoryData)
+            }
+
             btEdit.setOnClickListener {
                 onClickListener.onClickEdit(categoryData)
             }
@@ -95,6 +99,7 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
     
 
     interface OnClickListener {
+        fun onClick(categoryData: Category)
         fun onClickEdit(categoryData: Category)
         fun onClickDelete(categoryData: Category)
 

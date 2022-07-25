@@ -22,11 +22,12 @@ import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.AddCategoryViewErrors
 import vn.ztech.software.ecomSeller.ui.product.IListProductUseCase
+import vn.ztech.software.ecomSeller.ui.product.ProductViewModel
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import java.io.File
 
-class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
+class CategoryViewModel(val productViewModel: ProductViewModel, private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
     val TAG = "CategoryViewModel"
     val currentSelectedCategory = MutableLiveData<Category>()
 
@@ -81,7 +82,6 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
                         products.value = it.data
-                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
                         Log.d(TAG, "LOADED")
                     }
                     is LoadState.Error -> {

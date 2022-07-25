@@ -18,10 +18,10 @@ interface ICategoryApi{
     @GET("/api/v1/categories/my-categories")
     suspend fun getListCategories(): List<Category>
 
-    @POST("/api/v1/categories/{category}")
+    @POST("/api/v1/categories/seller/{category}")
     suspend fun getListProductsInCategory(@Path("category")category: String, @Body getProductsInCategoryRequest: GetProductsInCategoryRequest): PagedGetAllProductsResponse
 
-    @POST("/api/v1/categories/search/{category_name}")
+    @POST("/api/v1/categories/seller/search/{category_name}")
     suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): List<Product>
 
     @Multipart

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
+import vn.ztech.software.ecomSeller.ui.category.IListCategoriesUseCase
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import java.io.File
@@ -31,7 +33,8 @@ import java.io.File
 private const val TAG = "ProductViewModel"
 
 class ProductViewModel(
-    private val listProductsUseCase: IListProductUseCase
+    private val listProductsUseCase: IListProductUseCase,
+    private val categoriesUseCase: IListCategoriesUseCase
 ): ViewModel() {
 
     private val _storeDataStatus = MutableLiveData<StoreDataStatus>()
@@ -51,13 +54,19 @@ class ProductViewModel(
     val createdProduct = MutableLiveData<Product>()
     val updatedProduct = MutableLiveData<Product>()
     val deletedProductStatus = MutableLiveData<BasicResponse>()
+
+    /**category*/
+    val currentSelectedCategory = MutableLiveData<Category>()
+
     val errorUI = MutableLiveData<AddProductViewErrors>()
     val error = MutableLiveData<CustomError>()
 
 
     fun getProducts(){
         viewModelScope.launch {
-            listProductsUseCase.getListProducts().cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
+            var getList: Flow<PagingData<Product>> = if (currentSelectedCategory.value == null) listProductsUseCase.getListProducts()
+                                                    else categoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"")
+            getList.cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING

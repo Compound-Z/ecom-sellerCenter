@@ -1,6 +1,5 @@
 package vn.ztech.software.ecomSeller.ui.category
 
-import android.util.Log
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

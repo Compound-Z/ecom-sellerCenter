@@ -31,13 +31,13 @@ fun viewModelModule() = module {
     viewModel { OtpViewModel(get()) }
     viewModel { ForgotPasswordViewModel(get()) }
     viewModel { AccountViewModel(get()) }
-    viewModel { CategoryViewModel(get(), get()) }
+    viewModel { CategoryViewModel(get(), get(), get()) }
     viewModel { CartViewModel(get()) }
     viewModel { AddressViewModel(get()) }
     viewModel { OrderViewModel(get(), get()) }
     viewModel { OrderDetailsViewModel(get())}
     viewModel { ListOrdersViewModel(get()) }
-    viewModel { ProductViewModel(get()) }
+    viewModel { ProductViewModel(get(), get()) }
     viewModel { SaleReportViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { ChartViewModel(get()) }

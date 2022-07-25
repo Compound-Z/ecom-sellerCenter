@@ -108,6 +108,21 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             it ?: return@observe
             handleError(it)
         }
+
+        /**products viewmodel*/
+        viewModel.productViewModel.deletedProductStatus.observe(viewLifecycleOwner){
+            it?.let {
+                Toast.makeText(requireContext(), "Delete product successfully!", Toast.LENGTH_LONG).apply {
+                    setGravity(Gravity.CENTER, 0, 0)
+                }.show()
+                viewModel.productViewModel.deletedProductStatus.value = null
+                viewModel.getProductsInCategory()
+            }
+        }
+        viewModel.productViewModel.error.observe(viewLifecycleOwner){
+            it ?: return@observe
+            handleError(it)
+        }
     }
 
     private fun setTopAppBar() {
@@ -145,6 +160,15 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
     private fun setUpCategoryAdapter(categoriesList: List<Category>?) {
         listCategoriesAdapter = ListCategoriesAdapter(categoriesList ?: emptyList(), requireContext())
         listCategoriesAdapter.onClickListener =  object : ListCategoriesAdapter.OnClickListener {
+            override fun onClick(categoryData: Category) {
+                Log.d("category", categoryData.toString())
+                findNavController().navigate(
+                    R.id.action_categoryFragment_to_listProductsInCategoryFragment,
+                    bundleOf(
+                        "category" to categoryData
+                    )
+                )
+            }
 
             override fun onClickEdit(categoryData: Category) {
                 findNavController().navigate(
