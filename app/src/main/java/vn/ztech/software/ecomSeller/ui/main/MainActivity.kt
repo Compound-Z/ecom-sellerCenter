@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "remote token ${token}")
 
                 if (localFCMToken == token.toString()){
-                    if(isFCMTokenNew){
+//                    if(isFCMTokenNew){
                         viewModel.updateFCMToken(token.toString())
-                    }else{
+//                    }else{
                         return@OnCompleteListener
-                    }
+//                    }
                 }else{
                     /**update localFCMToken with new token*/
                     Log.d(TAG, "update token ${token}")
