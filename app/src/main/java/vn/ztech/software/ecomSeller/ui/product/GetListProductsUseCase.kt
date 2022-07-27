@@ -7,6 +7,7 @@ import vn.ztech.software.ecomSeller.api.request.CreateProductRequest
 import vn.ztech.software.ecomSeller.api.request.QuickUpdateProductRequest
 import vn.ztech.software.ecomSeller.api.response.BasicResponse
 import vn.ztech.software.ecomSeller.api.response.UploadImageResponse
+import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.model.Country
 import vn.ztech.software.ecomSeller.repository.IProductRepository
 import vn.ztech.software.ecomSeller.model.Product
@@ -40,7 +41,7 @@ class ListProductsUseCase(private val productRepository: IProductRepository): IL
     }
     override suspend fun uploadImage(file: File): Flow<UploadImageResponse> = flow{
         if(!"jpg|png|jpeg".contains(file.extension)) throw CustomError(customMessage = "Wrong file type, please submit image")
-        if (file.length()/1024>2048) throw CustomError(customMessage = "File is too large, please submit file smaller than 2M")
+        if (file.length()/1024>Constants.MAX_FILE_SIZE) throw CustomError(customMessage = "File is too large, please submit file smaller than 4M")
         else emit(productRepository.uploadImage(file))
     }
 

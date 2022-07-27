@@ -15,6 +15,7 @@ import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 import java.io.File
 
 interface IListCategoriesUseCase{
+    suspend fun getAllCategories(): Flow<List<Category>>
     suspend fun getListCategories(): Flow<List<Category>>
     suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>>
     suspend fun search(searchWordsCategory: String, searchWordsProduct: String):Flow<PagingData<Product>>
@@ -28,6 +29,13 @@ interface IListCategoriesUseCase{
 class ListCategoriesUseCase(private val categoryRepository: ICategoryRepository): IListCategoriesUseCase{
     override suspend fun getListCategories(): Flow<List<Category>> = flow{
         val listCategories = categoryRepository.getListCategories()
+        listCategories.forEach() {
+            it.name = it.name.removeUnderline()
+        }
+        emit(listCategories)
+    }
+    override suspend fun getAllCategories(): Flow<List<Category>> = flow{
+        val listCategories = categoryRepository.getAllCategories()
         listCategories.forEach() {
             it.name = it.name.removeUnderline()
         }

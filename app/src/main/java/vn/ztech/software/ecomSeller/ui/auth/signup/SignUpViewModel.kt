@@ -48,6 +48,7 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
         pwd2: String,
         isAccepted: Boolean,
         shopName: String,
+        shopDescription: String,
         imgList: List<Uri>,
         provinceName: String?,
         provincePos: Int,
@@ -58,7 +59,7 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
         detailedAddress: String,
     ) {
         if (name.trim().isBlank() || mobile.trim().isBlank() || email.trim().isBlank() || pwd1.trim().isBlank() || pwd2.trim().isBlank()
-            || shopName.trim().isBlank() || imgList.isEmpty()
+            || shopName.trim().isBlank()|| shopDescription.trim().isBlank() || imgList.isEmpty()
         ){
             _errorStatus.value = SignUpViewErrors.ERR_EMPTY
             return
@@ -107,6 +108,10 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
             _errorStatus.value = SignUpViewErrors.SHOP_NAME
             return
         }
+        if (shopDescription.length < 25 || name.length > 125){
+            _errorStatus.value = SignUpViewErrors.SHOP_DESCRIPTION
+            return
+        }
         /**address errors check*/
         if (provinceName==null || provinceName.isBlank()) {
             _errorStatus.value = SignUpViewErrors.ERR_PROVINCE_EMPTY
@@ -138,6 +143,7 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
                 ArrayList(),
                 ArrayList(),
                 shopName,
+                shopDescription,
                 "",
                 addressViewModel.provinces.value?.get(provincePos)?.province_id?:-1,
                 addressViewModel.districts.value?.get(districtPos)?.district_id?:-1,

@@ -73,6 +73,28 @@ class CategoryViewModel(val productViewModel: ProductViewModel, private val list
             }
         }
     }
+    fun getAllCategories(){
+        viewModelScope.launch {
+            listCategoriesUseCase.getAllCategories().flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
+                        _allCategories.value = it.data.toMutableList()
+                        originalCategories.value = it.data.toMutableList()
+                        Log.d(TAG, "LOADED")
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
     fun getProductsInCategory(){
         viewModelScope.launch {
             listCategoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"").cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {

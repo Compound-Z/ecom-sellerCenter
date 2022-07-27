@@ -25,6 +25,7 @@ data class UserData(
 	@TypeConverters(ObjectListTypeConvertor::class)
 	var cart: List<CartItem> = ArrayList(),
 	var shopName: String,
+	var shopDescription: String,
 	var imageUrl: String,
 	var provinceId: Int,
 	var districtId: Int,

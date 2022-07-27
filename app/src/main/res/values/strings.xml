@@ -12,6 +12,7 @@
     <string name="signup_welcome_text">Sign Up!</string>
     <string name="signup_name_hint">USER NAME</string>
     <string name="signup_shop_name_hint">SHOP NAME</string>
+    <string name="signup_shop_description_hint">SHOP DESCRIPTION</string>
     <string name="signup_mobile_hint">MOBILE</string>
     <string name="signup_password_hint">PASSWORD</string>
     <string name="signup_conf_password_hint">CONFIRM PASSWORD</string>
@@ -19,6 +20,7 @@
     <string name="signup_btn_text">Sign Up</string>
     <string name="signup_name_ph">Your Name</string>
     <string name="signup_shop_name_ph">Shop Name</string>
+    <string name="signup_shop_description_ph">Shop Description</string>
     <string name="signup_mobile_ph">Your Mobile</string>
     <string name="signup_email_hint">E-Mail</string>
     <string name="signup_email_ph">Your email</string>

@@ -187,6 +187,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 		binding.signupPasswordEditText.onFocusChangeListener = focusChangeListener
 		binding.signupCnfPasswordEditText.onFocusChangeListener = focusChangeListener
 		binding.etShopName.onFocusChangeListener = focusChangeListener
+		binding.etShopDescription.onFocusChangeListener = focusChangeListener
 		binding.etDetailedAddress.onFocusChangeListener = focusChangeListener
 
 		adapter = AddCategoryImagesAdapter(requireContext(), imgList)
@@ -228,6 +229,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 
 		/**shop info*/
 		val shopName = binding.etShopName.text.toString()
+		val shopDescription = binding.etShopDescription.text.toString()
 
 		val provincePos = binding.spinnerProvinces.selectedItemPosition-1
 		val provinceName = binding.spinnerProvinces.selectedItem?.toString()
@@ -238,7 +240,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 		val detailedAddress = binding.etDetailedAddress.text.toString()
 
 		viewModel.signUpSubmitData(name, mobile, email, password1, password2, isAccepted,
-			shopName, imgList,
+			shopName, shopDescription, imgList,
 			provinceName, provincePos,districtName,districtPos,wardName,wardPos,detailedAddress
 			)
 	}
@@ -278,6 +280,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 			SignUpViewErrors.SHOP_NAME -> {
 				binding.etShopName.error = "Name  must be 2-40"
 				toastCenter("Shop name  must be 2-40")
+			}
+			SignUpViewErrors.SHOP_DESCRIPTION -> {
+				binding.etShopDescription.error = "Shop description must be 25-125"
+				toastCenter("Shop description  must be 25-125")
 			}
 			SignUpViewErrors.ERR_PROVINCE_EMPTY->{
 				setSpinnerError(binding.tvProvinceError)

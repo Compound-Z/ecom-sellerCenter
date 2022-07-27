@@ -25,6 +25,7 @@ import vn.ztech.software.ecomSeller.model.Product
 import java.io.File
 
 interface ICategoryRepository {
+    suspend fun getAllCategories(): List<Category>
     suspend fun getListCategories(): List<Category>
     suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>>
     suspend fun search(searchWords: String, searchWordsProduct: String): Flow<PagingData<Product>>
@@ -37,6 +38,9 @@ interface ICategoryRepository {
 class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryRepository{
     override suspend fun getListCategories(): List<Category> {
         return CategoryApi.getListCategories()
+    }
+    override suspend fun getAllCategories(): List<Category> {
+        return CategoryApi.getAllCategories()
     }
 
     override suspend fun getListProductsInCategory(category: String):  Flow<PagingData<Product>> {
