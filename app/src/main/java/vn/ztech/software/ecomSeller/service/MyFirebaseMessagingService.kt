@@ -67,8 +67,8 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
             val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             var builder = NotificationCompat.Builder(context, Constants.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_filled_location_on_24))
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setColor(context.resources.getColor(R.color.transparent))
                 .setContentTitle(title)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -80,6 +80,11 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 //            image?.let {
 //                builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(it))
 //            }
+            if(image!=null){
+                builder.setLargeIcon(image)
+            }else{
+                builder.setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
+            }
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
                 notify(Random.nextInt(999999), builder.build())
