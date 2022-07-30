@@ -35,6 +35,7 @@ class CategoryViewModel(val productViewModel: ProductViewModel, private val list
     private var _allCategories = MutableLiveData<MutableList<Category>>()
     val allCategories: LiveData<MutableList<Category>> get() = _allCategories
     val originalCategories = MutableLiveData<MutableList<Category>>()
+    val myCategories = MutableLiveData<MutableList<Category>>()
 
     val isSearchCategoriesResultEmpty = MutableLiveData<Boolean>()
     val products = MutableLiveData<PagingData<Product>>()
@@ -60,8 +61,7 @@ class CategoryViewModel(val productViewModel: ProductViewModel, private val list
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-                        _allCategories.value = it.data.toMutableList()
-                        originalCategories.value = it.data.toMutableList()
+                        myCategories.value = it.data.toMutableList()
                         Log.d(TAG, "LOADED")
                     }
                     is LoadState.Error -> {

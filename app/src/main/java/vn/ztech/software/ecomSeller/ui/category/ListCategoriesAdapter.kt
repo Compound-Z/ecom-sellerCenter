@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import vn.ztech.software.ecomSeller.databinding.ItemCategoryListBinding
 import vn.ztech.software.ecomSeller.databinding.LayoutHomeAdBinding
 import vn.ztech.software.ecomSeller.model.Category
+import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 
 class ListCategoriesAdapter(categoryList: List<Any>, private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -38,7 +39,7 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
             btDelete.setOnClickListener {
                 onClickListener.onClickDelete(categoryData)
             }
-            categoryName.text = categoryData.name
+            categoryName.text = categoryData.name.removeUnderline()
             tvNumberOfProduct.text = "${categoryData.numberOfProduct} products"
             if (categoryData.imageUrl.isNotEmpty()) {
                 val imgUrl = categoryData.imageUrl.toUri().buildUpon().scheme("https").build()

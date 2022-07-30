@@ -30,14 +30,14 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.originalCategories.value.isNullOrEmpty()) {
+        if(viewModel.myCategories.value.isNullOrEmpty()) {
             viewModel.getCategories()
         }
     }
     override fun setUpViews() {
         super.setUpViews()
         if (context != null) {
-            setUpCategoryAdapter(viewModel.allCategories.value)
+            setUpCategoryAdapter(viewModel.myCategories.value)
             binding.categoriesRecyclerView.apply {
                 adapter = listCategoriesAdapter
                 val itemDecoration = ItemDecorationRecyclerViewPadding()
@@ -72,7 +72,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                 binding.swipeRefresh.isRefreshing = false
             }
         }
-        viewModel.allCategories.observe(viewLifecycleOwner) { listCategories->
+        viewModel.myCategories.observe(viewLifecycleOwner) { listCategories->
             if (!listCategories.isNullOrEmpty()) {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
