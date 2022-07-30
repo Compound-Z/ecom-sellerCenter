@@ -154,9 +154,10 @@ open class ListProductsInCategoryFragment : Fragment() {
 
     fun openLogInSignUpActivity(page: ISplashUseCase.PAGE){
         val intent = Intent(activity, LoginSignupActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         intent.putExtra("PAGE", page)
         startActivity(intent)
+        activity?.finish()
     }
 
     private fun setHomeTopAppBar() {

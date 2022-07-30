@@ -162,6 +162,7 @@ class OtpActivity : AppCompatActivity(), SuccessFragmentListener {
 			.putExtra("PAGE", ISplashUseCase.PAGE.LOGIN)
 			.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 		startActivity(logInIntent)
+		finish()
 	}
 
 	override fun onDialogDismiss() {

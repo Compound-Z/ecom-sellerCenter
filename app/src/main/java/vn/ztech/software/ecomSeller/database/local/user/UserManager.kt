@@ -52,6 +52,9 @@ class UserManager (context: Context): Serializable {
                 editor.putString(ACCESS_TOKEN_EXPIRES, "")
                 editor.putString(REFRESH_TOKEN, "")
                 editor.putString(REFRESH_TOKEN_EXPIRES, "")
+                editor.putString(FCM_TOKEN, "")
+                editor.putBoolean(IS_FCM_TOKEN_NEW, true)
+
             if (!editor.commit()) {
                 throw IllegalStateException("Failed to write login to shared prefs")
             }

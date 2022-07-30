@@ -84,8 +84,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 	private fun goLogIn() {
 		val logInIntent = Intent(context, LoginSignupActivity::class.java)
 			.putExtra("PAGE", ISplashUseCase.PAGE.LOGIN)
-			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 		startActivity(logInIntent)
+		activity?.finish()
 	}
 
 	override fun onStop() {
