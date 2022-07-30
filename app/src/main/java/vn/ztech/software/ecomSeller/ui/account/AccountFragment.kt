@@ -36,11 +36,11 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 				R.id.action_accountFragment_to_listReviewFragment,
 			)
 		}
-		binding.accountAddressTv.setOnClickListener {
-			findNavController().navigate(
-				R.id.action_accountFragment_to_addressFragment,
-				bundleOf("fromWhere" to "AccountFragment"))
-		}
+//		binding.accountAddressTv.setOnClickListener {
+//			findNavController().navigate(
+//				R.id.action_accountFragment_to_addressFragment,
+//				bundleOf("fromWhere" to "AccountFragment"))
+//		}
 		binding.accountSignOutTv.setOnClickListener {
 			showSignOutDialog()
 		}
