@@ -17,6 +17,7 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.databinding.ItemProductListBinding
 import vn.ztech.software.ecomSeller.databinding.LayoutHomeAdBinding
 import vn.ztech.software.ecomSeller.model.Product
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
 
 class ListProductsAdapter(private val context: Context) :
 	PagingDataAdapter<Product, RecyclerView.ViewHolder>(ProductComparator) {
@@ -38,8 +39,7 @@ class ListProductsAdapter(private val context: Context) :
 
 		fun bind(productData: Product) {
 			proName.text = productData.name
-			proPrice.text =
-				context.getString(R.string.pro_details_price_value, productData.price.toString())
+			proPrice.text = productData.price.toCurrency()
 //			proRatingBar.rating = productData.averageRating.toFloat()
 
 			if (productData.imageUrl.isNotEmpty()) {

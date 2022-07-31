@@ -18,6 +18,7 @@ import vn.ztech.software.ecomSeller.databinding.ItemPreviewReviewSellerBinding
 import vn.ztech.software.ecomSeller.model.Review
 import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.util.extension.round1Decimal
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
 import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
 class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
@@ -131,10 +132,7 @@ class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
         binding.tvAverageRating.text = "${viewModel.product.value?.averageRating?.round1Decimal().toString()}"
         binding.tvSoldNumber.text = "Sold: ${viewModel.product.value?.saleNumber.toString()}"
 
-        binding.proDetailsPriceTv.text = resources.getString(
-            R.string.pro_details_price_value,
-            viewModel.product.value?.price
-        )
+        binding.proDetailsPriceTv.text = viewModel.product.value?.price?.toCurrency()
         binding.proDetailsSpecificsText.text = viewModel.productDetails.value?.description ?: ""
         binding.categoryValue.text = viewModel.product.value?.category
         binding.unitValue.text = viewModel.productDetails.value?.unit
