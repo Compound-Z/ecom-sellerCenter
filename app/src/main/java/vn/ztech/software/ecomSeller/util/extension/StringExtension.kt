@@ -13,7 +13,10 @@ fun MutableList<String>.findIndexOf(category: String): Int{
     }
     return -1
 }
-
+fun String.toYear(): String {
+    val localDateTime = LocalDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
+    return localDateTime.format(DateTimeFormatter.ofPattern("MM/yyyy"))
+}
 fun String.toDateTimeString(): String {
     val localDateTime = LocalDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
     return localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))

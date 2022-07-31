@@ -9,7 +9,13 @@
     <string name="forgot_password_fragment_label">ForgetPasswrod Fragment</string>
     <string name="otp_fragment_label">Otp Fragment</string>
     <string name="signup_welcome_hello">Hello,</string>
+    <string name="account_from_when_label">From</string>
+    <string name="account_phone_number_label">Phone number</string>
+    <string name="account_num_of_product_label">Product</string>
+    <string name="account_review_label">Reviews</string>
+    <string name="account_description_label">Description</string>
     <string name="signup_welcome_text">Sign Up!</string>
+    <string name="account_shop_info_label">Shop information</string>
     <string name="signup_name_hint">USER NAME</string>
     <string name="signup_shop_name_hint">SHOP NAME</string>
     <string name="signup_shop_description_hint">SHOP DESCRIPTION</string>

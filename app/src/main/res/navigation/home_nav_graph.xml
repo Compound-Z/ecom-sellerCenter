@@ -194,6 +194,19 @@
         <action
             android:id="@+id/action_accountFragment_to_listReviewFragment"
             app:destination="@id/listReviewFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_shopInfoFragment"
+            app:destination="@id/shopInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/shopInfoFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.info.ShopInfoFragment"
+        android:label="fragment_shop_info"
+        tools:layout="@layout/fragment_shop_info" >
+<!--        <action-->
+<!--            android:id="@+id/action_accountFragment_to_orderHistoryFragment"-->
+<!--            app:destination="@id/orderHistoryFragment" />-->
+<!--       -->
     </fragment>
     <fragment
         android:id="@+id/listReviewFragment"

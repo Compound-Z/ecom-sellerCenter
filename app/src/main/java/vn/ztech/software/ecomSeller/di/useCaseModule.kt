@@ -5,6 +5,8 @@ import vn.ztech.software.ecomSeller.domain.use_case.get_product_details.IProduct
 import vn.ztech.software.ecomSeller.domain.use_case.get_product_details.ProductDetailsUseCase
 import vn.ztech.software.ecomSeller.ui.account.AccountUseCase
 import vn.ztech.software.ecomSeller.ui.account.IAccountUseCase
+import vn.ztech.software.ecomSeller.ui.account.info.IShopInfoUseCase
+import vn.ztech.software.ecomSeller.ui.account.info.ShopInfoUseCase
 import vn.ztech.software.ecomSeller.ui.account.review.IReviewUseCase
 import vn.ztech.software.ecomSeller.ui.account.review.ReviewUseCase
 import vn.ztech.software.ecomSeller.ui.address.AddressUseCase
@@ -48,5 +50,6 @@ fun useCaseModule() = module {
     factory<IOrderUserCase> { OrderUseCase(get()) }
     factory<IMainUseCase> { MainUseCase(get()) }
     factory<IReviewUseCase> { ReviewUseCase(get()) }
+    factory<IShopInfoUseCase> { ShopInfoUseCase (get()) }
 
 }

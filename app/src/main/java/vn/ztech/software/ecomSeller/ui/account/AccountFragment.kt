@@ -28,6 +28,11 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 //			Log.d(TAG, "Profile Selected")
 //			findNavController().navigate(R.id.action_accountFragment_to_profileFragment)
 //		}
+		binding.tvShopInfo.setOnClickListener {
+			findNavController().navigate(
+				R.id.action_accountFragment_to_shopInfoFragment
+			)
+		}
 		binding.accountOrdersTv.setOnClickListener {
 			(activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.orderHistoryFragment
 		}
