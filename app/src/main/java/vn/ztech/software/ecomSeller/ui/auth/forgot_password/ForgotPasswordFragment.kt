@@ -18,6 +18,7 @@ import vn.ztech.software.ecomSeller.util.MOB_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.PASSWORD_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.RETYPE_PASSWORD_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
+import vn.ztech.software.ecomSeller.util.standardlizePhoneNumber
 
 
 class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
@@ -61,7 +62,7 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
         viewModel.isSentResetRequestSuccessfully.observe(viewLifecycleOwner) {
             if (it){
                 val bundle = bundleOf(
-                    "PHONE_NUMBER" to binding.loginMobileEditText.text.toString(),
+                    "PHONE_NUMBER" to standardlizePhoneNumber(binding.loginMobileEditText.text.toString()),
                     "PASSWORD" to binding.loginPasswordEditText.text.toString()
                 )
                 launchOtpActivity(getString(R.string.forgot_password_fragment_label), bundle)
@@ -112,7 +113,7 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
         }
     }
     private fun onReset() {
-        val mob = binding.loginMobileEditText.text.toString()
+        val mob = standardlizePhoneNumber(binding.loginMobileEditText.text.toString())
         val pwd = binding.loginPasswordEditText.text.toString()
         val pwd2 = binding.retypeResetPasswordEditText.text.toString()
         viewModel.resetPassword(mob, pwd, pwd2)

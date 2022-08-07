@@ -82,7 +82,7 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
         if (!isEmailValid(email)) {
             err += ERR_EMAIL
         }
-        if (!isPhoneValid(mobile)) {
+        if (!isPhoneNumberValid(mobile)) {
             err += ERR_MOBILE
         }
         when (err) {
@@ -108,7 +108,7 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
             _errorStatus.value = SignUpViewErrors.SHOP_NAME
             return
         }
-        if (shopDescription.length < 25 || name.length > 125){
+        if (shopDescription.length < 25 || name.length > 500){
             _errorStatus.value = SignUpViewErrors.SHOP_DESCRIPTION
             return
         }
@@ -131,12 +131,12 @@ class SignUpViewModel(val productViewModel: ProductViewModel, val addressViewMod
         }
         //final
         _errorStatus.value = SignUpViewErrors.NONE
-        val uId = getRandomString(32, "84" + mobile.trim(), 6)
+        val uId = getRandomString(32, mobile.trim(), 6)
         val newData =
             UserData(
                 uId,
                 name.trim(),
-                "+84" + mobile.trim(),
+                mobile.trim(),
                 email.trim(),
                 pwd1.trim(),
                 UserType.seller.name,

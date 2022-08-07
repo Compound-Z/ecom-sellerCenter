@@ -20,6 +20,7 @@ import vn.ztech.software.ecomSeller.ui.main.MainActivity
 import vn.ztech.software.ecomSeller.util.MOB_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.PASSWORD_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
+import vn.ztech.software.ecomSeller.util.standardlizePhoneNumber
 
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
@@ -125,7 +126,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 	}
 
 	private fun onLogin() {
-		val mob = binding.loginMobileEditText.text.toString()
+		val mob = standardlizePhoneNumber(binding.loginMobileEditText.text.toString())
 		val pwd = binding.loginPasswordEditText.text.toString()
 
 		viewModel.login(mob, pwd)

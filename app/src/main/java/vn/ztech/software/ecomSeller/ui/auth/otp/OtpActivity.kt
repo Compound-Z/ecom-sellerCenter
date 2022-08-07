@@ -45,8 +45,6 @@ class OtpActivity : AppCompatActivity(), SuccessFragmentListener {
 				if(bundle!=null){
 					phoneNumber = bundle.getString("PHONE_NUMBER").toString()
 					password = bundle.getString("PASSWORD").toString()
-
-					Toast.makeText(this, phoneNumber, Toast.LENGTH_LONG).show()
 				}else{
 					/**if this type of error happen, return back to SignUpActivity*/
 					showErrorDialog(CustomError()) { _, _ ->

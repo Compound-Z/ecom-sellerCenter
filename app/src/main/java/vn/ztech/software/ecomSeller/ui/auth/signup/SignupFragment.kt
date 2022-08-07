@@ -28,13 +28,12 @@ import vn.ztech.software.ecomSeller.ui.AddAddressViewErrors
 import vn.ztech.software.ecomSeller.ui.AddProductViewErrors
 import vn.ztech.software.ecomSeller.ui.SignUpViewErrors
 import vn.ztech.software.ecomSeller.ui.category.AddCategoryImagesAdapter
+import vn.ztech.software.ecomSeller.util.*
 
-import vn.ztech.software.ecomSeller.util.EMAIL_ERROR_TEXT
-import vn.ztech.software.ecomSeller.util.MOB_ERROR_TEXT
-import vn.ztech.software.ecomSeller.util.PASSWORD_ERROR_TEXT
 import vn.ztech.software.ecomSeller.util.extension.findPos
 import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
 import vn.ztech.software.ecomSeller.util.getFullPath
+import vn.ztech.software.ecomSeller.util.standardlizePhoneNumber
 import java.io.File
 
 class SignupFragment : BaseFragment<FragmentSignupBinding>() {
@@ -221,7 +220,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 
 	private fun onSignUp() {
 		val name = binding.signupNameEditText.text.toString()
-		val mobile = binding.signupMobileEditText.text.toString()
+		val mobile = standardlizePhoneNumber(binding.signupMobileEditText.text.toString())
 		val email = binding.signupEmailEditText.text.toString()
 		val password1 = binding.signupPasswordEditText.text.toString()
 		val password2 = binding.signupCnfPasswordEditText.text.toString()
@@ -282,8 +281,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 				toastCenter("Shop name  must be 2-40")
 			}
 			SignUpViewErrors.SHOP_DESCRIPTION -> {
-				binding.etShopDescription.error = "Shop description must be 25-125"
-				toastCenter("Shop description  must be 25-125")
+				binding.etShopDescription.error = "Shop description must be 25-500"
+				toastCenter("Shop description  must be 25-500")
 			}
 			SignUpViewErrors.ERR_PROVINCE_EMPTY->{
 				setSpinnerError(binding.tvProvinceError)
