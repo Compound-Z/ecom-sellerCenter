@@ -10,11 +10,9 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
 import vn.ztech.software.ecomSeller.databinding.FragmentCategoryBinding
@@ -32,14 +30,14 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.originalCategories.value.isNullOrEmpty()) {
+        if(viewModel.myCategories.value.isNullOrEmpty()) {
             viewModel.getCategories()
         }
     }
     override fun setUpViews() {
         super.setUpViews()
         if (context != null) {
-            setUpCategoryAdapter(viewModel.allCategories.value)
+            setUpCategoryAdapter(viewModel.myCategories.value)
             binding.categoriesRecyclerView.apply {
                 adapter = listCategoriesAdapter
                 val itemDecoration = ItemDecorationRecyclerViewPadding()
@@ -74,7 +72,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
                 binding.swipeRefresh.isRefreshing = false
             }
         }
-        viewModel.allCategories.observe(viewLifecycleOwner) { listCategories->
+        viewModel.myCategories.observe(viewLifecycleOwner) { listCategories->
             if (!listCategories.isNullOrEmpty()) {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
                 binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
@@ -107,6 +105,21 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
             }
         }
         viewModel.error.observe(viewLifecycleOwner){
+            it ?: return@observe
+            handleError(it)
+        }
+
+        /**products viewmodel*/
+        viewModel.productViewModel.deletedProductStatus.observe(viewLifecycleOwner){
+            it?.let {
+                Toast.makeText(requireContext(), "Delete product successfully!", Toast.LENGTH_LONG).apply {
+                    setGravity(Gravity.CENTER, 0, 0)
+                }.show()
+                viewModel.productViewModel.deletedProductStatus.value = null
+                viewModel.getProductsInCategory()
+            }
+        }
+        viewModel.productViewModel.error.observe(viewLifecycleOwner){
             it ?: return@observe
             handleError(it)
         }
@@ -147,6 +160,15 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding>() {
     private fun setUpCategoryAdapter(categoriesList: List<Category>?) {
         listCategoriesAdapter = ListCategoriesAdapter(categoriesList ?: emptyList(), requireContext())
         listCategoriesAdapter.onClickListener =  object : ListCategoriesAdapter.OnClickListener {
+            override fun onClick(categoryData: Category) {
+                Log.d("category", categoryData.toString())
+                findNavController().navigate(
+                    R.id.action_categoryFragment_to_listProductsInCategoryFragment,
+                    bundleOf(
+                        "category" to categoryData
+                    )
+                )
+            }
 
             override fun onClickEdit(categoryData: Category) {
                 findNavController().navigate(

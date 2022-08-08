@@ -45,8 +45,6 @@ class OtpActivity : AppCompatActivity(), SuccessFragmentListener {
 				if(bundle!=null){
 					phoneNumber = bundle.getString("PHONE_NUMBER").toString()
 					password = bundle.getString("PASSWORD").toString()
-
-					Toast.makeText(this, phoneNumber, Toast.LENGTH_LONG).show()
 				}else{
 					/**if this type of error happen, return back to SignUpActivity*/
 					showErrorDialog(CustomError()) { _, _ ->
@@ -162,6 +160,7 @@ class OtpActivity : AppCompatActivity(), SuccessFragmentListener {
 			.putExtra("PAGE", ISplashUseCase.PAGE.LOGIN)
 			.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 		startActivity(logInIntent)
+		finish()
 	}
 
 	override fun onDialogDismiss() {

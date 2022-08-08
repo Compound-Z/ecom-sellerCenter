@@ -15,14 +15,17 @@ import vn.ztech.software.ecomSeller.model.Product
 
 @Keep
 interface ICategoryApi{
-    @GET("/api/v1/categories")
+
+    @GET("/api/v1/categories/")
+    suspend fun getAllCategories(): List<Category>
+    @GET("/api/v1/categories/my-categories")
     suspend fun getListCategories(): List<Category>
 
-    @POST("/api/v1/categories/{category}")
+    @POST("/api/v1/categories/seller/{category}")
     suspend fun getListProductsInCategory(@Path("category")category: String, @Body getProductsInCategoryRequest: GetProductsInCategoryRequest): PagedGetAllProductsResponse
 
-    @POST("/api/v1/categories/search/{category_name}")
-    suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): List<Product>
+    @POST("/api/v1/categories/seller/search/{category_name}")
+    suspend fun search(@Path("category_name")searchWordsCategory: String, @Body request: SearchProductInCategoryRequest): PagedGetAllProductsResponse
 
     @Multipart
     @POST("/api/v1/categories/uploadImage")

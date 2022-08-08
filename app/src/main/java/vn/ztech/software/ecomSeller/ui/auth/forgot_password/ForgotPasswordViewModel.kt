@@ -12,10 +12,9 @@ import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.extension.toLoadState
 import vn.ztech.software.ecomSeller.ui.LoginViewErrors
 import vn.ztech.software.ecomSeller.ui.auth.forgot_password.IResetPasswordUseCase
-import vn.ztech.software.ecomSeller.util.CustomError
-import vn.ztech.software.ecomSeller.util.errorMessage
+import vn.ztech.software.ecomSeller.util.*
 import vn.ztech.software.ecomSeller.util.isPasswordValid
-import vn.ztech.software.ecomSeller.util.isPhoneValid
+import vn.ztech.software.ecomSeller.util.isPhoneNumberValid
 
 class ForgotPasswordViewModel(private val useCase: IResetPasswordUseCase): ViewModel() {
     val loading = MutableLiveData<Boolean>()
@@ -27,7 +26,7 @@ class ForgotPasswordViewModel(private val useCase: IResetPasswordUseCase): ViewM
     fun resetPassword(phoneNumber: String, password: String, retypePassword: String) {
         if (isInfoValid(phoneNumber, password, retypePassword))
             viewModelScope.launch {
-                useCase.sendResetPasswordRequest("+84$phoneNumber", password).flowOn(Dispatchers.IO).toLoadState().collect {
+                useCase.sendResetPasswordRequest(phoneNumber, password).flowOn(Dispatchers.IO).toLoadState().collect {
                     when (it) {
                         is LoadState.Loading -> {
                             loading.value = true
@@ -55,7 +54,7 @@ class ForgotPasswordViewModel(private val useCase: IResetPasswordUseCase): ViewM
             errorInputData.value = LoginViewErrors.ERR_EMPTY
             return false
         }
-        if (!isPhoneValid(phoneNumber)) {
+        if (!isPhoneNumberValid(phoneNumber)) {
             errorInputData.value = LoginViewErrors.ERR_MOBILE
             return false
         }

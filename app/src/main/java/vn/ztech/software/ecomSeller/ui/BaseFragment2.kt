@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -76,9 +77,10 @@ abstract class BaseFragment2<VBinding : ViewBinding>: Fragment() {
 
     fun openLogInSignUpActivity(page: ISplashUseCase.PAGE){
         val intent = Intent(activity, LoginSignupActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         intent.putExtra("PAGE", page)
         startActivity(intent)
+        activity?.finish()
     }
 
     fun handleError(error: CustomError){

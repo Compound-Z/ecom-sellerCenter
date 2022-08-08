@@ -25,9 +25,10 @@ import vn.ztech.software.ecomSeller.model.Product
 import java.io.File
 
 interface ICategoryRepository {
+    suspend fun getAllCategories(): List<Category>
     suspend fun getListCategories(): List<Category>
     suspend fun getListProductsInCategory(category: String): Flow<PagingData<Product>>
-    suspend fun search(searchWords: String, searchWordsProduct: String): List<Product>
+    suspend fun search(searchWords: String, searchWordsProduct: String): Flow<PagingData<Product>>
     suspend fun uploadImage(file: File): UploadImageResponse
     suspend fun createCategory(createCategoryRequest: CreateCategoryRequest): Category
     suspend fun deleteCategory(categoryId: String): BasicResponse
@@ -37,6 +38,9 @@ interface ICategoryRepository {
 class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryRepository{
     override suspend fun getListCategories(): List<Category> {
         return CategoryApi.getListCategories()
+    }
+    override suspend fun getAllCategories(): List<Category> {
+        return CategoryApi.getAllCategories()
     }
 
     override suspend fun getListProductsInCategory(category: String):  Flow<PagingData<Product>> {
@@ -52,9 +56,18 @@ class CategoryRepository(private val CategoryApi: ICategoryApi): ICategoryReposi
         ).flow
     }
 
-    override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): List<Product> {
+    override suspend fun search(searchWordsCategory: String, searchWordsProduct: String): Flow<PagingData<Product>> {
         Log.d("x","search ${searchWordsCategory}")
-        return CategoryApi.search(searchWordsCategory, SearchProductInCategoryRequest(searchWordsProduct))
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.NETWORK_PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = {
+                SearchProductInCategoryPagingSource(searchWordsCategory, SearchProductInCategoryRequest(searchWordsProduct), CategoryApi)
+            },
+            initialKey = 1
+        ).flow
     }
 
     override suspend fun uploadImage(file: File): UploadImageResponse {

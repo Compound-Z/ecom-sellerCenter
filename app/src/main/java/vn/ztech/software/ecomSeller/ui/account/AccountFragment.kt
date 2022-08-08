@@ -1,4 +1,4 @@
-package vn.ztech.software.ecomSeller.ui.account.logout
+package vn.ztech.software.ecomSeller.ui.account
 
 import android.content.Intent
 import androidx.core.os.bundleOf
@@ -28,14 +28,24 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 //			Log.d(TAG, "Profile Selected")
 //			findNavController().navigate(R.id.action_accountFragment_to_profileFragment)
 //		}
+		binding.tvShopInfo.setOnClickListener {
+			findNavController().navigate(
+				R.id.action_accountFragment_to_shopInfoFragment
+			)
+		}
 		binding.accountOrdersTv.setOnClickListener {
 			(activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.orderHistoryFragment
 		}
-		binding.accountAddressTv.setOnClickListener {
+		binding.accountReviewTv.setOnClickListener {
 			findNavController().navigate(
-				R.id.action_accountFragment_to_addressFragment,
-				bundleOf("fromWhere" to "AccountFragment"))
+				R.id.action_accountFragment_to_listReviewFragment,
+			)
 		}
+//		binding.accountAddressTv.setOnClickListener {
+//			findNavController().navigate(
+//				R.id.action_accountFragment_to_addressFragment,
+//				bundleOf("fromWhere" to "AccountFragment"))
+//		}
 		binding.accountSignOutTv.setOnClickListener {
 			showSignOutDialog()
 		}
@@ -79,8 +89,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding>() {
 	private fun goLogIn() {
 		val logInIntent = Intent(context, LoginSignupActivity::class.java)
 			.putExtra("PAGE", ISplashUseCase.PAGE.LOGIN)
-			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 		startActivity(logInIntent)
+		activity?.finish()
 	}
 
 	override fun onStop() {

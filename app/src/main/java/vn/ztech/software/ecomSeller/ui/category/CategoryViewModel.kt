@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -22,17 +23,19 @@ import vn.ztech.software.ecomSeller.model.Category
 import vn.ztech.software.ecomSeller.model.Product
 import vn.ztech.software.ecomSeller.ui.AddCategoryViewErrors
 import vn.ztech.software.ecomSeller.ui.product.IListProductUseCase
+import vn.ztech.software.ecomSeller.ui.product.ProductViewModel
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import java.io.File
 
-class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
+class CategoryViewModel(val productViewModel: ProductViewModel, private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
     val TAG = "CategoryViewModel"
     val currentSelectedCategory = MutableLiveData<Category>()
 
     private var _allCategories = MutableLiveData<MutableList<Category>>()
     val allCategories: LiveData<MutableList<Category>> get() = _allCategories
     val originalCategories = MutableLiveData<MutableList<Category>>()
+    val myCategories = MutableLiveData<MutableList<Category>>()
 
     val isSearchCategoriesResultEmpty = MutableLiveData<Boolean>()
     val products = MutableLiveData<PagingData<Product>>()
@@ -58,6 +61,27 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
+                        myCategories.value = it.data.toMutableList()
+                        Log.d(TAG, "LOADED")
+                    }
+                    is LoadState.Error -> {
+                        _storeDataStatus.value = StoreDataStatus.ERROR
+                        error.value = errorMessage(it.e)
+                        Log.d(TAG +" ERROR:", it.e.message.toString())
+                    }
+                }
+            }
+        }
+    }
+    fun getAllCategories(){
+        viewModelScope.launch {
+            listCategoriesUseCase.getAllCategories().flowOn(Dispatchers.IO).toLoadState().collect {
+                when(it){
+                    LoadState.Loading -> {
+                        _storeDataStatus.value = StoreDataStatus.LOADING
+                    }
+                    is LoadState.Loaded -> {
+                        _storeDataStatus.value = StoreDataStatus.DONE
                         _allCategories.value = it.data.toMutableList()
                         originalCategories.value = it.data.toMutableList()
                         Log.d(TAG, "LOADED")
@@ -73,7 +97,7 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     }
     fun getProductsInCategory(){
         viewModelScope.launch {
-            listCategoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"").flowOn(Dispatchers.IO).toLoadState().collect {
+            listCategoriesUseCase.getListProductsInCategory(currentSelectedCategory.value?.name?:"").cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING
@@ -81,7 +105,6 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
                         products.value = it.data
-                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
                         Log.d(TAG, "LOADED")
                     }
                     is LoadState.Error -> {
@@ -129,15 +152,14 @@ class CategoryViewModel(private val listCategoriesUseCase: IListCategoriesUseCas
     fun searchProductsInCategory(searchWordsProduct: String){
         Log.d("searchProductsInCategory", searchWordsProduct + currentSelectedCategory.value?.name?:"")
         viewModelScope.launch {
-            listCategoriesUseCase.search(currentSelectedCategory.value?.name?:"", searchWordsProduct).flowOn(Dispatchers.IO).toLoadState().collect {
+            listCategoriesUseCase.search(currentSelectedCategory.value?.name?:"", searchWordsProduct).cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when(it){
                     LoadState.Loading -> {
                         _storeDataStatus.value = StoreDataStatus.LOADING
                     }
                     is LoadState.Loaded -> {
                         _storeDataStatus.value = StoreDataStatus.DONE
-//                        products.value = it.data?: emptyList()
-                        error.value = errorMessage(CustomError(customMessage = "Not implemented yet"))
+                        products.value = it.data
                         Log.d(TAG, "SEARCH LOADED")
                     }
                     is LoadState.Error -> {

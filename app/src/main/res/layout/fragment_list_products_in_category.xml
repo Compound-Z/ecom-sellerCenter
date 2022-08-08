@@ -8,11 +8,17 @@
     tools:context=".ui.category.ListProductsInCategoryFragment">
 
     <include
+        android:id="@+id/cate_app_bar"
+        layout="@layout/layout_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+    <include
         android:id="@+id/home_top_app_bar"
         layout="@layout/layout_list_products_in_category_top_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@id/cate_app_bar"/>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
@@ -63,22 +69,19 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:spanCount="2"
+                app:spanCount="1"
                 tools:itemCount="10"
                 tools:listitem="@layout/item_product_list" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    //feature: this button is for the seller
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/home_fab_add_product"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        android:layout_marginBottom="16dp"-->
-<!--        android:contentDescription="@string/home_add_fab_desc"-->
-<!--        app:srcCompat="@drawable/ic_add_48" />-->
-
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/home_fab_add_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:contentDescription="@string/home_add_fab_desc"
+        app:srcCompat="@drawable/ic_add_48" />
 </RelativeLayout>

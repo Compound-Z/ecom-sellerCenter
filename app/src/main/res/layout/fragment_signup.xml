@@ -71,20 +71,35 @@
                 android:paddingBottom="12dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/tv"
+            android:text="+84"
+            app:layout_constraintBottom_toBottomOf="@id/mobileOutlinedTextField"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:layout_marginTop="6dp"
+            android:textSize="18sp"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:background="@drawable/rounder_background_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mobileOutlinedTextField"
+            android:layout_height="0dp">
 
+        </TextView>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/mobileOutlinedTextField"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp"
             android:hint="@string/signup_mobile_hint"
             app:expandedHintEnabled="false"
             app:hintTextAppearance="@style/TextAppearance.MyTheme.Subtitle2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv"
             app:layout_constraintTop_toBottomOf="@id/nameOutlinedTextField"
             app:placeholderText="@string/signup_mobile_ph"
             app:placeholderTextAppearance="@style/TextAppearance.MyTheme.Body2">
@@ -180,22 +195,311 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <com.google.android.material.switchmaterial.SwitchMaterial-->
-<!--            android:id="@+id/signup_seller_switch"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="24dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="24dp"-->
-<!--            android:checked="false"-->
-<!--            android:paddingStart="2dp"-->
-<!--            android:paddingEnd="2dp"-->
-<!--            android:text="@string/signup_seller_text"-->
-<!--            android:textSize="14sp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/confirmPasswordOutlinedTextField"-->
-<!--            app:switchPadding="4dp" />-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/shopNameOutlinedTextField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/signup_shop_name_hint"
+            app:expandedHintEnabled="false"
+            app:hintTextAppearance="@style/TextAppearance.MyTheme.Subtitle2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/confirmPasswordOutlinedTextField"
+            app:placeholderText="@string/signup_shop_name_ph"
+            app:placeholderTextAppearance="@style/TextAppearance.MyTheme.Body2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etShopName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/addImageLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="10dp"
+            android:text="Add profile image"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/btAddImg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shopNameOutlinedTextField" />
+
+        <ImageButton
+            android:id="@+id/btAddImg"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/blue_accent_300"
+            android:contentDescription="Add image"
+            android:scaleType="centerCrop"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/addImageLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addImageLabel"
+            app:srcCompat="@drawable/ic_add_48" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAddedImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addImageLabel"
+            tools:itemCount="1"
+            tools:listitem="@layout/add_images_item" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/shopDescriptionOutlinedTextField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/signup_shop_description_hint"
+            app:hintTextAppearance="@style/TextAppearance.MyTheme.Subtitle2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewAddedImage"
+            app:placeholderText="@string/signup_shop_description_ph"
+            app:placeholderTextAppearance="@style/TextAppearance.MyTheme.Body2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etShopDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/tvProvince"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            android:text="Province"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/shopDescriptionOutlinedTextField" />
+        <TextView
+            android:id="@+id/tvProvinceError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="* Error: province is missing"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/red_600"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_constraintStart_toEndOf="@id/tvProvince"
+            app:layout_constraintTop_toTopOf="@id/tvProvince" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProvince"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProvince"
+            android:backgroundTint="#D9EEF3"
+            android:layout_marginTop="8dp"
+            android:layout_height="50dp">
+
+            <Spinner
+                android:id="@+id/spinnerProvinces"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/black">
+
+            </Spinner>
+        </androidx.cardview.widget.CardView>
+
+
+
+        <TextView
+            android:id="@+id/tvDistrict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            android:text="District"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardProvince" />
+        <TextView
+            android:id="@+id/tvDistrictError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="* Error: district is missing"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/red_600"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/tvDistrict"
+            app:layout_constraintTop_toBottomOf="@id/cardProvince"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDistrict"
+            android:layout_width="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDistrict"
+            android:backgroundTint="#D9EEF3"
+            android:layout_height="50dp">
+            <Spinner
+                android:id="@+id/spinnerDistricts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDistrict"
+                />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tvWard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            android:text="Ward"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardDistrict" />
+        <TextView
+            android:id="@+id/tvWardError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="* Error: ward is missing"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/red_600"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/tvWard"
+            app:layout_constraintTop_toBottomOf="@id/cardDistrict"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardWard"
+            android:layout_width="match_parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvWard"
+            android:backgroundTint="#D9EEF3"
+            android:layout_height="50dp">
+            <Spinner
+                android:id="@+id/spinnerWards"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:outlineSpotShadowColor="@color/green_500"
+                android:outlineAmbientShadowColor="@color/green_500"
+                app:layout_constraintTop_toBottomOf="@id/tvWard"
+                >
+            </Spinner>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <TextView
+            android:id="@+id/add_address_city_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            android:text="Detailed address"
+            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardWard" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfDetailedAddress"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            app:boxStrokeColor="@color/blue_accent_300"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_address_city_label">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDetailedAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textColor="@color/gray"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/signup_policy_switch"
@@ -210,7 +514,7 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmPasswordOutlinedTextField"
+            app:layout_constraintTop_toBottomOf="@+id/tfDetailedAddress"
             app:switchPadding="8dp"
             app:switchTextAppearance="@style/TextAppearance.MyTheme.Caption" />
 

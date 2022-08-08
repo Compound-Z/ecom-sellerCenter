@@ -14,6 +14,7 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.ItemOrderHistoryBinding
 import vn.ztech.software.ecomSeller.model.Order
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
 
 class ListOrderAdapter( val context: Context,
                         val onClickListener: OnClickListener
@@ -24,8 +25,8 @@ class ListOrderAdapter( val context: Context,
         fun bind(order: Order) {
             binding.tvUserName.text = order.user.name
             binding.cartProductTitleTv.text = "${order.orderItems[0].name}..."
-            binding.tvSubTotalAndShipping.text = "Subtotal: ${order.billing.subTotal} + ${order.billing.shippingFee}(ship)"
-            binding.tvTotal.text = (order.billing.subTotal + order.billing.shippingFee).toString()
+            binding.tvSubTotalAndShipping.text = "Subtotal: ${order.billing.subTotal.toCurrency()} + ${order.billing.shippingFee.toCurrency()}(ship)"
+            binding.tvTotal.text = (order.billing.subTotal + order.billing.shippingFee).toCurrency()
             binding.tvOrderId.text = order.orderId
             if (order.orderItems[0].imageUrl.isNotEmpty()) {
                 val imgUrl = order.orderItems[0].imageUrl.toUri().buildUpon().scheme("https").build()
@@ -108,7 +109,7 @@ class ListOrderAdapter( val context: Context,
         }
 
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
-            return oldItem.orderId == newItem.orderId
+            return oldItem.status == newItem.status
         }
     }
 }

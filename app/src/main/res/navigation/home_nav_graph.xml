@@ -54,6 +54,9 @@
         <action
             android:id="@+id/action_category_home"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_listProductsInCategoryFragment"
+            app:destination="@id/listProductsInCategoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEditCategoryFragment"
@@ -72,6 +75,14 @@
         <action
             android:id="@+id/action_list_pro_in_cart_2_pro_details"
             app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/action_listProductsInCategoryFragment_to_addEditProductFragment"
+            app:destination="@id/addEditProductFragment"
+            />
+        <action
+            android:id="@+id/action_listProductsInCategoryFragment_to_quickEditProductFragment"
+            app:destination="@id/quickEditProductFragment"
+            />
         <!--        <action-->
         <!--            android:id="@+id/action_goto_addProduct"-->
         <!--            app:destination="@id/addEditProductFragment" />-->
@@ -93,6 +104,10 @@
         <action
             android:id="@+id/action_productDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment"
+            />
+        <action
+            android:id="@+id/action_productDetailsFragment_to_listReviewOfProductFragment"
+            app:destination="@id/allReviewOfProductFragment"
             />
     </fragment>
     <fragment
@@ -167,7 +182,7 @@
 <!--    </fragment>-->
     <fragment
         android:id="@+id/accountFragment"
-        android:name="vn.ztech.software.ecomSeller.ui.account.logout.AccountFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" >
         <action
@@ -176,9 +191,37 @@
         <action
             android:id="@+id/action_accountFragment_to_addressFragment"
             app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_listReviewFragment"
+            app:destination="@id/listReviewFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_shopInfoFragment"
+            app:destination="@id/shopInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/shopInfoFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.info.ShopInfoFragment"
+        android:label="fragment_shop_info"
+        tools:layout="@layout/fragment_shop_info" >
 <!--        <action-->
-<!--            android:id="@+id/action_accountFragment_to_profileFragment"-->
-<!--            app:destination="@id/profileFragment" />-->
+<!--            android:id="@+id/action_accountFragment_to_orderHistoryFragment"-->
+<!--            app:destination="@id/orderHistoryFragment" />-->
+<!--       -->
+    </fragment>
+    <fragment
+        android:id="@+id/listReviewFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.account.review.ListReviewFragment"
+        android:label="fragment_list_review"
+        tools:layout="@layout/fragment_list_review" >
+        <action
+            android:id="@+id/action_listReviewFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allReviewOfProductFragment"
+        android:name="vn.ztech.software.ecomSeller.ui.product_details.AllReviewOfProductFragment"
+        android:label="fragment_all_review_of_product"
+        tools:layout="@layout/fragment_all_review_of_product">
     </fragment>
     <fragment
         android:id="@+id/orderFragment"

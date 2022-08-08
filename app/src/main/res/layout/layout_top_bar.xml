@@ -15,6 +15,7 @@
         android:layout_height="55dp"
         android:background="@color/white"
         app:buttonGravity="center_vertical"
+        app:layout_collapseMode="none"
         app:contentInsetStartWithNavigation="0dp"
         app:navigationIcon="@drawable/ic_outline_arrow_back_24"
         app:navigationIconTint="@color/gray"

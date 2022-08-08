@@ -38,6 +38,7 @@ class ApiNetworkInterceptor(private val gson: Gson, private val userManager: Use
         }
         request.addHeader(HEADER_AUTHORIZATION, "Bearer $token")
         var response = chain.proceed(request.build())
+        Log.d("URL","${response.request.method.toString()} ${response.request.url.toString()}")
         Log.d("RESPONSE", response.peekBody(2048).string() +" " + response?.code)
 
         //if there is a error, throw errors

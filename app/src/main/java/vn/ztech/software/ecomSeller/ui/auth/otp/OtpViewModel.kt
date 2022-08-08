@@ -53,7 +53,7 @@ class OtpViewModel(private val useCase: IOtpUseCase) : ViewModel() {
 	fun verifyOTPResetPassword(phoneNumber: String, password: String, otp: String) {
 		if (isOtpValid(otp))
 		viewModelScope.launch {
-			useCase.verifyOtpResetPassword("+84$phoneNumber", password, otp).flowOn(Dispatchers.IO).toLoadState().collect {
+			useCase.verifyOtpResetPassword(phoneNumber, password, otp).flowOn(Dispatchers.IO).toLoadState().collect {
 				when(it){
 					LoadState.Loading -> {
 						Log.d("OTP RESET", "loading")

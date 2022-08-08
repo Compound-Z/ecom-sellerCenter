@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.navigation.fragment.findNavController
@@ -14,12 +15,14 @@ import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.FragmentOrderDetailsBinding
 import vn.ztech.software.ecomSeller.model.*
 import vn.ztech.software.ecomSeller.ui.BaseFragment
+import vn.ztech.software.ecomSeller.ui.main.MainActivity
 import vn.ztech.software.ecomSeller.ui.order.OrderProductsAdapter
 import vn.ztech.software.ecomSeller.ui.order.order_history.ListOrdersViewModel
 import vn.ztech.software.ecomSeller.util.CustomError
 import vn.ztech.software.ecomSeller.util.errorMessage
 import vn.ztech.software.ecomSeller.util.extension.getFullAddress
 import vn.ztech.software.ecomSeller.util.extension.toCartProductResponses
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
 
 const val TAG = "OrderDetailsFragment"
 class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
@@ -27,6 +30,7 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
     private val viewModel: OrderDetailsViewModel by viewModel()
     private val listOrdersViewModel: ListOrdersViewModel by viewModel()
 	private lateinit var productsAdapter: OrderProductsAdapter
+    var isLaunchedFromNoti = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,12 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
                     viewModel.orderDetails.value = orderDetails
                 }
             }
+            "MainActivity"->{
+                arguments?.takeIf { it.containsKey("orderId") }?.apply {
+                    viewModel.getOrderDetails(getString("orderId"))
+                    isLaunchedFromNoti = true
+                }
+            }
         }
     }
 
@@ -55,8 +65,23 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
 
     override fun setUpViews() {
         super.setUpViews()
+        if(isLaunchedFromNoti){
+            activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,object :
+                OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.accountFragment
+                    findNavController().navigateUp()
+                }
+            })
+        }
         binding.orderDetailAppBar.topAppBar.title = getString(R.string.order_details_fragment_title)
-		binding.orderDetailAppBar.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
+		binding.orderDetailAppBar.topAppBar.setNavigationOnClickListener {
+            if (isLaunchedFromNoti){
+                /**this is a trick to force orderFragment to re-render, otherwise it will be blank, another solution should be research to replace this :((, but i have no time, so temporarily accept this*/
+                (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.accountFragment
+            }
+            findNavController().navigateUp()
+        }
 		binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
 //
 		if (context != null) {
@@ -90,9 +115,9 @@ class OrderDetailsFragment : BaseFragment<FragmentOrderDetailsBinding>() {
         }else{
             binding.layoutBilling.adCard.visibility = View.VISIBLE
             binding.layoutBilling.apply {
-                priceItemsAmountTv.text = billing.subTotal.toString()
-                priceShippingAmountTv.text = billing.shippingFee.toString()
-                priceTotalAmountTv.text = (billing.subTotal + billing.shippingFee).toString()
+                priceItemsAmountTv.text = billing.subTotal.toCurrency()
+                priceShippingAmountTv.text = billing.shippingFee.toCurrency()
+                priceTotalAmountTv.text = (billing.subTotal + billing.shippingFee).toCurrency()
                 tvNumberItems.text = "Items(${orderItems.size})"
             }
         }

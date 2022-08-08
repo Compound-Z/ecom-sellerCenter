@@ -16,13 +16,13 @@ import vn.ztech.software.ecomSeller.model.ProductDetails
 
 @Keep
 interface IProductApi{
-    @POST("/api/v1/products/all")
+    @POST("/api/v1/products/my-products")
     suspend fun getListProducts(@Body getProductsRequest: GetProductsRequest): PagedGetAllProductsResponse
 
     @GET("/api/v1/products/{id}")
     suspend fun getProductDetails(@Path("id")id: String): ProductDetails
 
-    @POST("/api/v1/products/search/{searchWords}")
+    @POST("/api/v1/products/search-seller/{searchWords}")
     suspend fun search(@Path("searchWords")searchWords: String, @Body getProductsRequest: GetProductsRequest): PagedGetAllProductsResponse
 
     @GET("/api/v1/products/origins")
@@ -42,6 +42,9 @@ interface IProductApi{
 
     @DELETE("/api/v1/products/{productId}")
     suspend fun deleteProduct(@Path("productId") productId: String): BasicResponse
+
+    @GET("/api/v1/products/get-one-product/{productId}")
+    suspend fun getOneProduct(@Path("productId") productId: String): Product
 }
 
 

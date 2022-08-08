@@ -13,10 +13,10 @@ import vn.ztech.software.ecomSeller.common.LoadState
 import vn.ztech.software.ecomSeller.common.extension.toLoadState
 import vn.ztech.software.ecomSeller.model.UserData
 import vn.ztech.software.ecomSeller.ui.LoginViewErrors
-import vn.ztech.software.ecomSeller.util.CustomError
-import vn.ztech.software.ecomSeller.util.errorMessage
+import vn.ztech.software.ecomSeller.ui.UserType
+import vn.ztech.software.ecomSeller.util.*
 import vn.ztech.software.ecomSeller.util.isPasswordValid
-import vn.ztech.software.ecomSeller.util.isPhoneValid
+import vn.ztech.software.ecomSeller.util.isPhoneNumberValid
 
 class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
     val loading = MutableLiveData<Boolean>()
@@ -30,18 +30,24 @@ class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
     fun login(phoneNumber: String, password: String) {
         if (isLogInInfoValid(phoneNumber, password))
             viewModelScope.launch {
-                useCase.login("+84$phoneNumber", password).flowOn(Dispatchers.IO).toLoadState().collect {
+                useCase.login(phoneNumber, password).flowOn(Dispatchers.IO).toLoadState().collect {
                     when (it) {
                         is LoadState.Loading -> {
                             loading.value = true
                         }
                         is LoadState.Loaded -> {
                             Log.d("LOGIN:", "LoadState.Loaded ${it.data}")
-                            userData = it.data.user
-                            tokens = it.data.tokens
-                            loading.value = false
-                            saveLogInInfo(userData, tokens)
-                            isLogInSuccessfully.value = true
+                            if(checkIdSeller(it.data.user)){
+                                userData = it.data.user
+                                tokens = it.data.tokens
+                                loading.value = false
+                                saveLogInInfo(userData, tokens)
+                                isLogInSuccessfully.value = true
+                            }else{
+                                loading.value = false
+                                error.value = errorMessage(CustomError(customMessage = "Wrong account type, please use an Seller account to use this app"))
+                            }
+
                         }
                         is LoadState.Error -> {
 //                        if (it.e is TokenRefreshing) {
@@ -56,6 +62,10 @@ class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
             }
     }
 
+    private fun checkIdSeller(user: UserData): Boolean {
+        return user.role == UserType.seller.name
+    }
+
     private fun saveLogInInfo(userData: UserData?, tokens: TokenResponse?) {
         if(userData != null && tokens != null){
             Log.d("LOGIN", "LogInViewModel saveLogInInfo")
@@ -68,7 +78,7 @@ class LogInViewModel(private val useCase: ILogInUseCase): ViewModel() {
             errorInputData.value = LoginViewErrors.ERR_EMPTY
             return false
         }
-        if (!isPhoneValid(phoneNumber)) {
+        if (!isPhoneNumberValid(phoneNumber)) {
             errorInputData.value = LoginViewErrors.ERR_MOBILE
             return false
         }

@@ -1,64 +1,51 @@
 package vn.ztech.software.ecomSeller.ui.product_details
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.fragment_product_details.view.*
 import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.databinding.FragmentProductDetailsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.ztech.software.ecomSeller.common.StoreDataStatus
-import vn.ztech.software.ecomSeller.model.Product
-import vn.ztech.software.ecomSeller.ui.cart.CartViewModel
-import vn.ztech.software.ecomSeller.ui.cart.DialogAddToCartSuccessFragment
-import vn.ztech.software.ecomSeller.ui.main.MainActivity
-import vn.ztech.software.ecomSeller.util.extension.showErrorDialog
+import vn.ztech.software.ecomSeller.databinding.ItemPreviewReviewSellerBinding
+import vn.ztech.software.ecomSeller.model.Review
+import vn.ztech.software.ecomSeller.ui.BaseFragment2
+import vn.ztech.software.ecomSeller.util.extension.round1Decimal
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
+import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
-class ProductDetailsFragment : Fragment(),
-    DialogAddToCartSuccessFragment.OnClick {
+class ProductDetailsFragment : BaseFragment2<FragmentProductDetailsBinding>() {
     val TAG = "ProductDetailsFragment"
-    private lateinit var binding: FragmentProductDetailsBinding
     private val viewModel: ProductDetailsViewModel by viewModel()
-    private val cartViewModel: CartViewModel by viewModel()
-    var isAddToCartButtonEnabled = true
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentProductDetailsBinding.inflate(layoutInflater)
-//        if (viewModel.isSeller()) {
-//            binding.proDetailsAddCartBtn.visibility = View.GONE
-//        } else {
-            binding.proDetailsAddCartBtn.visibility = View.VISIBLE
-            binding.proDetailsAddCartBtn.setOnClickListener {
-                    addToCart(viewModel.product.value?._id)
-            }
-//        }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val productId = arguments?.getString("productId") as String?
+        viewModel.getProduct(productId?:"")
+        viewModel.getProductDetails(productId?:"")
+        if (viewModel.reviews.value == null || viewModel.reviews.value?.isEmpty() == true){
+            viewModel.getReviewsOfThisProduct(productId?:"")
+        }
+    }
+
+    override fun setUpViews() {
+        super.setUpViews()
+        binding.proDetailsAddCartBtn.visibility = View.VISIBLE
         binding.layoutViewsGroup.visibility = View.GONE
         binding.proDetailsAddCartBtn.visibility = View.GONE
+    }
+
+    override fun observeView() {
+        super.observeView()
         setObservers()
-        return binding.root
-    }
 
-    private fun addToCart(_id: String?) {
-        cartViewModel.addProductToCart(_id)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val product = arguments?.getParcelable("product") as Product?
-        isAddToCartButtonEnabled = arguments?.getBoolean("ADD_TO_CART_BUTTON_ENABLED")?:true
-        if(!isAddToCartButtonEnabled) {
-            binding.proDetailsAddCartBtn.visibility = View.GONE
-        }
-        viewModel.product.value = product
-        viewModel.getProductDetails(product?._id?:"")
     }
 
     private fun setObservers() {
@@ -74,46 +61,65 @@ class ProductDetailsFragment : Fragment(),
                 }
             }
         }
+        viewModel.product.observe(viewLifecycleOwner){
+            if(viewModel.checkIsDataReady()){
+                setViews()
+            }
+        }
         viewModel.productDetails.observe(viewLifecycleOwner){
-            setViews()
-        }
-        cartViewModel.loading.observe(viewLifecycleOwner){
-            it?.let {
-                if (it){
-                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
-                }else{
-                    binding.loaderLayout.loaderFrameLayout.visibility = View.GONE
-                }
+            if(viewModel.checkIsDataReady()){
+                setViews()
             }
         }
-        cartViewModel.addProductStatus.observe(viewLifecycleOwner){
+        viewModel.reviews.observe(viewLifecycleOwner){
             it?.let {
-                if (it){
-                    showBottomDialogSuccess()
-                }
-            }
-        }
-        cartViewModel.error.observe(viewLifecycleOwner){
-            it?.let {
-                showErrorDialog(it)
+                addReviewUI(it)
             }
         }
         viewModel.error.observe(viewLifecycleOwner){
             it?.let {
-                showErrorDialog(it)
+                handleError(it)
             }
         }
     }
 
-    private fun showBottomDialogSuccess() {
-        viewModel.product.value?.let {
-            DialogAddToCartSuccessFragment(it, this@ProductDetailsFragment).show(parentFragmentManager,"DialogAddToCartSuccessFragment")
+    private fun addReviewUI(it: List<Review>) {
+
+        if(viewModel.hasNextPage.value == true) {
+            binding.btViewAllReview.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_productDetailsFragment_to_listReviewOfProductFragment,
+                        bundleOf(
+                            "product" to viewModel.product.value
+                        )
+                    )
+                }
+            }
+        } else {
+            binding.btViewAllReview.apply {
+                visibility = View.GONE
+
+            }
+        }
+
+        val layoutReviewItems = binding.layoutReviewItems
+        layoutReviewItems.removeAllViews()
+        it.forEach {
+            val view = ItemPreviewReviewSellerBinding.inflate(layoutInflater)
+            view.tvUserName.text = it.userName
+            view.ratingBar.rating = it.rating.toFloat()
+            view.tvReviewContent.text = it.content
+            view.tvDateTime.text = it.updatedAt.toDateTimeString()
+
+            layoutReviewItems.addView(view.root)
         }
     }
 
+
     private fun setViews() {
         binding.layoutViewsGroup.visibility = View.VISIBLE
-        if(isAddToCartButtonEnabled)binding.proDetailsAddCartBtn.visibility = View.VISIBLE
         binding.addProAppBar.topAppBar.title = viewModel.product.value?.name
         binding.addProAppBar.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -122,19 +128,21 @@ class ProductDetailsFragment : Fragment(),
         setImagesView()
 
         binding.proDetailsTitleTv.text = viewModel.product.value?.name.toString()
-        binding.proDetailsRatingBar.rating = (viewModel.product.value?.averageRating ?: 0.0).toFloat()
-        binding.tvNumberOfReviews.text = "(${viewModel.productDetails.value?.numOfReviews.toString()})"
+        binding.proDetailsRatingBar.rating = (viewModel.product.value?.averageRating ?: 0.0f)
+        binding.tvAverageRating.text = "${viewModel.product.value?.averageRating?.round1Decimal().toString()}"
         binding.tvSoldNumber.text = "Sold: ${viewModel.product.value?.saleNumber.toString()}"
 
-        binding.proDetailsPriceTv.text = resources.getString(
-            R.string.pro_details_price_value,
-            viewModel.product.value?.price
-        )
+        binding.proDetailsPriceTv.text = viewModel.product.value?.price?.toCurrency()
         binding.proDetailsSpecificsText.text = viewModel.productDetails.value?.description ?: ""
         binding.categoryValue.text = viewModel.product.value?.category
         binding.unitValue.text = viewModel.productDetails.value?.unit
         binding.brandValue.text = viewModel.productDetails.value?.brandName
         binding.originValue.text = viewModel.productDetails.value?.origin
+
+
+        binding.ratingBar.rating = viewModel.product.value?.averageRating?:0f
+        binding.tvAverageRating2.text = "${viewModel.product.value?.averageRating} / 5"
+        binding.numOfReview.text = "(${viewModel.product.value?.numberOfRating} reviews)"
     }
 
     private fun setImagesView() {
@@ -158,12 +166,13 @@ class ProductDetailsFragment : Fragment(),
         }
     }
 
-    override fun onButtonGoToCartClicked() {
-        cartViewModel.addProductStatus.value = false /**refresh live data value to the original, so that the bottom sheet will not show up when navigate back to this fragment*/
-        (activity as MainActivity).binding.homeBottomNavigation.selectedItemId = R.id.cartFragment
-    }
     override fun onStop() {
         super.onStop()
         viewModel.clearErrors()
     }
+
+    override fun setViewBinding(): FragmentProductDetailsBinding {
+        return FragmentProductDetailsBinding.inflate(layoutInflater)
+    }
+
 }

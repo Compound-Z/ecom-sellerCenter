@@ -56,6 +56,16 @@ internal fun isPasswordValid(password: String): Boolean {
 	}
 }
 internal fun isPhoneNumberValid(phoneNumber: String): Boolean {
+	/**check length, if start with +84-> length12, start with 84 length11, start with 0-> length10*/
+	if (phoneNumber.startsWith("0")){
+		if (phoneNumber.length != 10) return false
+	}
+	if (phoneNumber.startsWith("+84")){
+		if (phoneNumber.length != 12) return false
+	}
+	if (phoneNumber.startsWith("84")){
+		if (phoneNumber.length != 11) return false
+	}
 
 	val PHONENUMBER_PATTERN = Pattern.compile("^(((\\+|)84)|0)(3|5|7|8|9)+([0-9]{8})$")
 	return if (phoneNumber.isEmpty()) {
@@ -64,6 +74,22 @@ internal fun isPhoneNumberValid(phoneNumber: String): Boolean {
 		Log.d("REGEX", PHONENUMBER_PATTERN.matcher(phoneNumber).matches().toString())
 		PHONENUMBER_PATTERN.matcher(phoneNumber).matches()
 	}
+}
+
+internal fun standardlizePhoneNumber(phoneNumber: String): String{
+	if (phoneNumber.startsWith("0")){
+		val removedZero = phoneNumber.trim().substring(1)
+		return "+84${removedZero}"
+	}
+	if (phoneNumber.startsWith("+84")){
+		return phoneNumber
+	}
+	if (phoneNumber.startsWith("84")){
+		if(phoneNumber.length == 9) return "+84${phoneNumber}"
+		else if(phoneNumber.length == 11) return "+${phoneNumber}"
+	}
+
+	return "+84${phoneNumber.trim()}"
 }
 internal fun isZipCodeValid(zipCode: String): Boolean {
 	val ZIPCODE_PATTERN = Pattern.compile("^\\s*[1-9]\\d{5}\\s*\$")

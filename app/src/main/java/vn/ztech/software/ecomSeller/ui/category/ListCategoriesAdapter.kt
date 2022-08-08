@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import vn.ztech.software.ecomSeller.databinding.ItemCategoryListBinding
 import vn.ztech.software.ecomSeller.databinding.LayoutHomeAdBinding
 import vn.ztech.software.ecomSeller.model.Category
+import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 
 class ListCategoriesAdapter(categoryList: List<Any>, private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -21,20 +22,24 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
     inner class ItemViewHolder(binding: ItemCategoryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private val categoryName = binding.categoryNameTv
-        private val productCard = binding.categoryCard
+        private val categoryCard = binding.categoryCard
         private val categoryImage = binding.categoryImageView
         private val btEdit = binding.btEdit
         private val btDelete = binding.btDelete
         private val tvNumberOfProduct = binding.tvNumberOfProduct
 
         fun bind(categoryData: Category) {
+            categoryCard.setOnClickListener {
+                onClickListener.onClick(categoryData)
+            }
+
             btEdit.setOnClickListener {
                 onClickListener.onClickEdit(categoryData)
             }
             btDelete.setOnClickListener {
                 onClickListener.onClickDelete(categoryData)
             }
-            categoryName.text = categoryData.name
+            categoryName.text = categoryData.name.removeUnderline()
             tvNumberOfProduct.text = "${categoryData.numberOfProduct} products"
             if (categoryData.imageUrl.isNotEmpty()) {
                 val imgUrl = categoryData.imageUrl.toUri().buildUpon().scheme("https").build()
@@ -95,6 +100,7 @@ class ListCategoriesAdapter(categoryList: List<Any>, private val context: Contex
     
 
     interface OnClickListener {
+        fun onClick(categoryData: Category)
         fun onClickEdit(categoryData: Category)
         fun onClickDelete(categoryData: Category)
 

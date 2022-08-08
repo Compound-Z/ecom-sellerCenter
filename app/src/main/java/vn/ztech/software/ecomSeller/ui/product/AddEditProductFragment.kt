@@ -59,7 +59,7 @@ class AddEditProductFragment : BaseFragment2<FragmentAddEditProductBinding>() {
         }
         /**if product argument does not exist*/
         if (categoryViewModel.originalCategories.value == null){
-            categoryViewModel.getCategories()
+            categoryViewModel.getAllCategories()
         }
         if (viewModel.origins.value == null){
             viewModel.getOrigins()

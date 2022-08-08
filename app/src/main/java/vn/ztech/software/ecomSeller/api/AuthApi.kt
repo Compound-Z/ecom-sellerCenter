@@ -34,5 +34,8 @@ interface IAuthApi{
     @POST("/api/v1/auth/refresh-token")
     suspend fun refreshToken(@Body request: RefreshTokenRequest): TokenResponse
 
+    @POST("/api/v1/auth/update-fcm-token")
+    suspend fun updateFCMToken(@Body request: UpdateFCMTokenRequest): BasicResponse
+
 
 }

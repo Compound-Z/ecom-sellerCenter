@@ -20,6 +20,7 @@ import vn.ztech.software.ecomSeller.ui.BaseFragment2
 import vn.ztech.software.ecomSeller.util.extension.getAvgSale
 import vn.ztech.software.ecomSeller.util.extension.getNumberOfOrder
 import vn.ztech.software.ecomSeller.util.extension.getTotalSales
+import vn.ztech.software.ecomSeller.util.extension.toCurrency
 import java.time.LocalDate
 import kotlin.properties.Delegates
 
@@ -97,12 +98,12 @@ class SaleReportFragment : BaseFragment2<FragmentSaleReportBinding>() {
             }
             1 -> {
                 viewModel.orders.value?.get(numberOfDays)?.let {
-                    content = it.getTotalSales().toString()
+                    content = it.getTotalSales().toCurrency()
                 }
             }
             2 -> {
                 viewModel.orders.value?.get(numberOfDays)?.let {
-                    content = it.getAvgSale().toString()
+                    content = it.getAvgSale().toCurrency()
                 }
             }
         }
