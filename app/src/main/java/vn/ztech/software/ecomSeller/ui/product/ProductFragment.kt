@@ -227,6 +227,15 @@ class ProductFragment : Fragment() {
                 )
 
             }
+
+            override fun onProductClicked(productId: String) {
+                findNavController().navigate(
+                    R.id.action_productFragment_to_productDetailsFragment,
+                    bundleOf(
+                        "productId" to productId
+                    )
+                )
+            }
         }
 
         listProductsAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY

@@ -62,6 +62,9 @@ class ListProductsAdapter(private val context: Context) :
 			btAdvancedActions.setOnClickListener {
 				onClickListener.onClickAdvancedActionsButton(it, productData)
 			}
+			proName.setOnClickListener {
+				onClickListener.onProductClicked(productData._id)
+			}
 
 //			}
 		}
@@ -114,6 +117,7 @@ class ListProductsAdapter(private val context: Context) :
 	interface OnClickListener {
 		fun onClickAdvancedActionsButton(view: View, productData: Product)
 		fun onEditClick(productData: Product)
+		fun onProductClicked(productId: String)
 	}
 	object ProductComparator: DiffUtil.ItemCallback<Product>() {
 		override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
