@@ -30,7 +30,10 @@ class ListOrdersViewModel(private val orderUseCase: IOrderUserCase): ViewModel()
     val error = MutableLiveData<CustomError>()
 
     fun getOrders(statusFilter: String?, isLoadingEnabled: Boolean = true) {
-        statusFilter ?: throw CustomError(customMessage = "System error")
+        if(statusFilter==null) {
+            error.value = errorMessage(CustomError(customMessage = "System error"))
+            return
+        }
         viewModelScope.launch {
             orderUseCase.getOrders(statusFilter).cachedIn(viewModelScope).flowOn(Dispatchers.IO).toLoadState().collect {
                 when (it) {
