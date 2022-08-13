@@ -30,6 +30,7 @@ import java.io.File
 
 class CategoryViewModel(val productViewModel: ProductViewModel, private val listCategoriesUseCase: IListCategoriesUseCase, private val listProductsUseCase: IListProductUseCase): ViewModel() {
     val TAG = "CategoryViewModel"
+    var existed = false
     val currentSelectedCategory = MutableLiveData<Category>()
 
     private var _allCategories = MutableLiveData<MutableList<Category>>()

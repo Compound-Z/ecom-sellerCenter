@@ -48,6 +48,8 @@ open class ListProductsInCategoryFragment : Fragment() {
         arguments?.takeIf { it.containsKey("category") }?.let {
             viewModel.currentSelectedCategory.value = arguments!!.getParcelable<Category>("category")
         }
+        if (viewModel.products.value == null) viewModel.getProductsInCategory()
+
     }
 
     override fun onCreateView(
@@ -63,8 +65,8 @@ open class ListProductsInCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getProductsInCategory()
         binding.swipeRefresh.setOnRefreshListener {
+            viewModel.existed = false
             viewModel.getProductsInCategory()
         }
     }
@@ -250,8 +252,11 @@ open class ListProductsInCategoryFragment : Fragment() {
             // show empty list
             if (loadState.refresh is androidx.paging.LoadState.Loading ||
                 loadState.append is androidx.paging.LoadState.Loading){
-                binding.loaderLayout.circularLoader.showAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                if(!viewModel.existed){
+                    binding.loaderLayout.circularLoader.showAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                }
+
             }
             else {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
@@ -368,7 +373,13 @@ open class ListProductsInCategoryFragment : Fragment() {
         super.onResume()
         viewModel.productViewModel.clearSelected()
         productViewModel.clearSelected()
-
+        if (viewModel.existed) {
+            listProductsAdapter.refresh()
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        viewModel.existed = true
     }
     override fun onStop() {
         super.onStop()
