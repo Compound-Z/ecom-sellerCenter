@@ -36,7 +36,7 @@ class ProductViewModel(
     private val listProductsUseCase: IListProductUseCase,
     private val categoriesUseCase: IListCategoriesUseCase
 ): ViewModel() {
-
+    var existed = false
     private val _storeDataStatus = MutableLiveData<StoreDataStatus>()
     val storeDataStatus: LiveData<StoreDataStatus> get() = _storeDataStatus
 

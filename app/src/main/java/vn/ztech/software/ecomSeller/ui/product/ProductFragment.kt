@@ -45,6 +45,7 @@ class ProductFragment : Fragment() {
         arguments?.takeIf { it.containsKey("category") }?.let {
             viewModel.currentSelectedCategory.value = arguments!!.getParcelable<Category>("category")
         }
+        if(viewModel.allProducts.value == null) viewModel.getProducts()
     }
 
     override fun onCreateView(
@@ -60,8 +61,8 @@ class ProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getProducts()
         binding.swipeRefresh.setOnRefreshListener {
+            viewModel.existed = false
             viewModel.getProducts()
         }
     }
@@ -234,8 +235,12 @@ class ProductFragment : Fragment() {
             // show empty list
             if (loadState.refresh is androidx.paging.LoadState.Loading ||
                 loadState.append is androidx.paging.LoadState.Loading){
-                binding.loaderLayout.circularLoader.showAnimationBehavior
-                binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+
+                if(!viewModel.existed){
+                    binding.loaderLayout.circularLoader.showAnimationBehavior
+                    binding.loaderLayout.loaderFrameLayout.visibility = View.VISIBLE
+                }
+
             }
             else {
                 binding.loaderLayout.circularLoader.hideAnimationBehavior
@@ -349,6 +354,13 @@ class ProductFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.clearSelected()
+        if (viewModel.existed) {
+            listProductsAdapter.refresh()
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        viewModel.existed = true
     }
     override fun onStop() {
         super.onStop()
