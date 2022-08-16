@@ -43,8 +43,11 @@ data class ShippingDetails(
     val shippingProvider: String,
     val shippingServiceId: Int,
     val shippingServiceTypeId: Int,
-    val weight: Int
-    //todo: more properties when the admin change order's status
+    val weight: Int,
+    var expectedDeliveryTime: String?,
+    var shippingOrderCode: String?,
+    var status: String,
+    var log: List<Log>?
 ):Parcelable
 @Parcelize
 data class UserOrder(
@@ -52,4 +55,9 @@ data class UserOrder(
     val name: String,
     val phoneNumber: String,
     val userId: String
+):Parcelable
+@Parcelize
+data class Log(
+    val status: String,
+    val updated_date: String,
 ):Parcelable

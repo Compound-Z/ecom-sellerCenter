@@ -15,7 +15,8 @@ data class Order(
     val status: String,
     val updatedAt: String,
     val createdAt: String,
-)
+    val shippingDetails: ShippingDetails?,
+    )
 
 data class OrderWithTime(
     val order: Order,

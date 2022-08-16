@@ -3,6 +3,7 @@ package vn.ztech.software.ecomSeller.ui.order.order_history
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.net.toUri
@@ -14,7 +15,9 @@ import vn.ztech.software.ecomSeller.R
 import vn.ztech.software.ecomSeller.common.Constants
 import vn.ztech.software.ecomSeller.databinding.ItemOrderHistoryBinding
 import vn.ztech.software.ecomSeller.model.Order
+import vn.ztech.software.ecomSeller.util.extension.removeUnderline
 import vn.ztech.software.ecomSeller.util.extension.toCurrency
+import vn.ztech.software.ecomSeller.util.extension.toDateTimeString
 
 class ListOrderAdapter( val context: Context,
                         val onClickListener: OnClickListener
@@ -37,6 +40,27 @@ class ListOrderAdapter( val context: Context,
                 binding.productImageView.clipToOutline = true
             }
             setUIBaseOnOrderStatus(binding.tvOrderStatus, order.status)
+
+            if (order.status == "CONFIRMED"){
+                /**only show expected delivery time if the order has been CONFIRMED*/
+                binding.tvExpectedDeliveryTime.apply {
+                    order.shippingDetails?.let {
+                        if(!it.expectedDeliveryTime.isNullOrEmpty()){
+                            visibility = View.VISIBLE
+                            text = "Expected delivery time: ${it.expectedDeliveryTime?.toDateTimeString()}"
+                        }
+                    }
+                }
+                if(order.shippingDetails?.status != "none"){
+                    binding.tvShippingStatus.visibility = View.VISIBLE
+                    binding.tvShippingStatus.text = "Shipping status: ${ order.shippingDetails?.status?.removeUnderline() }"
+                }
+            }else{
+                binding.btViewDetails.text = "View details"
+                binding.btViewDetails.setBackgroundColor(context.resources.getColor(R.color.blue_accent_300))
+
+            }
+
             binding.btViewDetails.text = getAppropriateActionLabel(order.status)
             binding.productCard.setOnClickListener {
                 onClickListener.onClick(order)

@@ -17,6 +17,8 @@
     <string name="signup_welcome_text">Sign Up!</string>
     <string name="account_shop_info_label">Shop information</string>
     <string name="signup_name_hint">USER NAME</string>
+    <string name="shipping_exp_delivery_time_label_string">Expected delivery time</string>
+    <string name="shipping_shipping_order_code_label_string">Shipping order code</string>
     <string name="signup_shop_name_hint">SHOP NAME</string>
     <string name="signup_shop_description_hint">SHOP DESCRIPTION</string>
     <string name="signup_mobile_hint">MOBILE</string>
