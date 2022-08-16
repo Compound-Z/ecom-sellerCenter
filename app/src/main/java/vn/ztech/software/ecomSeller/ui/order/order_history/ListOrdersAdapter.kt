@@ -51,9 +51,12 @@ class ListOrderAdapter( val context: Context,
                         }
                     }
                 }
-                if(order.shippingDetails?.status != "none"){
+                if(order.shippingDetails?.status != "none") {
                     binding.tvShippingStatus.visibility = View.VISIBLE
-                    binding.tvShippingStatus.text = "Shipping status: ${ order.shippingDetails?.status?.removeUnderline() }"
+                    if (!order.shippingDetails?.log.isNullOrEmpty())
+                        binding.tvShippingStatus.text = "Shipping status: ${order.shippingDetails?.log?.last()?.status?.removeUnderline()}"
+                    else
+                        binding.tvShippingStatus.text = "Shipping status: ${order.shippingDetails?.status?.removeUnderline()}"
                 }
             }else{
                 binding.btViewDetails.text = "View details"

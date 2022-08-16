@@ -6,7 +6,7 @@ object Constants {
     val BASE_URL_DEBUG = "http://192.168.0.103:5000"
 
     fun getBaseUrl(): String{
-        return BASE_URL_DEBUG
+        return BASE_URL
     }
 
     val TOKEN_NEAR_EXPIRED_TIME_IN_SECOND = 5*60 /**five minutes, consider the internet delay time*/
