@@ -126,7 +126,7 @@ class ListProductsAdapter(private val context: Context) :
 		}
 
 		override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
-			return oldItem.name == newItem.name
+			return (oldItem.name == newItem.name && oldItem.quantity == newItem.quantity && oldItem.saleNumber == newItem.saleNumber)
 		}
 	}
 }
